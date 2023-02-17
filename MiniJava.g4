@@ -27,7 +27,7 @@
     ;
 
     exprbody
-    : 'print(' (exprbodies* | escape*) ')' ';'
+    : 'print(' (exprbodies* | escape*) ')'
     | exprbody init
     | NUMBER
     | STRING
