@@ -23,8 +23,10 @@
     ;
 
     expression
-    : 'print(' expression ')'
+    : 'print(' (expressions* | escape*) ')' ';'
+    | expression init ';'
     | NUMBER
+    | STRING
     | 'true'
     | 'false'
     | '"' (.*? | escape+) '"'
@@ -35,6 +37,11 @@
     | '(' DATATYPE ')' expression
     | expression ('*' | '/' | '%') expression
     | expression ('+' | '-') expression
+    ;
+
+    expressions
+    : expression
+    | expression ',' expressions
     ;
 
     init
@@ -80,6 +87,10 @@
 
     NAME
     : [A-Za-z_$]+([a-z]|[_$]|[0-9])*
+    ;
+
+    STRING
+    : '"' .*? '"'
     ;
 
     WS
