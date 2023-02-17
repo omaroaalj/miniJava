@@ -50,7 +50,7 @@
     ;
 
     init
-    : '=' expression
+    : '=' exprbody
     ;
 
     escape
