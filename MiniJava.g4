@@ -69,7 +69,7 @@
     ;
 
     LINE_COMMENT
-    : '//' .*? [\n] -> skip
+    : '//' .*? '\n' -> skip
     ;
 
     DATATYPE
