@@ -11,7 +11,7 @@
     ;
 
     statement
-    : declaration
+    : declaration statement?
     ;
 
     expression
@@ -33,6 +33,14 @@
     | NAME init? ',' names
     ;
 
+    COMMENT
+    : '/*' .*? '*/' -> skip
+    ;
+
+    LINE_COMMENT
+    : '//' .*? [/n]+ -> skip
+    ;
+
     DATATYPE
     : 'int'
     | 'double'
@@ -50,11 +58,6 @@
     : [A-Za-z_$]+([a-z]|[_$]|[0-9])*
     ;
 
-    COMMENT
-    : '//' .*? [/n]
-    | '/*' .*? '*/'
-    ;
-
     WS
-    : [ ] -> skip
+    : [ /n] -> skip
     ;
