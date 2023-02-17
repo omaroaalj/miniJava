@@ -20,11 +20,17 @@
 
     declaration
     : DATATYPE NAME init? ';'
+    | DATATYPE names init? ';'
     ;
 
     init
     : '=' NUMBER
     | '=' NAME
+    ;
+
+    names
+    : NAME init?
+    | NAME init? ',' names
     ;
 
     DATATYPE
