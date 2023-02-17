@@ -6,12 +6,12 @@
         ;
 
     methodBody
-    : statement
-    | expression
+    : statement ('\n'* statement|'\n'* expression)*
+    | expression ('\n'* statement|'\n'* expression)*
     ;
 
     statement
-    : declaration ('\n'statement)?
+    : declaration
     ;
 
     expression
@@ -76,5 +76,5 @@
     ;
 
     WS
-    : [ ] -> skip
+    : [ \r\t\n] -> skip
     ;
