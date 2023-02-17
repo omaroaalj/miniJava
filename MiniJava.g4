@@ -90,6 +90,19 @@
     | [0-9]+ [eE] [+-]? [0-9]+
     ;
 
+    RESERVED
+    : 'abstract' | 'assert' | 'break'
+    | 'case' | 'catch' | 'class' | 'const'
+    | '_' | 'continue' | 'default' | 'do'
+    | 'else' | 'enum' | 'extends' | 'final'
+    | 'finally' | 'float' | 'for'| 'if'
+    | 'goto' | 'implements' | 'import'
+    | 'instanceof' | 'interface' | 'long'
+    | 'native' | 'new' | 'package' | 'private'
+    | 'protected' | 'public' | 'return'
+    | 'short' | 'static' | 'strictfp' | 'super'
+    ;
+
     NAME
     : [A-Za-z_$]+([a-z]|[_$]|[0-9])*
     ;
