@@ -24,7 +24,8 @@
 
     expression
     : 'print(' (expressions* | escape*) ')' ';'
-    | expression init ';'
+    | expression init ';'?
+    | expression '=' expressions ';'
     | NUMBER
     | STRING
     | 'true'
@@ -35,6 +36,7 @@
     | expression ('++' | '--') ';'?
     | ('++' | '+' | '--' | '-') expression
     | '(' DATATYPE ')' expression
+    | '(' NAME ')' expression
     | expression ('*' | '/' | '%') expression
     | expression ('+' | '-') expression
     ;
@@ -79,7 +81,7 @@
     NUMBER
     : [+-]? [0-9]+
     | [+-]? [0-9]+ '.'
-    | [+-]? [0-9]+ '.'? [0-9]+
+    | [+-]? [0-9]+ '.'? [0-9]*
     | '.' [0-9]+
     | [0-9] '.' [0-9]+ [eE] [+-]? [0-9]+
     | [0-9]+ [eE] [+-]? [0-9]+
