@@ -6,12 +6,15 @@
         ;
 
     methodBody
-    : statement ('\n'* statement|'\n'* expression)*
-    | expression ('\n'* statement|'\n'* expression)*
+    : statement ('\n'* statement|'\n'* expression |'\n'* declaration)*
+    | expression ('\n'* statement|'\n'* expression |'\n'* declaration)*
+    | declaration ('\n'* statement|'\n'* expression |'\n'* declaration)*
     ;
 
     statement
-    : declaration
+    : '{' '\n'* '}' ('\n'* statement|'\n'* expression |'\n'* declaration)*
+    | ';' ('\n'* statement|'\n'* expression |'\n'* declaration)*
+    | '{' '\n'* ('\n'* statement|'\n'* expression |'\n'* declaration)* '}'
     ;
 
     declaration
@@ -27,7 +30,7 @@
     | '"' (.*? | escape+) '"'
     | NAME
     | '(' expression ')'
-    | expression ('++' | '--')
+    | expression ('++' | '--') ';'?
     | ('++' | '+' | '--' | '-') expression
     | '(' DATATYPE ')' expression
     | expression ('*' | '/' | '%') expression
