@@ -11,11 +11,22 @@
     ;
 
     statement
-    : declaration statement?
+    : declaration ('\n'statement)?
     ;
 
     expression
-    :
+    : 'print(' expression ')'
+    | NUMBER
+    | 'true'
+    | 'false'
+    | '"' (.*? | escape+) '"'
+    | NAME
+    | '(' expression ')'
+    | expression ('++' | '--')
+    | ('++' | '+' | '--' | '-') expression
+    | '(' DATATYPE ')' expression
+    | expression ('*' | '/' | '%') expression
+    | expression ('+' | '-') expression
     ;
 
     declaration
@@ -28,6 +39,12 @@
     | '=' NAME
     ;
 
+    escape
+    : '\n'
+    | '\t'
+    | '\\'
+    ;
+
     names
     : NAME init?
     | NAME init? ',' names
@@ -38,7 +55,7 @@
     ;
 
     LINE_COMMENT
-    : '//' .*? [/n]+ -> skip
+    : '//' .*? [\n] -> skip
     ;
 
     DATATYPE
@@ -59,5 +76,5 @@
     ;
 
     WS
-    : [ /n] -> skip
+    : [ ] -> skip
     ;
