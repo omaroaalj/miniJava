@@ -14,6 +14,11 @@
     : declaration
     ;
 
+    declaration
+    : DATATYPE NAME init? ';'
+    | DATATYPE names init? ';'
+    ;
+
     expression
     : 'print(' expression ')'
     | NUMBER
@@ -29,14 +34,8 @@
     | expression ('+' | '-') expression
     ;
 
-    declaration
-    : DATATYPE NAME init? ';'
-    | DATATYPE names init? ';'
-    ;
-
     init
-    : '=' NUMBER
-    | '=' NAME
+    : '=' expression
     ;
 
     escape
@@ -62,6 +61,7 @@
     : 'int'
     | 'double'
     | 'boolean'
+    | 'String'
     ;
 
     NUMBER
