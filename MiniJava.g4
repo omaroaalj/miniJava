@@ -23,27 +23,30 @@
     ;
 
     expression
-    : 'print(' (expressions* | escape*) ')' ';'
-    | expression init ';'?
-    | expression '=' expressions ';'
+    : exprbody ';'
+    ;
+
+    exprbody
+    : 'print(' (exprbodies* | escape*) ')' ';'
+    | exprbody init
     | NUMBER
     | STRING
     | 'true'
     | 'false'
     | '"' (.*? | escape+) '"'
     | NAME
-    | '(' expression ')'
-    | expression ('++' | '--') ';'?
-    | ('++' | '+' | '--' | '-') expression
-    | '(' DATATYPE ')' expression
-    | '(' NAME ')' expression
-    | expression ('*' | '/' | '%') expression
-    | expression ('+' | '-') expression
+    | '(' exprbody ')'
+    | exprbody ('++' | '--')
+    | ('++' | '+' | '--' | '-') exprbody
+    | '(' DATATYPE ')' exprbody
+    | '(' NAME ')' exprbody
+    | exprbody ('*' | '/' | '%') exprbody
+    | exprbody ('+' | '-') exprbody
     ;
 
-    expressions
-    : expression
-    | expression ',' expressions
+    exprbodies
+    : exprbody
+    | exprbody ',' exprbodies
     ;
 
     init
