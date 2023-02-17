@@ -6,9 +6,9 @@
         ;
 
     methodBody
-    : statement ('\n'* statement|'\n'* expression |'\n'* declaration)*
-    | expression ('\n'* statement|'\n'* expression |'\n'* declaration)*
-    | declaration ('\n'* statement|'\n'* expression |'\n'* declaration)*
+    : '\n'* statement ('\n'* statement|'\n'* expression |'\n'* declaration)* '\n'*
+    | '\n'* expression ('\n'* statement|'\n'* expression |'\n'* declaration)* '\n'*
+    | '\n'* declaration ('\n'* statement|'\n'* expression |'\n'* declaration)* '\n'*
     ;
 
     statement
@@ -65,11 +65,15 @@
     | 'double'
     | 'boolean'
     | 'String'
+    | 'byte'
+    | 'char'
     ;
 
     NUMBER
     : [+-]? [0-9]+
+    | [+-]? [0-9]+ '.'
     | [+-]? [0-9]+ '.'? [0-9]+
+    | '.' [0-9]+
     | [0-9] '.' [0-9]+ [eE] [+-]? [0-9]+
     | [0-9]+ [eE] [+-]? [0-9]+
     ;
