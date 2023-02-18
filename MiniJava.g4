@@ -23,7 +23,7 @@
     ;
 
     expression
-    : exprbody ';'
+    : exprbodies ';'
     ;
 
     exprbody
@@ -42,6 +42,7 @@
     | '(' NAME ')' exprbody
     | exprbody ('*' | '/' | '%') exprbody
     | exprbody ('+' | '-') exprbody
+    | <assoc=right> exprbody '=' exprbody
     ;
 
     exprbodies
@@ -83,9 +84,8 @@
 
     NUMBER
     : [+-]? [0-9]+
-    | [+-]? [0-9]+ '.'
     | [+-]? [0-9]+ '.'? [0-9]*
-    | '.' [0-9]+
+    | [+-]? [0-9]* '.'? [0-9]+
     | [0-9] '.' [0-9]+ [eE] [+-]? [0-9]+
     | [0-9]+ [eE] [+-]? [0-9]+
     ;
