@@ -1,4 +1,4 @@
-// comment to check if git is working
+// Taeden & Omar - CMPT 355 - 2/17/2023
     grammar MiniJava;
 
     minijava
@@ -6,111 +6,106 @@
         ;
 
     methodBody
-    : '\n'* statement ('\n'* statement|'\n'* expression |'\n'* declaration)* '\n'*
-    | '\n'* expression ('\n'* statement|'\n'* expression |'\n'* declaration)* '\n'*
-    | '\n'* declaration ('\n'* statement|'\n'* expression |'\n'* declaration)* '\n'*
-    ;
+        : statement*
+        ;
 
     statement
-    : '{' '\n'* '}' ('\n'* statement|'\n'* expression |'\n'* declaration)*
-    | ';' ('\n'* statement|'\n'* expression |'\n'* declaration)*
-    | '{' '\n'* ('\n'* statement|'\n'* expression |'\n'* declaration)* '}'
-    ;
+        : '{' '}' (statement|expression|declaration)*
+        | ';' (statement|expression|declaration)*
+        | '{'(statement|expression|declaration)* '}'
+        | expression ';'
+        | declaration
+        ;
 
     declaration
-    : DATATYPE NAME init? ';'
-    | DATATYPE names init? ';'
-    ;
+        : DATATYPE DATATYPE init? ';'
+        | DATATYPE names init? ';'
+        ;
 
     expression
-    : exprbody ';'
-    ;
-
-    exprbody
-    : 'print(' (exprbodies* | escape*) ')'
-    | exprbody init
-    | NUMBER
-    | STRING
-    | 'true'
-    | 'false'
-    | '"' (.*? | escape+) '"'
-    | NAME
-    | '(' exprbody ')'
-    | exprbody ('++' | '--')
-    | ('++' | '+' | '--' | '-') exprbody
-    | '(' DATATYPE ')' exprbody
-    | '(' NAME ')' exprbody
-    | exprbody ('*' | '/' | '%') exprbody
-    | exprbody ('+' | '-') exprbody
-    ;
+        : 'print(' (exprbodies* | escape*) ')'
+        | expression init
+        | NUMBER
+        | STRING
+        | 'true'
+        | 'false'
+        | '"' (.*? | escape+) '"'
+        | NAME
+        | '(' expression ')'
+        | expression ('++' | '--')
+        | ('++' | '+' | '--' | '-') expression
+        | '(' DATATYPE ')' expression
+        | '(' NAME ')' expression
+        | expression ('*' | '/' | '%') expression
+        | expression ('+' | '-') expression
+        | <assoc=right> expression '=' expression
+        ;
 
     exprbodies
-    : exprbody
-    | exprbody ',' exprbodies
-    ;
+        : expression
+        | expression ',' exprbodies
+        ;
 
     init
-    : '=' exprbody
-    ;
+        : '=' expression
+        ;
 
     escape
-    : '\n'
-    | '\t'
-    | '\\'
-    ;
+        : '\\n'
+        | '\\t'
+        | '\\\\'
+        ;
 
     names
-    : NAME init?
-    | NAME init? ',' names
-    ;
+        : NAME init?
+        | NAME init? ',' names
+        ;
 
     COMMENT
-    : '/*' .*? '*/' -> skip
-    ;
+        : '/*' .*? '*/' -> skip
+        ;
 
     LINE_COMMENT
-    : '//' .*? [\n] -> skip
-    ;
+        : '//' .*? '\n' -> skip
+        ;
 
     DATATYPE
-    : 'int'
-    | 'double'
-    | 'boolean'
-    | 'String'
-    | 'byte'
-    | 'char'
-    ;
+        : 'int'
+        | 'double'
+        | 'boolean'
+        | NAME
+        ;
 
     NUMBER
-    : [+-]? [0-9]+
-    | [+-]? [0-9]+ '.'
-    | [+-]? [0-9]+ '.'? [0-9]*
-    | '.' [0-9]+
-    | [0-9] '.' [0-9]+ [eE] [+-]? [0-9]+
-    | [0-9]+ [eE] [+-]? [0-9]+
-    ;
+        : [+-]? [0-9]+
+        | [+-]? [0-9]+ '.'? [0-9]*
+        | [+-]? [0-9]* '.'? [0-9]+
+        | [0-9] '.' [0-9]* [eE] [+-]? [0-9]+
+        | '.'[0-9]+ [eE] [+-]? [0-9]+
+        | [0-9] [eE] [+-]? [0-9]+
+        ;
 
     RESERVED
-    : 'abstract' | 'assert' | 'break'
-    | 'case' | 'catch' | 'class' | 'const'
-    | '_' | 'continue' | 'default' | 'do'
-    | 'else' | 'enum' | 'extends' | 'final'
-    | 'finally' | 'float' | 'for'| 'if'
-    | 'goto' | 'implements' | 'import'
-    | 'instanceof' | 'interface' | 'long'
-    | 'native' | 'new' | 'package' | 'private'
-    | 'protected' | 'public' | 'return'
-    | 'short' | 'static' | 'strictfp' | 'super'
-    ;
+        : 'abstract' | 'assert' | 'break'
+        | 'case' | 'catch' | 'class' | 'const'
+        | '_' | 'continue' | 'default' | 'do'
+        | 'else' | 'enum' | 'extends' | 'final'
+        | 'finally' | 'float' | 'for'| 'if'
+        | 'goto' | 'implements' | 'import'
+        | 'instanceof' | 'interface' | 'long'
+        | 'native' | 'new' | 'package' | 'private'
+        | 'protected' | 'public' | 'return'
+        | 'short' | 'static' | 'strictfp' | 'super'
+        ;
 
     NAME
-    : [A-Za-z_$]+([a-z]|[_$]|[0-9])*
-    ;
+        : [A-Za-z_$]+([a-z]|[_$]|[0-9])*
+        ;
 
     STRING
-    : '"' .*? '"'
-    ;
+        : '"' .*? '"'
+        ;
 
     WS
-    : [ \r\t\n] -> skip
-    ;
+        : [ \r\t\n] -> skip
+        ;
