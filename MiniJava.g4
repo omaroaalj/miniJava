@@ -1,6 +1,11 @@
 // Taeden & Omar - CMPT 355 - 2/17/2023
 grammar MiniJava;
 
+@parser::header {
+import edu.westminstercollege.cmpt355.minijava.node.*;
+}
+
+
 goal
     returns [Block n]
     : methodBody {
@@ -10,9 +15,9 @@ goal
 
 methodBody
     returns [Block n]
-    : (stmts=statement)* EOF {
+    : (stmts+=statement)* EOF {
         var statements = new ArrayList<Statement>();
-        for(var stmt : stmts)
+        for(var stmt : $stmts)
             statements.add(stmt.n);
 
         $n = new Block(statements);
@@ -32,9 +37,9 @@ statement
             $n = $stmt.n;
         }
     }
-    | decs=declaration  {
+    | decs+=declaration  {
         var declarations = new ArrayList<Declarations>();
-        for(var dec : decs)
+        for(var dec : $decs)
             declarations.add(dec.n);
 
         $n = new Statement(declarations);
@@ -51,10 +56,10 @@ declaration
         //type is a TypeNode, how would Declaration take as parameter?
 
         var itemlist = new ArrayList<DecItem>();
-        for(var item : item)
+        for(var item : $items)
             itemlist.add(item.n);
 
-        $n = new Declaration($type.text, itemList) //each DecItem possibly contains info on value if initialized?
+        $n = new Declaration($type.text, itemList); //each DecItem possibly contains info on value if initialized?
     }
     ;
 
@@ -73,7 +78,7 @@ expression
     returns[ExpressionStatement n]
     : 'print' '(' (args+=expression (',' args+=expression)*)? ')' {
         var prints = new ArrayList<Print>();
-        for(var arg : args)
+        for(var arg : $args)
             prints.add(arg.n);
 
         $n = new Print(prints);
