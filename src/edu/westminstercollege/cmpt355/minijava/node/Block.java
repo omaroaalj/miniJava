@@ -2,9 +2,9 @@ package edu.westminstercollege.cmpt355.minijava.node;
 
 import java.util.List;
 
-public record Block() implements Statement {
+public record Block(List<Statement> statements) implements Statement {
     @Override
     public List<? extends Node> children() {
-        return null;
+        return statements;
     }
 }

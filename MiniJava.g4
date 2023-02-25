@@ -1,16 +1,9 @@
 // Taeden & Omar - CMPT 355 - 2/17/2023
 grammar MiniJava;
 
-    goal
-        returns[Block n] // just a Block?
-        : methodBody EOF {
-            $n = $methodBody.n;
-        }
-        ;
-
     methodBody
         returns [Block n]
-        : stmts+=statement* {
+        : (stmts+=statement)* EOF {
             var statements = new ArrayList<Statement>();
             for(var stmt : $stmts)
                 statements.add(stmt.n);
@@ -100,10 +93,10 @@ grammar MiniJava;
                 $n = new PostIncrement($expression.n, $op.text); // $op.text may be ++ or --
         }
         | op+=('++' | '--' | '+' | '-') expression {
-            if(op.equals("++") || op.equals("--")){
+            if($op.text.equals("++") || $op.text.equals("--")){
                 $n = new PreIncrement($expression.n, $op.text);
             }
-            else if(op.equals("-")) {
+            else if($op.text.equals("-")) {
                 $n = new Negate($expression.n);
             }
             else {
