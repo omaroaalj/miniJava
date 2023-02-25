@@ -1,7 +1,7 @@
 // Taeden & Omar - CMPT 355 - 2/17/2023
-    grammar MiniJava;
+grammar MiniJava;
 
-    minijava
+    goal
         : methodBody EOF
         ;
 
@@ -10,102 +10,102 @@
         ;
 
     statement
-        : '{' '}' (statement|expression|declaration)*
-        | ';' (statement|expression|declaration)*
-        | '{'(statement|expression|declaration)* '}'
+        : ';'
+        | '{' statement* '}'
+        | variableDeclaration  // would include one or more variable declarations, possibly with initializations
         | expression ';'
-        | declaration
         ;
 
-    declaration
-        : DATATYPE DATATYPE init? ';'
-        | DATATYPE names init? ';'
+    // type followed by a comma-separated list of "items", each being just a name or a name = value.
+    variableDeclaration
+        : type variableDeclarationItem (',' variableDeclarationItem)* ';'
         ;
 
+    variableDeclarationItem
+        : NAME
+        | NAME '=' expression
+        ;
+
+    // print()
     expression
-        : 'print(' (exprbodies* | escape*) ')'
-        | expression init
-        | NUMBER
+        : 'print' '(' (expression (',' expression)*)? ')'
+        | INT
+        | DOUBLE
+        | BOOLEAN
         | STRING
-        | 'true'
-        | 'false'
-        | '"' (.*? | escape+) '"'
-        | NAME
+        | NAME  // name (presumably of a variable)
         | '(' expression ')'
         | expression ('++' | '--')
-        | ('++' | '+' | '--' | '-') expression
-        | '(' DATATYPE ')' expression
-        | '(' NAME ')' expression
+        | ('++' | '--' | '+' | '-') expression
+        | '(' type ')' expression
         | expression ('*' | '/' | '%') expression
         | expression ('+' | '-') expression
         | <assoc=right> expression '=' expression
         ;
 
-    exprbodies
-        : expression
-        | expression ',' exprbodies
-        ;
-
-    init
-        : '=' expression
-        ;
-
-    escape
-        : '\\n'
-        | '\\t'
-        | '\\\\'
-        ;
-
-    names
-        : NAME init?
-        | NAME init? ',' names
-        ;
-
-    COMMENT
-        : '/*' .*? '*/' -> skip
-        ;
-
-    LINE_COMMENT
-        : '//' .*? '\n' -> skip
-        ;
-
-    DATATYPE
+    type
         : 'int'
         | 'double'
         | 'boolean'
         | NAME
         ;
 
-    NUMBER
-        : [+-]? [0-9]+
-        | [+-]? [0-9]+ '.'? [0-9]*
-        | [+-]? [0-9]* '.'? [0-9]+
-        | [0-9] '.' [0-9]* [eE] [+-]? [0-9]+
-        | '.'[0-9]+ [eE] [+-]? [0-9]+
-        | [0-9] [eE] [+-]? [0-9]+
+    RESERVED_WORD
+        : 'abstract'   | 'continue'   | 'for'          | 'new'         | 'switch'
+        | 'assert'     | 'default'    | 'if'           | 'package'     | 'synchronized'
+        | 'boolean'    | 'do'         | 'goto'         | 'private'     | 'this'
+        | 'break'      | 'double'     | 'implements'   | 'protected'   | 'throw'
+        | 'byte'       | 'else'       | 'import'       | 'public'      | 'throws'
+        | 'case'       | 'enum'       | 'instanceof'   | 'return'      | 'transient'
+        | 'catch'      | 'extends'    | 'int'          | 'short'       | 'try'
+        | 'char'       | 'final'      | 'interface'    | 'static'      | 'void'
+        | 'class'      | 'finally'    | 'long'         | 'strictfp'    | 'volatile'
+        | 'const'      | 'float'      | 'native'       | 'super'       | 'while'
+        | '_'
         ;
 
-    RESERVED
-        : 'abstract' | 'assert' | 'break'
-        | 'case' | 'catch' | 'class' | 'const'
-        | '_' | 'continue' | 'default' | 'do'
-        | 'else' | 'enum' | 'extends' | 'final'
-        | 'finally' | 'float' | 'for'| 'if'
-        | 'goto' | 'implements' | 'import'
-        | 'instanceof' | 'interface' | 'long'
-        | 'native' | 'new' | 'package' | 'private'
-        | 'protected' | 'public' | 'return'
-        | 'short' | 'static' | 'strictfp' | 'super'
-        ;
-
+    // letters, numbers, dollar signs '$', underscores '_', but not starting with a digit
     NAME
-        : [A-Za-z_$]+([a-z]|[_$]|[0-9])*
+        : [a-zA-Z_$] [a-zA-Z_$0-9]*
+        ;
+
+    WHITESPACE
+        : [ \n\r\t]+ -> skip
+        ;
+
+    // fragment: doesn't generate tokens, but can be used in other lexer rules
+    fragment DIGITS
+        : [0-9]+
+        ;
+
+    fragment FIXED_POINT
+        : [0-9]+ '.' [0-9]*
+        | [0-9]* '.' [0-9]+
+        ;
+
+    INT
+        : DIGITS
+        ;
+
+    DOUBLE
+        :  FIXED_POINT
+        | FIXED_POINT [Ee] [+-]? INT
+        | DIGITS [Ee] [+-]? DIGITS
+        ;
+
+    BOOLEAN
+        : 'true'
+        | 'false'
         ;
 
     STRING
         : '"' .*? '"'
         ;
 
-    WS
-        : [ \r\t\n] -> skip
+    LINE_COMMENT
+        : '//' .*? ('\n' | EOF) -> skip
+        ;
+
+    BLOCK_COMMENT
+        : '/*' .*? '*/'         -> skip
         ;
