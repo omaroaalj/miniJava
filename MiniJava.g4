@@ -12,16 +12,16 @@ grammar MiniJava;
     statement
         : ';'
         | '{' statement* '}'
-        | variableDeclaration  // would include one or more variable declarations, possibly with initializations
+        | declaration  // would include one or more variable declarations, possibly with initializations
         | expression ';'
         ;
 
     // type followed by a comma-separated list of "items", each being just a name or a name = value.
-    variableDeclaration
-        : type variableDeclarationItem (',' variableDeclarationItem)* ';'
+    declaration
+        : type decItem (',' decItem)* ';'
         ;
 
-    variableDeclarationItem
+    decItem
         : NAME
         | NAME '=' expression
         ;
