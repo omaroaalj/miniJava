@@ -10,9 +10,9 @@ goal
 
 methodBody
     returns [Block n]
-    : (stmts+=statement)* EOF {
+    : (stmts=statement)* EOF {
         var statements = new ArrayList<Statement>();
-        for(var stmt : $stmts)
+        for(var stmt : stmts)
             statements.add(stmt.n);
 
         $n = new Block(statements);
@@ -24,20 +24,20 @@ statement
     : ';' {
         $n = new EmptyStatement(); // shouldn't take any parameters?
     }
-    | '{' stmt+=statement* '}' {
+    | '{' stmt=statement* '}' {
         // is there a statment? if not, empty statement
-        if(stmt.isEmpty()) {
+        if(stmt.isEmpty() == true) {
             $n = new EmptyStatement();
         } else {
-            $n = $statement.n;
+            $n = $stmt.n;
         }
     }
-    | decs+=declaration  {
+    | decs=declaration  {
         var declarations = new ArrayList<Declarations>();
-        for(var dec : $decs)
+        for(var dec : decs)
             declarations.add(dec.n);
 
-        $n = new Statement(declarations); // will this be a possible parameter of Statement?
+        $n = new Statement(declarations);
     }// would include one or more variable declarations, possibly with initializations
     | expression ';' {
         $n = new ExpressionStatement($expression.n);
@@ -96,10 +96,10 @@ expression
     | '(' expression ')' {
         $n = $expression.n;
     }
-    | expression op+=('++' | '--') {
+    | expression op=('++' | '--') {
             $n = new PostIncrement($expression.n, $op.text); // $op.text may be ++ or --
     }
-    | op+=('++' | '--' | '+' | '-') expression {
+    | op=('++' | '--' | '+' | '-') expression {
         if($op.text.equals("++") || $op.text.equals("--")){
             $n = new PreIncrement($expression.n, $op.text);
         }
@@ -111,19 +111,19 @@ expression
         }
     }
     | '(' type ')' expression {
-        $n = new Cast($type.text, $expression);
+        $n = new Cast($type.text, $expression.n);
     }
-    | l+=expression op+=('*' | '/' | '%') r+=expression {
+    | l=expression op=('*' | '/' | '%') r=expression {
         $n = new BinaryOp($op.text, $l.n, $r.n);
     }
-    | l+=expression op+=('+' | '-') r+=expression {
+    | l=expression op=('+' | '-') r=expression {
         $n = new BinaryOp($op.text, $l.n, $r.n);
     }
     | <assoc=right> expression '=' expression
     ;
 
 type
-    returns[TypeNode]
+    returns[TypeNode n]
     : 'int' {
         $n = "int";
     }
