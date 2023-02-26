@@ -1,2 +1,1 @@
-// This is a line comment
-int x = 25;
+double z;
