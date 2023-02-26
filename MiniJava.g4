@@ -3,6 +3,7 @@ grammar MiniJava;
 
 @parser::header {
 import edu.westminstercollege.cmpt355.minijava.node.*;
+import java.util.Optional;
 }
 
 goal
@@ -56,7 +57,7 @@ declaration
         for(var item : $items)
             itemList.add(item.n);
 
-        $n = new Declaration($type.n, itemList);
+        $n = new Declarations($type.n, itemList);
     }
     ;
 
@@ -66,7 +67,7 @@ decItem
         $n = new Declaration($NAME.text, null);
     }
     | NAME '=' expression {
-        $n = new Declaration($NAME.text, $expression.n);
+        $n = new Declaration($NAME.text, Optional<$expression.n>);
     }
     ;
 
