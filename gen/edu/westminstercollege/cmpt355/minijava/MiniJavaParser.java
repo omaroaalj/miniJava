@@ -736,8 +736,7 @@ public class MiniJavaParser extends Parser {
 							consume();
 						}
 
-						                      var varAccess = new VariableAccess((((ExpressionContext)_localctx).expression!=null?_input.getText(((ExpressionContext)_localctx).expression.start,((ExpressionContext)_localctx).expression.stop):null));
-						                      ((ExpressionContext)_localctx).n =  new PostIncrement(varAccess, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null)); // (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null) may be ++ or --
+						                      ((ExpressionContext)_localctx).n =  new PostIncrement(((ExpressionContext)_localctx).expression.n, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null)); // (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null) may be ++ or --
 						              
 						}
 						break;
