@@ -122,7 +122,9 @@ expression
     | l=expression op=('+' | '-') r=expression {
         $n = new BinaryOp($op.text, $l.n, $r.n);
     }
-    | <assoc=right> expression '=' expression
+    | <assoc=right> l=expression '=' r=expression {
+        $n = new Assignment($l.text, $r.n);
+    }
     ;
 
 type
