@@ -10,12 +10,12 @@ import java.util.regex.Pattern;
 public class Main {
 
     public static void main(String... args) throws IOException, SyntaxException {
-        final String EVAL_FILE = "test_programs/hello.eval";
-        final String CLASS_NAME = getClassNameFromPath(EVAL_FILE);
+        final String MINI_FILE = "test_programs/test.minijava";
+        final String CLASS_NAME = getClassNameFromPath(MINI_FILE);
 
-        System.out.printf("Compiling class %s from %s...\n", CLASS_NAME, EVAL_FILE);
+        System.out.printf("Compiling class %s from %s...\n", CLASS_NAME, MINI_FILE);
 
-        var lexer = new MiniJavaLexer(CharStreams.fromFileName(EVAL_FILE));
+        var lexer = new MiniJavaLexer(CharStreams.fromFileName(MINI_FILE));
         var parser = new MiniJavaParser(new CommonTokenStream(lexer));
 
 
