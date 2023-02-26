@@ -2,9 +2,9 @@ package edu.westminstercollege.cmpt355.minijava.node;
 
 import java.util.List;
 
-public record BinaryOp() implements Expression {
+public record BinaryOp(Expression left, Expression right) implements Expression {
     @Override
     public List<? extends Node> children() {
-        return null;
+        return List.of(left, right);
     }
 }

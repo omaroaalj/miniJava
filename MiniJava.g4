@@ -47,22 +47,22 @@ statement
 
 // type followed by a comma-separated list of "items", each being just a name or a name = value.
 declaration
-    returns [Declaration n] // Declaration contains TypeNode and name of variable
+    returns [Declarations n] // Declaration contains TypeNode and name of variable
     : type items+=decItem (',' items+=decItem)* ';' {
-        //Declarations parameters: list of Declaration
+        //Declarations parameters: TypeNode, list of DecItem
         //DecItem parameters: String name, Expression
-        //Declaration parameter: TypeNode, list of DecItem
+        //Declaration parameter: String name
 
         var itemlist = new ArrayList<DecItem>();
         for(var item : $items)
             itemlist.add(item.n);
 
-        $n = new Declarations($type.n, itemList);
+        $n = new Declaration($type.n, itemList);
     }
     ;
 
 decItem
-    returns[Declaration n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
+    returns[DecItem n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
     : NAME {
         $n = new Declaration($NAME.text, null);
     }

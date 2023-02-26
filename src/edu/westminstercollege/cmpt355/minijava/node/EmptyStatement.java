@@ -5,6 +5,6 @@ import java.util.List;
 public record EmptyStatement() implements Statement {
     @Override
     public List<? extends Node> children() {
-        return null;
+        return List.of();
     }
 }
