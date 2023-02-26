@@ -50,10 +50,9 @@ declaration
     returns [Declarations n] // Declaration contains TypeNode and name of variable
     : type items+=decItem (',' items+=decItem)* ';' {
         //Declarations parameters: TypeNode, list of DecItem
-        //DecItem parameters: String name, Expression
-        //Declaration parameter: String name
+        //Declaration parameters: String name, Optional<Expression>
 
-        var itemlist = new ArrayList<DecItem>();
+        var itemlist = new ArrayList<Declaration>();
         for(var item : $items)
             itemlist.add(item.n);
 
@@ -62,12 +61,12 @@ declaration
     ;
 
 decItem
-    returns[DecItem n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
+    returns[Declaration n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
     : NAME {
         $n = new Declaration($NAME.text, null);
     }
     | NAME '=' expression {
-        $n = new DecItem($NAME.text, $expression.n);
+        $n = new Declaration($NAME.text, $expression.n);
     }
     ;
 
