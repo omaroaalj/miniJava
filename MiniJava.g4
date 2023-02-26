@@ -8,15 +8,15 @@ import edu.westminstercollege.cmpt355.minijava.node.*;
 goal
     returns [Block n]
     : methodBody {
-    $n = $methodBody.n;
+        $n = $methodBody.n;
     }
     ;
 
 methodBody
     returns [Block n]
-    : (stmts=statement)* EOF {
+    : (stmts+=statement)* EOF {
         var statements = new ArrayList<Statement>();
-        for(var stmt : stmts)
+        for(var stmt : $stmts)
             statements.add(stmt.n);
 
         $n = new Block(statements);
@@ -28,21 +28,18 @@ statement
     : ';' {
         $n = new EmptyStatement(); // shouldn't take any parameters?
     }
-    | '{' stmt=statement* '}' {
+    | '{' stmts+=statement* '}' {
         // is there a statment? if not, empty statement
-        if(stmt.isEmpty() == true) {
-            $n = new EmptyStatement();
-        } else {
-            $n = $stmt.n;
-        }
+            var stmtList = new ArrayList<Statement>();
+            for(var stmt : $stmts){
+                stmtList.add(stmt.n);
+            }
+            $n = new Block(stmtList);
     }
-    | decs=declaration  {
-        var declarations = new ArrayList<Declarations>();
-        for(var dec : decs)
-            declarations.add(dec.n);
-
-        $n = new Statement(declarations);
-    }// would include one or more variable declarations, possibly with initializations
+    // would include one or more variable declarations, possibly with initializations
+    | declaration  {
+        $n = new Declarations($declaration.n);
+    }
     | expression ';' {
         $n = new ExpressionStatement($expression.n);
     }
@@ -52,32 +49,33 @@ statement
 declaration
     returns [Declaration n] // Declaration contains TypeNode and name of variable
     : type items+=decItem (',' items+=decItem)* ';' {
-        //type is a TypeNode, how would Declaration take as parameter?
+        //Declarations parameters: list of Declaration
+        //DecItem parameters: String name, Expression
+        //Declaration parameter: TypeNode, list of DecItem
 
         var itemlist = new ArrayList<DecItem>();
-        for(var item : item)
+        for(var item : $items)
             itemlist.add(item.n);
 
-        $n = new Declaration($type.text, itemList) //each DecItem possibly contains info on value if initialized?
+        $n = new Declarations($type.n, itemList);
     }
     ;
 
 decItem
-    returns[DecItem n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
+    returns[Declaration n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
     : NAME {
-        $n = $NAME.text;
+        $n = new Declaration($NAME.text, null);
     }
     | NAME '=' expression {
-        $n = new DecItem($NAME.text, $expression.n); //expression here must resolve to IntLiteral etc?
+        $n = new DecItem($NAME.text, $expression.n);
     }
     ;
 
-// print()
 expression
-    returns[ExpressionStatement n]
+    returns[Expression n]
     : 'print' '(' (args+=expression (',' args+=expression)*)? ')' {
         var prints = new ArrayList<Print>();
-        for(var arg : args)
+        for(var arg : $args)
             prints.add(arg.n);
 
         $n = new Print(prints);
@@ -94,9 +92,10 @@ expression
     | STRING {
         $n = new StringLiteral($STRING.text);
     }
+    // name (presumably of a variable)
     | NAME  {
-        $n = $NAME.text; // match what I have for DecItem?
-    }// name (presumably of a variable)
+        $n = new VariableAccess($NAME.text);
+    }
     | '(' expression ')' {
         $n = $expression.n;
     }
