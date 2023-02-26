@@ -123,7 +123,7 @@ expression
         $n = new BinaryOp($op.text, $l.n, $r.n);
     }
     | <assoc=right> l=expression '=' r=expression {
-        $n = new Assignment($l.text, $r.n);
+        $n = new Assignment($l.n, $r.n);
     }
     ;
 

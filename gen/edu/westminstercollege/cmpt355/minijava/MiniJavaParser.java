@@ -718,7 +718,7 @@ public class MiniJavaParser extends Parser {
 						setState(121);
 						((ExpressionContext)_localctx).r = ((ExpressionContext)_localctx).expression = expression(1);
 
-						                  ((ExpressionContext)_localctx).n =  new Assignment((((ExpressionContext)_localctx).l!=null?_input.getText(((ExpressionContext)_localctx).l.start,((ExpressionContext)_localctx).l.stop):null), ((ExpressionContext)_localctx).r.n);
+						                  ((ExpressionContext)_localctx).n =  new Assignment(((ExpressionContext)_localctx).l.n, ((ExpressionContext)_localctx).r.n);
 						              
 						}
 						break;
