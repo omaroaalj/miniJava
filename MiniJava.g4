@@ -38,7 +38,7 @@ statement
     }
     // would include one or more variable declarations, possibly with initializations
     | declaration  {
-        $n = new Declarations($declaration.n);
+        $n = $declaration.n;
     }
     | expression ';' {
         $n = new ExpressionStatement($expression.n);
@@ -49,12 +49,12 @@ statement
 declaration
     returns [Declarations n] // Declaration contains TypeNode and name of variable
     : type items+=decItem (',' items+=decItem)* ';' {
-        //Declarations parameters: TypeNode, list of DecItem
+        //Declarations parameters: TypeNode, list of Declaration
         //Declaration parameters: String name, Optional<Expression>
 
-        var itemlist = new ArrayList<Declaration>();
+        var itemList = new ArrayList<Declaration>();
         for(var item : $items)
-            itemlist.add(item.n);
+            itemList.add(item.n);
 
         $n = new Declaration($type.n, itemList);
     }
@@ -73,7 +73,7 @@ decItem
 expression
     returns[Expression n]
     : 'print' '(' (args+=expression (',' args+=expression)*)? ')' {
-        var prints = new ArrayList<Print>();
+        var prints = new ArrayList<Expression>();
         for(var arg : $args)
             prints.add(arg.n);
 
@@ -127,16 +127,16 @@ expression
 type
     returns[TypeNode n]
     : 'int' {
-        $n = "int";
+        $n = new TypeNode("int");
     }
     | 'double' {
-        $n = "double";
+        $n = new TypeNode("double");
     }
     | 'boolean' {
-        $n = "boolean";
+        $n = new TypeNode("boolean");
     }
     | NAME {
-        $n = $NAME.text;
+        $n = new TypeNode($NAME.text);
     }
     ;
 
