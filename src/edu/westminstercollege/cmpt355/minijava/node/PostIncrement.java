@@ -7,4 +7,9 @@ public record PostIncrement(Expression expression, String increment) implements 
     public List<? extends Node> children() {
         return List.of(expression);
     }
+
+    @Override
+    public String getNodeDescription() {
+        return String.format("[op: %s]", increment);
+    }
 }

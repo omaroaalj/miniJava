@@ -1,3 +1,8 @@
 // This is a line comment
 int x = 25;
-double z;
+double z = 5.0, peanut, ampersand = z;
+/* This is a
+block comment
+*/
+print("\n\tx = ", x);
+x++;

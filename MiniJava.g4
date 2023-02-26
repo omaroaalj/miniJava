@@ -100,7 +100,8 @@ expression
         $n = $expression.n;
     }
     | expression op=('++' | '--') {
-            $n = new PostIncrement($expression.n, $op.text); // $op.text may be ++ or --
+            var varAccess = new VariableAccess($expression.text);
+            $n = new PostIncrement(varAccess, $op.text); // $op.text may be ++ or --
     }
     | op=('++' | '--' | '+' | '-') expression {
         if($op.text.equals("++") || $op.text.equals("--")){
