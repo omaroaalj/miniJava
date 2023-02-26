@@ -64,7 +64,7 @@ declaration
 decItem
     returns[Declaration n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
     : NAME {
-        $n = new Declaration($NAME.text, null);
+        $n = new Declaration($NAME.text, Optional.empty());
     }
     | NAME '=' expression {
         $n = new Declaration($NAME.text, Optional.of($expression.n));

@@ -12,6 +12,11 @@ public record Declaration(String name, Optional<Expression> expression) implemen
 
     @Override
     public List<? extends Node> children() {
-        return List.of(expression.get());
+        if(expression.isPresent()){
+            return List.of(expression.get());
+        }
+        else {
+            return List.of();
+        }
     }
 }

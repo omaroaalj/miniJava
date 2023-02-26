@@ -413,7 +413,7 @@ public class MiniJavaParser extends Parser {
 				setState(58);
 				((DecItemContext)_localctx).NAME = match(NAME);
 
-				        ((DecItemContext)_localctx).n =  new Declaration((((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), null);
+				        ((DecItemContext)_localctx).n =  new Declaration((((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), Optional.empty());
 				    
 				}
 				break;
