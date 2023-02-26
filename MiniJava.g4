@@ -67,7 +67,7 @@ decItem
         $n = new Declaration($NAME.text, null);
     }
     | NAME '=' expression {
-        $n = new Declaration($NAME.text, Optional<$expression.n>);
+        $n = new Declaration($NAME.text, Optional.of($expression.n));
     }
     ;
 
@@ -114,7 +114,7 @@ expression
         }
     }
     | '(' type ')' expression {
-        $n = new Cast($type.text, $expression.n);
+        $n = new Cast($type.n, $expression.n);
     }
     | l=expression op=('*' | '/' | '%') r=expression {
         $n = new BinaryOp($op.text, $l.n, $r.n);

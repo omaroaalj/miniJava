@@ -427,7 +427,7 @@ public class MiniJavaParser extends Parser {
 				setState(62);
 				((DecItemContext)_localctx).expression = expression(0);
 
-				        ((DecItemContext)_localctx).n =  new Declaration((((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), Optional<((DecItemContext)_localctx).expression.n>);
+				        ((DecItemContext)_localctx).n =  new Declaration((((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), Optional.of(((DecItemContext)_localctx).expression.n));
 				    
 				}
 				break;
@@ -639,7 +639,7 @@ public class MiniJavaParser extends Parser {
 				setState(104);
 				((ExpressionContext)_localctx).expression = expression(4);
 
-				        ((ExpressionContext)_localctx).n =  new Cast((((ExpressionContext)_localctx).type!=null?_input.getText(((ExpressionContext)_localctx).type.start,((ExpressionContext)_localctx).type.stop):null), ((ExpressionContext)_localctx).expression.n);
+				        ((ExpressionContext)_localctx).n =  new Cast(((ExpressionContext)_localctx).type.n, ((ExpressionContext)_localctx).expression.n);
 				    
 				}
 				break;
