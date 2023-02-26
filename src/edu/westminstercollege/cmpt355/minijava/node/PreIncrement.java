@@ -7,4 +7,9 @@ public record PreIncrement(Expression expression, String increment) implements E
     public List<? extends Node> children() {
         return List.of(expression);
     }
+
+    @Override
+    public String getNodeDescription() {
+        return String.format("PreIncrement [op: %s]", increment);
+    }
 }

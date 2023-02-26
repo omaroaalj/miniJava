@@ -7,7 +7,7 @@ public record Declaration(String name, Optional<Expression> expression) implemen
 
     @Override
     public String getNodeDescription() {
-            return String.format("[name: %s]", name);
+            return String.format("Declaration [name: %s]", name);
     }
 
     @Override

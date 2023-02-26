@@ -10,6 +10,6 @@ public record TypeNode(String type) implements Node {
 
     @Override
     public String getNodeDescription() {
-        return String.format("[type: %s]", type);
+        return String.format("TypeNode [type: %s]", type);
     }
 }

@@ -10,6 +10,6 @@ public record PostIncrement(Expression expression, String increment) implements 
 
     @Override
     public String getNodeDescription() {
-        return String.format("[op: %s]", increment);
+        return String.format("PostIncrement [op: %s]", increment);
     }
 }

@@ -10,6 +10,6 @@ public record BinaryOp(String operator, Expression left, Expression right) imple
 
     @Override
     public String getNodeDescription() {
-        return String.format("[op: %s]", operator);
+        return String.format("BinaryOp [op: %s]", operator);
     }
 }
