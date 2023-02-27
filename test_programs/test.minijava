@@ -8,3 +8,4 @@ block comment
 //peanut = (int) (++x / (z + 5) - ampersand * ampersand);
 5++;
 ++5;
+print("The current year is " + 2023, " and so far we've had worse.");
