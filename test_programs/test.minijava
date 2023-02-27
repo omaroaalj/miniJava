@@ -1,8 +1,10 @@
 // This is a line comment
-int x = 25;
-double z = 5.0, peanut, ampersand = z;
+//int x = 25;
+//double z = 5.0, peanut, ampersand = z;
 /* This is a
 block comment
 */
-print("\n\tx = ", x);
-peanut = (int) (++x / (z + 5) - ampersand * ampersand);
+//print("\n\tx = ", x);
+//peanut = (int) (++x / (z + 5) - ampersand * ampersand);
+5++;
+++5;

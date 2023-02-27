@@ -99,8 +99,8 @@ expression
     | '(' expression ')' {
         $n = $expression.n;
     }
-    | expression op=('++' | '--') {
-            $n = new PostIncrement($expression.n, $op.text); // $op.text may be ++ or --
+    | e=expression op=('++' | '--') {
+            $n = new PostIncrement($e.n, $op.text); // $op.text may be ++ or --
     }
     | op=('++' | '--' | '+' | '-') expression {
         if($op.text.equals("++") || $op.text.equals("--")){
