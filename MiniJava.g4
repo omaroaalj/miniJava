@@ -74,7 +74,7 @@ decItem
 
 expression
     returns[Expression n]
-    : 'print' '(' (args+=expression ((',' | '+') args+=expression)*)? ')' {
+    : 'print' '(' (args+=expression (',' args+=expression)*)? ')' {
         var prints = new ArrayList<Expression>();
         for(var arg : $args)
             prints.add(arg.n);
