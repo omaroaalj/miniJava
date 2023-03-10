@@ -73,6 +73,9 @@ public class Compiler {
         AST.preOrder(block, node -> {
             switch (node) {
                 case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
+                    if(symbols.findVariable(exprName.toString()) != null){
+                        throw new SyntaxException();
+                    }
                     symbols.registerVariable(exprName.toString());
                 }
                 case VariableAccess(ParserRuleContext ctx, String name) -> {
