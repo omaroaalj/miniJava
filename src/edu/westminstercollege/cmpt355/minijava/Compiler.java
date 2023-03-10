@@ -2,6 +2,7 @@
 package edu.westminstercollege.cmpt355.minijava;
 
 import edu.westminstercollege.cmpt355.minijava.node.*;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -69,11 +70,12 @@ public class Compiler {
      // i.e. we should not be using the value of a variable before we have assigned
      // to it (Eval does not have declarations).
       private void resolveSymbols(Block block) throws SyntaxException {
-        /*
         AST.preOrder(block, node -> {
             switch (node) {
-                case Assignment(Expression name, Expression e) -> symbols.registerVariable(name);
-                case VariableAccess(String name) -> {
+                case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
+                    symbols.registerVariable(exprName.toString());
+                }
+                case VariableAccess(ParserRuleContext ctx, String name) -> {
                     if (symbols.findVariable(name).isEmpty())
                         // no variable found
                         throw new SyntaxException(String.format("Variable used before assignment. %s", name));
@@ -81,7 +83,6 @@ public class Compiler {
                 default -> {}
             }
         });
-         */
     }
 
     /*
