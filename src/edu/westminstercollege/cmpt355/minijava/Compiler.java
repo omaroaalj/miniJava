@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public class Compiler {
 
+
     // Commented out until we have our AST nodes defined...
     private SymbolTable symbols = new SymbolTable();
     private PrintWriter out;
@@ -20,6 +21,7 @@ public class Compiler {
     private final String className;
 
     public Compiler(Block block, String className) {
+
         this.block = block;
         this.className = className;
     }
