@@ -9,6 +9,6 @@ public record BooleanLiteral(String text) implements Expression {
     }
     @Override
     public List<? extends Node> children() {
-        return null;
+        return List.of();
     }
 }
