@@ -108,7 +108,6 @@ public class Compiler {
                 generateCode(value); // get value to be assigned on top of the stack
                 out.printf("dstore %d\n", var.getIndex());
             }
-
             default -> {}
         }
     }
