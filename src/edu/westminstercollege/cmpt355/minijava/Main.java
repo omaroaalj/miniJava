@@ -22,6 +22,7 @@ public class Main {
         var program = parser.goal().n;
         AST.print(program);
 
+        /*
         var compiler = new Compiler(program, CLASS_NAME);
         compiler.compile(Path.of("test_output"));
 
@@ -29,6 +30,7 @@ public class Main {
                 "-d", "out/test_compiled",
                 String.format("test_output/%s.j", CLASS_NAME)
         });
+        */
     }
 
     private static String getClassNameFromPath(String path) {

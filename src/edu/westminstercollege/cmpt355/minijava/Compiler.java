@@ -1,3 +1,4 @@
+
 package edu.westminstercollege.cmpt355.minijava;
 
 import edu.westminstercollege.cmpt355.minijava.node.*;
@@ -9,7 +10,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Compiler {
-
+    /*
     // Commented out until we have our AST nodes defined...
     private SymbolTable symbols = new SymbolTable();
     private PrintWriter out;
@@ -54,7 +55,7 @@ public class Compiler {
             for (var statement : block.statements()) {
                 generateCode(statement);
             }
-            */
+
 
             // another way
             // program.statements().forEach(this::generateCode);
@@ -67,7 +68,7 @@ public class Compiler {
      // Make sure that all symbols (in this case, names of variables) make sense,
      // i.e. we should not be using the value of a variable before we have assigned
      // to it (Eval does not have declarations).
-     private void resolveSymbols(Block block) throws SyntaxException {
+      private void resolveSymbols(Block block) throws SyntaxException {
         AST.preOrder(block, node -> {
             switch (node) {
                 case Assignment(Expression name, Expression e) -> symbols.registerVariable(name);

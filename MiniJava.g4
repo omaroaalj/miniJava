@@ -21,14 +21,14 @@ methodBody
         for(var stmt : $stmts)
             statements.add(stmt.n);
 
-        $n = new Block(statements);
+        $n = new Block($ctx, statements);
     }
     ;
 
 statement
     returns [Statement n]
     : ';' {
-        $n = new EmptyStatement(); // shouldn't take any parameters?
+        $n = new EmptyStatement($ctx);
     }
     | '{' stmts+=statement* '}' {
         // is there a statment? if not, empty statement
@@ -36,14 +36,14 @@ statement
             for(var stmt : $stmts){
                 stmtList.add(stmt.n);
             }
-            $n = new Block(stmtList);
+            $n = new Block($ctx, stmtList);
     }
     // would include one or more variable declarations, possibly with initializations
     | declaration  {
         $n = $declaration.n;
     }
     | expression ';' {
-        $n = new ExpressionStatement($expression.n);
+        $n = new ExpressionStatement($ctx, $expression.n);
     }
     ;
 
@@ -58,17 +58,17 @@ declaration
         for(var item : $items)
             itemList.add(item.n);
 
-        $n = new Declarations($type.n, itemList);
+        $n = new Declarations($ctx, $type.n, itemList);
     }
     ;
 
 decItem
     returns[Declaration n] // DecItem is a name, may contain info for IntLiteral, DoubleLiteral, or VarAccess
     : NAME {
-        $n = new Declaration($NAME.text, Optional.empty());
+        $n = new Declaration($ctx, $NAME.text, Optional.empty());
     }
     | NAME '=' expression {
-        $n = new Declaration($NAME.text, Optional.of($expression.n));
+        $n = new Declaration($ctx, $NAME.text, Optional.of($expression.n));
     }
     ;
 
@@ -79,68 +79,68 @@ expression
         for(var arg : $args)
             prints.add(arg.n);
 
-        $n = new Print(prints);
+        $n = new Print($ctx, prints);
     }
     | INT {
-        $n = new IntLiteral($INT.text);
+        $n = new IntLiteral($ctx, $INT.text);
     }
     | DOUBLE {
-        $n = new DoubleLiteral($DOUBLE.text);
+        $n = new DoubleLiteral($ctx, $DOUBLE.text);
     }
     | BOOLEAN {
-        $n = new BooleanLiteral($BOOLEAN.text);
+        $n = new BooleanLiteral($ctx, $BOOLEAN.text);
     }
     | STRING {
-        $n = new StringLiteral($STRING.text);
+        $n = new StringLiteral($ctx, $STRING.text);
     }
     // name (presumably of a variable)
     | NAME  {
-        $n = new VariableAccess($NAME.text);
+        $n = new VariableAccess($ctx, $NAME.text);
     }
     | '(' expression ')' {
         $n = $expression.n;
     }
     | e=expression op=('++' | '--') {
-            $n = new PostIncrement($e.n, $op.text); // $op.text may be ++ or --
+            $n = new PostIncrement($ctx, $e.n, $op.text); // $op.text may be ++ or --
     }
     | op=('++' | '--' | '+' | '-') expression {
         if($op.text.equals("++") || $op.text.equals("--")){
-            $n = new PreIncrement($expression.n, $op.text);
+            $n = new PreIncrement($ctx, $expression.n, $op.text);
         }
         else if($op.text.equals("-")) {
-            $n = new Negate($expression.n);
+            $n = new Negate($ctx, $expression.n);
         }
         else {
             $n = $expression.n;
         }
     }
     | '(' type ')' expression {
-        $n = new Cast($type.n, $expression.n);
+        $n = new Cast($ctx, $type.n, $expression.n);
     }
     | l=expression op=('*' | '/' | '%') r=expression {
-        $n = new BinaryOp($op.text, $l.n, $r.n);
+        $n = new BinaryOp($ctx, $op.text, $l.n, $r.n);
     }
     | l=expression op=('+' | '-') r=expression {
-        $n = new BinaryOp($op.text, $l.n, $r.n);
+        $n = new BinaryOp($ctx, $op.text, $l.n, $r.n);
     }
     | <assoc=right> l=expression '=' r=expression {
-        $n = new Assignment($l.n, $r.n);
+        $n = new Assignment($ctx, $l.n, $r.n);
     }
     ;
 
 type
     returns[TypeNode n]
     : 'int' {
-        $n = new TypeNode("int");
+        $n = new TypeNode($ctx, "int");
     }
     | 'double' {
-        $n = new TypeNode("double");
+        $n = new TypeNode($ctx, "double");
     }
     | 'boolean' {
-        $n = new TypeNode("boolean");
+        $n = new TypeNode($ctx, "boolean");
     }
     | NAME {
-        $n = new TypeNode($NAME.text);
+        $n = new TypeNode($ctx, $NAME.text);
     }
     ;
 

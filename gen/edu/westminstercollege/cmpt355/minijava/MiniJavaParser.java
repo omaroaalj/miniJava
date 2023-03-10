@@ -186,7 +186,7 @@ public class MiniJavaParser extends Parser {
 			        for(var stmt : ((MethodBodyContext)_localctx).stmts)
 			            statements.add(stmt.n);
 
-			        ((MethodBodyContext)_localctx).n =  new Block(statements);
+			        ((MethodBodyContext)_localctx).n =  new Block(_localctx, statements);
 			    
 			}
 		}
@@ -240,7 +240,7 @@ public class MiniJavaParser extends Parser {
 				setState(26);
 				match(T__0);
 
-				        ((StatementContext)_localctx).n =  new EmptyStatement(); // shouldn't take any parameters?
+				        ((StatementContext)_localctx).n =  new EmptyStatement(_localctx);
 				    
 				}
 				break;
@@ -272,7 +272,7 @@ public class MiniJavaParser extends Parser {
 				            for(var stmt : ((StatementContext)_localctx).stmts){
 				                stmtList.add(stmt.n);
 				            }
-				            ((StatementContext)_localctx).n =  new Block(stmtList);
+				            ((StatementContext)_localctx).n =  new Block(_localctx, stmtList);
 				    
 				}
 				break;
@@ -294,7 +294,7 @@ public class MiniJavaParser extends Parser {
 				setState(41);
 				match(T__0);
 
-				        ((StatementContext)_localctx).n =  new ExpressionStatement(((StatementContext)_localctx).expression.n);
+				        ((StatementContext)_localctx).n =  new ExpressionStatement(_localctx, ((StatementContext)_localctx).expression.n);
 				    
 				}
 				break;
@@ -371,7 +371,7 @@ public class MiniJavaParser extends Parser {
 			        for(var item : ((DeclarationContext)_localctx).items)
 			            itemList.add(item.n);
 
-			        ((DeclarationContext)_localctx).n =  new Declarations(((DeclarationContext)_localctx).type.n, itemList);
+			        ((DeclarationContext)_localctx).n =  new Declarations(_localctx, ((DeclarationContext)_localctx).type.n, itemList);
 			    
 			}
 		}
@@ -414,7 +414,7 @@ public class MiniJavaParser extends Parser {
 				setState(58);
 				((DecItemContext)_localctx).NAME = match(NAME);
 
-				        ((DecItemContext)_localctx).n =  new Declaration((((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), Optional.empty());
+				        ((DecItemContext)_localctx).n =  new Declaration(_localctx, (((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), Optional.empty());
 				    
 				}
 				break;
@@ -428,7 +428,7 @@ public class MiniJavaParser extends Parser {
 				setState(62);
 				((DecItemContext)_localctx).expression = expression(0);
 
-				        ((DecItemContext)_localctx).n =  new Declaration((((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), Optional.of(((DecItemContext)_localctx).expression.n));
+				        ((DecItemContext)_localctx).n =  new Declaration(_localctx, (((DecItemContext)_localctx).NAME!=null?((DecItemContext)_localctx).NAME.getText():null), Optional.of(((DecItemContext)_localctx).expression.n));
 				    
 				}
 				break;
@@ -540,7 +540,7 @@ public class MiniJavaParser extends Parser {
 				        for(var arg : ((ExpressionContext)_localctx).args)
 				            prints.add(arg.n);
 
-				        ((ExpressionContext)_localctx).n =  new Print(prints);
+				        ((ExpressionContext)_localctx).n =  new Print(_localctx, prints);
 				    
 				}
 				break;
@@ -549,7 +549,7 @@ public class MiniJavaParser extends Parser {
 				setState(82);
 				((ExpressionContext)_localctx).INT = match(INT);
 
-				        ((ExpressionContext)_localctx).n =  new IntLiteral((((ExpressionContext)_localctx).INT!=null?((ExpressionContext)_localctx).INT.getText():null));
+				        ((ExpressionContext)_localctx).n =  new IntLiteral(_localctx, (((ExpressionContext)_localctx).INT!=null?((ExpressionContext)_localctx).INT.getText():null));
 				    
 				}
 				break;
@@ -558,7 +558,7 @@ public class MiniJavaParser extends Parser {
 				setState(84);
 				((ExpressionContext)_localctx).DOUBLE = match(DOUBLE);
 
-				        ((ExpressionContext)_localctx).n =  new DoubleLiteral((((ExpressionContext)_localctx).DOUBLE!=null?((ExpressionContext)_localctx).DOUBLE.getText():null));
+				        ((ExpressionContext)_localctx).n =  new DoubleLiteral(_localctx, (((ExpressionContext)_localctx).DOUBLE!=null?((ExpressionContext)_localctx).DOUBLE.getText():null));
 				    
 				}
 				break;
@@ -567,7 +567,7 @@ public class MiniJavaParser extends Parser {
 				setState(86);
 				((ExpressionContext)_localctx).BOOLEAN = match(BOOLEAN);
 
-				        ((ExpressionContext)_localctx).n =  new BooleanLiteral((((ExpressionContext)_localctx).BOOLEAN!=null?((ExpressionContext)_localctx).BOOLEAN.getText():null));
+				        ((ExpressionContext)_localctx).n =  new BooleanLiteral(_localctx, (((ExpressionContext)_localctx).BOOLEAN!=null?((ExpressionContext)_localctx).BOOLEAN.getText():null));
 				    
 				}
 				break;
@@ -576,7 +576,7 @@ public class MiniJavaParser extends Parser {
 				setState(88);
 				((ExpressionContext)_localctx).STRING = match(STRING);
 
-				        ((ExpressionContext)_localctx).n =  new StringLiteral((((ExpressionContext)_localctx).STRING!=null?((ExpressionContext)_localctx).STRING.getText():null));
+				        ((ExpressionContext)_localctx).n =  new StringLiteral(_localctx, (((ExpressionContext)_localctx).STRING!=null?((ExpressionContext)_localctx).STRING.getText():null));
 				    
 				}
 				break;
@@ -585,7 +585,7 @@ public class MiniJavaParser extends Parser {
 				setState(90);
 				((ExpressionContext)_localctx).NAME = match(NAME);
 
-				        ((ExpressionContext)_localctx).n =  new VariableAccess((((ExpressionContext)_localctx).NAME!=null?((ExpressionContext)_localctx).NAME.getText():null));
+				        ((ExpressionContext)_localctx).n =  new VariableAccess(_localctx, (((ExpressionContext)_localctx).NAME!=null?((ExpressionContext)_localctx).NAME.getText():null));
 				    
 				}
 				break;
@@ -619,10 +619,10 @@ public class MiniJavaParser extends Parser {
 				((ExpressionContext)_localctx).expression = expression(5);
 
 				        if((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null).equals("++") || (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null).equals("--")){
-				            ((ExpressionContext)_localctx).n =  new PreIncrement(((ExpressionContext)_localctx).expression.n, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null));
+				            ((ExpressionContext)_localctx).n =  new PreIncrement(_localctx, ((ExpressionContext)_localctx).expression.n, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null));
 				        }
 				        else if((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null).equals("-")) {
-				            ((ExpressionContext)_localctx).n =  new Negate(((ExpressionContext)_localctx).expression.n);
+				            ((ExpressionContext)_localctx).n =  new Negate(_localctx, ((ExpressionContext)_localctx).expression.n);
 				        }
 				        else {
 				            ((ExpressionContext)_localctx).n =  ((ExpressionContext)_localctx).expression.n;
@@ -641,7 +641,7 @@ public class MiniJavaParser extends Parser {
 				setState(104);
 				((ExpressionContext)_localctx).expression = expression(4);
 
-				        ((ExpressionContext)_localctx).n =  new Cast(((ExpressionContext)_localctx).type.n, ((ExpressionContext)_localctx).expression.n);
+				        ((ExpressionContext)_localctx).n =  new Cast(_localctx, ((ExpressionContext)_localctx).type.n, ((ExpressionContext)_localctx).expression.n);
 				    
 				}
 				break;
@@ -679,7 +679,7 @@ public class MiniJavaParser extends Parser {
 						setState(111);
 						((ExpressionContext)_localctx).r = ((ExpressionContext)_localctx).expression = expression(4);
 
-						                  ((ExpressionContext)_localctx).n =  new BinaryOp((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null), ((ExpressionContext)_localctx).l.n, ((ExpressionContext)_localctx).r.n);
+						                  ((ExpressionContext)_localctx).n =  new BinaryOp(_localctx, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null), ((ExpressionContext)_localctx).l.n, ((ExpressionContext)_localctx).r.n);
 						              
 						}
 						break;
@@ -704,7 +704,7 @@ public class MiniJavaParser extends Parser {
 						setState(116);
 						((ExpressionContext)_localctx).r = ((ExpressionContext)_localctx).expression = expression(3);
 
-						                  ((ExpressionContext)_localctx).n =  new BinaryOp((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null), ((ExpressionContext)_localctx).l.n, ((ExpressionContext)_localctx).r.n);
+						                  ((ExpressionContext)_localctx).n =  new BinaryOp(_localctx, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null), ((ExpressionContext)_localctx).l.n, ((ExpressionContext)_localctx).r.n);
 						              
 						}
 						break;
@@ -720,7 +720,7 @@ public class MiniJavaParser extends Parser {
 						setState(121);
 						((ExpressionContext)_localctx).r = ((ExpressionContext)_localctx).expression = expression(1);
 
-						                  ((ExpressionContext)_localctx).n =  new Assignment(((ExpressionContext)_localctx).l.n, ((ExpressionContext)_localctx).r.n);
+						                  ((ExpressionContext)_localctx).n =  new Assignment(_localctx, ((ExpressionContext)_localctx).l.n, ((ExpressionContext)_localctx).r.n);
 						              
 						}
 						break;
@@ -743,7 +743,7 @@ public class MiniJavaParser extends Parser {
 							consume();
 						}
 
-						                      ((ExpressionContext)_localctx).n =  new PostIncrement(((ExpressionContext)_localctx).e.n, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null)); // (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null) may be ++ or --
+						                      ((ExpressionContext)_localctx).n =  new PostIncrement(_localctx, ((ExpressionContext)_localctx).e.n, (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null)); // (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null) may be ++ or --
 						              
 						}
 						break;
@@ -791,7 +791,7 @@ public class MiniJavaParser extends Parser {
 				setState(132);
 				match(T__15);
 
-				        ((TypeContext)_localctx).n =  new TypeNode("int");
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, "int");
 				    
 				}
 				break;
@@ -801,7 +801,7 @@ public class MiniJavaParser extends Parser {
 				setState(134);
 				match(T__16);
 
-				        ((TypeContext)_localctx).n =  new TypeNode("double");
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, "double");
 				    
 				}
 				break;
@@ -811,7 +811,7 @@ public class MiniJavaParser extends Parser {
 				setState(136);
 				match(T__17);
 
-				        ((TypeContext)_localctx).n =  new TypeNode("boolean");
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, "boolean");
 				    
 				}
 				break;
@@ -821,7 +821,7 @@ public class MiniJavaParser extends Parser {
 				setState(138);
 				((TypeContext)_localctx).NAME = match(NAME);
 
-				        ((TypeContext)_localctx).n =  new TypeNode((((TypeContext)_localctx).NAME!=null?((TypeContext)_localctx).NAME.getText():null));
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, (((TypeContext)_localctx).NAME!=null?((TypeContext)_localctx).NAME.getText():null));
 				    
 				}
 				break;
