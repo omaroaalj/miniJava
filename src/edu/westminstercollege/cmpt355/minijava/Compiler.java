@@ -83,17 +83,22 @@ public class Compiler {
 
     private void generateCode(Statement statement) {
         switch (statement) {
+            case EmptyStatement() -> {
+                //do nothing?
+            }
             case Block(List<Statement> stmts) -> {
-                // Print each argument individually (using generateCode(PrintArgument))
-                // then do a println.
+
                 for (var stmt : stmts)
                     generateCode(stmt);
                 // args.forEach(this::generateCode);
+                // generateCode should handle each kind of statement later
+            }
+            case Declarations(TypeNode type, List<Declaration> decItems) -> {
+                for(var dec : decItems){
+                    generateCode(dec);
+                    //need to make private void generateCode(Declaration dec){}
+                }
 
-                // out.println goes to the .j file (assembly code)
-                // jasmin uses slashes
-                out.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
-                out.println("invokevirtual java/io/PrintStream/println()V");
             }
 
             case Assignment(String varName, Expression value) -> {
