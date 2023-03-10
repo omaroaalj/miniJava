@@ -75,9 +75,9 @@ public class Compiler {
       private void resolveSymbols(Block block) throws SyntaxException {
         AST.preOrder(block, node -> {
             switch (node) {
-                case Declaration(ParserRuleContext ctx1, String name, Optional<Expression> expression1) -> {
+                case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression1) -> {
                     if(symbols.findVariable(name).isPresent()){
-                        throw new SyntaxException(String.format("Variable %s already exists.", name));
+                        throw new SyntaxException(node, String.format("Variable %s already exists.", name));
                     }
                     else {
                         symbols.registerVariable(name);
@@ -86,11 +86,11 @@ public class Compiler {
                 case VariableAccess(ParserRuleContext ctx, String name) -> {
                     if (symbols.findVariable(name).isEmpty())
                         // no variable found
-                        throw new SyntaxException(String.format("Variable used before assignment. %s", name));
+                        throw new SyntaxException(node, String.format("Variable used before assignment. %s", name));
                 }
                 case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
                     if(symbols.findVariable(exprName.toString()).isEmpty()){
-                        throw new SyntaxException(String.format("Variable used before assignment. %s", exprName));
+                        throw new SyntaxException(node, String.format("Variable used before assignment. %s", exprName));
                     }
 
                 }
@@ -99,7 +99,7 @@ public class Compiler {
         });
     }
 
-
+    /*
     private void generateCode(Statement statement) {
         switch (statement) {
             case EmptyStatement() -> {

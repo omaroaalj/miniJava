@@ -3,8 +3,8 @@ package edu.westminstercollege.cmpt355.minijava;
 import edu.westminstercollege.cmpt355.minijava.node.Node;
 
 public class SyntaxException extends Exception {
-    Node node;
-    String message;
+    private Node node;
+    public String message;
 
     public SyntaxException() {
         super();
