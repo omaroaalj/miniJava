@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Compiler {
-    /*
+
     // Commented out until we have our AST nodes defined...
     private SymbolTable symbols = new SymbolTable();
     private PrintWriter out;
@@ -23,7 +23,7 @@ public class Compiler {
     }
 
     public void compile(Path outputDir) throws IOException, SyntaxException {
-        Path asmFilePath = outputDir.resolve(className + ".j");
+        Path asmFilePath = outputDir.resolve(className + ".minijava");
         try (var out = new PrintWriter(Files.newBufferedWriter(asmFilePath))) {
             this.out = out;
             resolveSymbols(block);
@@ -50,10 +50,10 @@ public class Compiler {
             out.printf(".limit stack 100\n");
             out.printf(".limit locals %d\n", symbols.getVariableCount() * 2 + 1); // + 1 because of args
             out.println();
-            /*
+
             // Generate code for program here 🙂
             for (var statement : block.statements()) {
-                generateCode(statement);
+                //generateCode(statement);
             }
 
 
@@ -69,6 +69,7 @@ public class Compiler {
      // i.e. we should not be using the value of a variable before we have assigned
      // to it (Eval does not have declarations).
       private void resolveSymbols(Block block) throws SyntaxException {
+        /*
         AST.preOrder(block, node -> {
             switch (node) {
                 case Assignment(Expression name, Expression e) -> symbols.registerVariable(name);
@@ -80,6 +81,7 @@ public class Compiler {
                 default -> {}
             }
         });
+         */
     }
 
     /*
