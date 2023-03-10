@@ -97,7 +97,7 @@ public class Compiler {
         });
     }
 
-    /*
+
     private void generateCode(Statement statement) {
         switch (statement) {
             case EmptyStatement() -> {
