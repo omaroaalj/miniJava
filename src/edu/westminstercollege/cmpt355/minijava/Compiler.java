@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public class Compiler {
 
@@ -72,16 +73,24 @@ public class Compiler {
       private void resolveSymbols(Block block) throws SyntaxException {
         AST.preOrder(block, node -> {
             switch (node) {
-                case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
-                    if(symbols.findVariable(exprName.toString()) != null){
-                        throw new SyntaxException();
+                case Declaration(ParserRuleContext ctx1, String name, Optional<Expression> expression1) -> {
+                    if(symbols.findVariable(name).isPresent()){
+                        throw new SyntaxException(String.format("Variable %s already exists.", name));
                     }
-                    symbols.registerVariable(exprName.toString());
+                    else {
+                        symbols.registerVariable(name);
+                    }
                 }
                 case VariableAccess(ParserRuleContext ctx, String name) -> {
                     if (symbols.findVariable(name).isEmpty())
                         // no variable found
                         throw new SyntaxException(String.format("Variable used before assignment. %s", name));
+                }
+                case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
+                    if(symbols.findVariable(exprName.toString()).isEmpty()){
+                        throw new SyntaxException(String.format("Variable used before assignment. %s", exprName));
+                    }
+
                 }
                 default -> {}
             }
