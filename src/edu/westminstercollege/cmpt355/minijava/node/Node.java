@@ -15,10 +15,7 @@ public sealed interface Node
         return fullName;
     }
 
-    default ParserRuleContext ctx(){
-        var context = getClass().getTypeParameters();
-        return (ParserRuleContext)context[1];
-    }
+    ParserRuleContext ctx();
 
     List<? extends Node> children();
 }
