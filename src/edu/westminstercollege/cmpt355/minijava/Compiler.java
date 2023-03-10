@@ -49,11 +49,12 @@ public class Compiler {
             out.printf(".limit stack 100\n");
             out.printf(".limit locals %d\n", symbols.getVariableCount() * 2 + 1); // + 1 because of args
             out.println();
-
+            /*
             // Generate code for program here 🙂
             for (var statement : block.statements()) {
                 generateCode(statement);
             }
+            */
 
             // another way
             // program.statements().forEach(this::generateCode);
@@ -80,7 +81,7 @@ public class Compiler {
         });
     }
 
-
+    /*
     private void generateCode(Statement statement) {
         switch (statement) {
             case Block(List<Statement> stmts) -> {
