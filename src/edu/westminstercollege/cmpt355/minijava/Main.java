@@ -22,6 +22,7 @@ public class Main {
         var program = parser.goal().n;
         AST.print(program);
 
+
     }
 
     private static String getClassNameFromPath(String path) {

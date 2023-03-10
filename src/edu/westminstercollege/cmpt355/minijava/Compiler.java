@@ -13,11 +13,11 @@ public class Compiler {
     // Commented out until we have our AST nodes defined...
     private SymbolTable symbols = new SymbolTable();
     private PrintWriter out;
-    private final Program program;
+    private final Block block;
     private final String className;
 
-    public Compiler(Program program, String className) {
-        this.program = program;
+    public Compiler(Block block, String className) {
+        this.block = block;
         this.className = className;
     }
 
@@ -25,7 +25,7 @@ public class Compiler {
         Path asmFilePath = outputDir.resolve(className + ".j");
         try (var out = new PrintWriter(Files.newBufferedWriter(asmFilePath))) {
             this.out = out;
-            resolveSymbols(program);
+            resolveSymbols(block);
 
             out.printf(".class public %s\n", className);
             out.printf(".super java/lang/Object\n");
@@ -51,7 +51,7 @@ public class Compiler {
             out.println();
 
             // Generate code for program here 🙂
-            for (var statement : program.statements()) {
+            for (var statement : block.statements()) {
                 generateCode(statement);
             }
 
@@ -66,10 +66,10 @@ public class Compiler {
      // Make sure that all symbols (in this case, names of variables) make sense,
      // i.e. we should not be using the value of a variable before we have assigned
      // to it (Eval does not have declarations).
-     private void resolveSymbols(Program program) throws SyntaxException {
-        AST.preOrder(program, node -> {
+     private void resolveSymbols(Block block) throws SyntaxException {
+        AST.preOrder(block, node -> {
             switch (node) {
-                case Assignment(String name, Expression e) -> symbols.registerVariable(name);
+                case Assignment(Expression name, Expression e) -> symbols.registerVariable(name);
                 case VariableAccess(String name) -> {
                     if (symbols.findVariable(name).isEmpty())
                         // no variable found
