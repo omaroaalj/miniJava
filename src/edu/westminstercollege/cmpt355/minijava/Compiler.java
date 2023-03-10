@@ -83,11 +83,11 @@ public class Compiler {
 
     private void generateCode(Statement statement) {
         switch (statement) {
-            case Print(List<PrintArgument> args) -> {
+            case Block(List<Statement> stmts) -> {
                 // Print each argument individually (using generateCode(PrintArgument))
                 // then do a println.
-                for (var arg : args)
-                    generateCode(arg);
+                for (var stmt : stmts)
+                    generateCode(stmt);
                 // args.forEach(this::generateCode);
 
                 // out.println goes to the .j file (assembly code)
