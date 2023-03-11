@@ -96,7 +96,7 @@ public class Compiler {
                         }
                     }
                     else {
-                        throw new SyntaxException(node, "Character(s) before '=' is not a valid variable");
+                        throw new SyntaxException(node, "Character(s) before '=' not a valid variable");
                     }
                 }
                 default -> {}
