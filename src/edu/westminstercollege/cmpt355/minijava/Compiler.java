@@ -89,9 +89,14 @@ public class Compiler {
                         throw new SyntaxException(node, String.format("Variable used before assignment. %s", name));
                 }
                 case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
-                    if(symbols.findVariable(exprName.toString()).isEmpty()){
+                    if(exprName.getClass() != VariableAccess.class){
+                        throw new SyntaxException(node, "Not a valid variable.");
+                    }
+                    /*
+                    else if(symbols.findVariable(exprName.toString()).isEmpty()){
                         throw new SyntaxException(node, String.format("Variable used before assignment. %s", exprName));
                     }
+                     */
 
                 }
                 default -> {}
