@@ -33,7 +33,7 @@ public class Main {
             });
         }
         catch (SyntaxException se) {
-            System.out.println("ERROR: " + se.message + " line: " + se.getNode().ctx().start.getLine());
+            System.out.println("ERROR: " + se.message + " [line " + se.getNode().ctx().start.getLine() + "]");
         }
 
 

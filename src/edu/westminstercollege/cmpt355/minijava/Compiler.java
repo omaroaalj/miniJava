@@ -79,11 +79,11 @@ public class Compiler {
                 case VariableAccess(ParserRuleContext ctx, String name) -> {
                     if (symbols.findVariable(name).isEmpty())
                         // no variable found
-                        throw new SyntaxException(node, String.format("Variable used before assignment. %s", name));
+                        throw new SyntaxException(node, String.format("Variable '%s' used before declaration", name));
                 }
                 case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression1) -> {
                     if(symbols.findVariable(name).isPresent()){
-                        throw new SyntaxException(node, String.format("Variable %s already exists.", name));
+                        throw new SyntaxException(node, String.format("Variable '%s' already declared", name));
                     }
                     else {
                         symbols.registerVariable(name);
@@ -92,11 +92,11 @@ public class Compiler {
                 case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
                     if (exprName instanceof VariableAccess expr) {
                         if (symbols.findVariable(expr.getVariableName()).isEmpty()) {
-                            throw new SyntaxException(node, String.format("Variable used before assignment. %s", expr.getVariableName()));
+                            throw new SyntaxException(node, String.format("Variable '%s' used before assignment", expr.getVariableName()));
                         }
                     }
                     else {
-                        throw new SyntaxException(node, "Not a valid variable.");
+                        throw new SyntaxException(node, "Character(s) before '=' is not a valid variable");
                     }
                 }
                 default -> {}
