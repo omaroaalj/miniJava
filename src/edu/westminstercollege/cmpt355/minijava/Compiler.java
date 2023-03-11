@@ -90,16 +90,14 @@ public class Compiler {
                     }
                 }
                 case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
-                    var expressionName = exprName.toString();
-                    String[] splitter = expressionName.split("=");
-                    String[] splitter2 = splitter[2].split("]");
-                    if(exprName.getClass() != VariableAccess.class){
+                    if (exprName instanceof VariableAccess expr) {
+                        if (symbols.findVariable(expr.getVariableName()).isEmpty()) {
+                            throw new SyntaxException(node, String.format("Variable used before assignment. %s", expr.getVariableName()));
+                        }
+                    }
+                    else {
                         throw new SyntaxException(node, "Not a valid variable.");
                     }
-                    else if(symbols.findVariable(splitter2[0]).isEmpty()){
-                        throw new SyntaxException(node, String.format("Variable used before assignment. %s", splitter2[0]));
-                    }
-
                 }
                 default -> {}
             }
