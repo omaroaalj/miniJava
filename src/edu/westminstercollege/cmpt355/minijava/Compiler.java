@@ -54,11 +54,12 @@ public class Compiler {
             out.printf(".limit stack 100\n");
             out.printf(".limit locals %d\n", symbols.getVariableCount() * 2 + 1); // + 1 because of args
             out.println();
-
+            /*
             // Generate code for program here 🙂
             for (var statement : block.statements()) {
                 //generateCode(statement);
             }
+            */
 
 
             // another way
@@ -73,8 +74,13 @@ public class Compiler {
      // i.e. we should not be using the value of a variable before we have assigned
      // to it (Eval does not have declarations).
       private void resolveSymbols(Block block) throws SyntaxException {
-        AST.preOrder(block, node -> {
+        AST.postOrder(block, node -> {
             switch (node) {
+                case VariableAccess(ParserRuleContext ctx, String name) -> {
+                    if (symbols.findVariable(name).isEmpty())
+                        // no variable found
+                        throw new SyntaxException(node, String.format("Variable used before assignment. %s", name));
+                }
                 case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression1) -> {
                     if(symbols.findVariable(name).isPresent()){
                         throw new SyntaxException(node, String.format("Variable %s already exists.", name));
@@ -82,11 +88,6 @@ public class Compiler {
                     else {
                         symbols.registerVariable(name);
                     }
-                }
-                case VariableAccess(ParserRuleContext ctx, String name) -> {
-                    if (symbols.findVariable(name).isEmpty())
-                        // no variable found
-                        throw new SyntaxException(node, String.format("Variable used before assignment. %s", name));
                 }
                 case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
                     var expressionName = exprName.toString();
