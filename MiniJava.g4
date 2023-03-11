@@ -159,9 +159,7 @@ RESERVED_WORD
     ;
 
 // letters, numbers, dollar signs '$', underscores '_', but not starting with a digit
-NAME
-    : [a-zA-Z_$] [a-zA-Z_$0-9]*
-    ;
+
 
 WHITESPACE
     : [ \n\r\t]+ -> skip
@@ -190,6 +188,10 @@ DOUBLE
 BOOLEAN
     : 'true'
     | 'false'
+    ;
+
+NAME
+    : [a-zA-Z_$] [a-zA-Z_$0-9]*
     ;
 
 STRING

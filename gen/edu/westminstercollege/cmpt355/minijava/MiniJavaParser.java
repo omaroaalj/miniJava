@@ -24,8 +24,8 @@ public class MiniJavaParser extends Parser {
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
-		T__17=18, RESERVED_WORD=19, NAME=20, WHITESPACE=21, INT=22, DOUBLE=23, 
-		BOOLEAN=24, STRING=25, LINE_COMMENT=26, BLOCK_COMMENT=27;
+		T__17=18, RESERVED_WORD=19, WHITESPACE=20, INT=21, DOUBLE=22, BOOLEAN=23, 
+		NAME=24, STRING=25, LINE_COMMENT=26, BLOCK_COMMENT=27;
 	public static final int
 		RULE_goal = 0, RULE_methodBody = 1, RULE_statement = 2, RULE_declaration = 3, 
 		RULE_decItem = 4, RULE_expression = 5, RULE_type = 6;
@@ -47,8 +47,8 @@ public class MiniJavaParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, "RESERVED_WORD", "NAME", "WHITESPACE", 
-			"INT", "DOUBLE", "BOOLEAN", "STRING", "LINE_COMMENT", "BLOCK_COMMENT"
+			null, null, null, null, null, null, null, "RESERVED_WORD", "WHITESPACE", 
+			"INT", "DOUBLE", "BOOLEAN", "NAME", "STRING", "LINE_COMMENT", "BLOCK_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -167,7 +167,7 @@ public class MiniJavaParser extends Parser {
 			setState(20);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (((_la) & ~0x3f) == 0 && ((1L << _la) & 64429766L) != 0) {
+			while (((_la) & ~0x3f) == 0 && ((1L << _la) & 65478342L) != 0) {
 				{
 				{
 				setState(17);
@@ -252,7 +252,7 @@ public class MiniJavaParser extends Parser {
 				setState(32);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (((_la) & ~0x3f) == 0 && ((1L << _la) & 64429766L) != 0) {
+				while (((_la) & ~0x3f) == 0 && ((1L << _la) & 65478342L) != 0) {
 					{
 					{
 					setState(29);
@@ -508,7 +508,7 @@ public class MiniJavaParser extends Parser {
 				setState(78);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (((_la) & ~0x3f) == 0 && ((1L << _la) & 63971008L) != 0) {
+				if (((_la) & ~0x3f) == 0 && ((1L << _la) & 65019584L) != 0) {
 					{
 					setState(70);
 					((ExpressionContext)_localctx).expression = ((ExpressionContext)_localctx).expression = expression(0);
@@ -912,7 +912,7 @@ public class MiniJavaParser extends Parser {
 		"\u0000\u000042\u0001\u0000\u0000\u000045\u0001\u0000\u0000\u000057\u0001"+
 		"\u0000\u0000\u000064\u0001\u0000\u0000\u000078\u0005\u0001\u0000\u0000"+
 		"89\u0006\u0003\uffff\uffff\u00009\u0007\u0001\u0000\u0000\u0000:;\u0005"+
-		"\u0014\u0000\u0000;B\u0006\u0004\uffff\uffff\u0000<=\u0005\u0014\u0000"+
+		"\u0018\u0000\u0000;B\u0006\u0004\uffff\uffff\u0000<=\u0005\u0018\u0000"+
 		"\u0000=>\u0005\u0005\u0000\u0000>?\u0003\n\u0005\u0000?@\u0006\u0004\uffff"+
 		"\uffff\u0000@B\u0001\u0000\u0000\u0000A:\u0001\u0000\u0000\u0000A<\u0001"+
 		"\u0000\u0000\u0000B\t\u0001\u0000\u0000\u0000CD\u0006\u0005\uffff\uffff"+
@@ -921,11 +921,11 @@ public class MiniJavaParser extends Parser {
 		"\u0000JM\u0001\u0000\u0000\u0000KI\u0001\u0000\u0000\u0000KL\u0001\u0000"+
 		"\u0000\u0000LO\u0001\u0000\u0000\u0000MK\u0001\u0000\u0000\u0000NF\u0001"+
 		"\u0000\u0000\u0000NO\u0001\u0000\u0000\u0000OP\u0001\u0000\u0000\u0000"+
-		"PQ\u0005\b\u0000\u0000Ql\u0006\u0005\uffff\uffff\u0000RS\u0005\u0016\u0000"+
-		"\u0000Sl\u0006\u0005\uffff\uffff\u0000TU\u0005\u0017\u0000\u0000Ul\u0006"+
-		"\u0005\uffff\uffff\u0000VW\u0005\u0018\u0000\u0000Wl\u0006\u0005\uffff"+
+		"PQ\u0005\b\u0000\u0000Ql\u0006\u0005\uffff\uffff\u0000RS\u0005\u0015\u0000"+
+		"\u0000Sl\u0006\u0005\uffff\uffff\u0000TU\u0005\u0016\u0000\u0000Ul\u0006"+
+		"\u0005\uffff\uffff\u0000VW\u0005\u0017\u0000\u0000Wl\u0006\u0005\uffff"+
 		"\uffff\u0000XY\u0005\u0019\u0000\u0000Yl\u0006\u0005\uffff\uffff\u0000"+
-		"Z[\u0005\u0014\u0000\u0000[l\u0006\u0005\uffff\uffff\u0000\\]\u0005\u0007"+
+		"Z[\u0005\u0018\u0000\u0000[l\u0006\u0005\uffff\uffff\u0000\\]\u0005\u0007"+
 		"\u0000\u0000]^\u0003\n\u0005\u0000^_\u0005\b\u0000\u0000_`\u0006\u0005"+
 		"\uffff\uffff\u0000`l\u0001\u0000\u0000\u0000ab\u0007\u0000\u0000\u0000"+
 		"bc\u0003\n\u0005\u0005cd\u0006\u0005\uffff\uffff\u0000dl\u0001\u0000\u0000"+
@@ -949,7 +949,7 @@ public class MiniJavaParser extends Parser {
 		"\u0010\u0000\u0000\u0085\u008d\u0006\u0006\uffff\uffff\u0000\u0086\u0087"+
 		"\u0005\u0011\u0000\u0000\u0087\u008d\u0006\u0006\uffff\uffff\u0000\u0088"+
 		"\u0089\u0005\u0012\u0000\u0000\u0089\u008d\u0006\u0006\uffff\uffff\u0000"+
-		"\u008a\u008b\u0005\u0014\u0000\u0000\u008b\u008d\u0006\u0006\uffff\uffff"+
+		"\u008a\u008b\u0005\u0018\u0000\u0000\u008b\u008d\u0006\u0006\uffff\uffff"+
 		"\u0000\u008c\u0084\u0001\u0000\u0000\u0000\u008c\u0086\u0001\u0000\u0000"+
 		"\u0000\u008c\u0088\u0001\u0000\u0000\u0000\u008c\u008a\u0001\u0000\u0000"+
 		"\u0000\u008d\r\u0001\u0000\u0000\u0000\u000b\u0014 ,4AKNk\u007f\u0081"+
