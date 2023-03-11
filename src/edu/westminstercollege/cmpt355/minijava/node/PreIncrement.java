@@ -1,8 +1,10 @@
 package edu.westminstercollege.cmpt355.minijava.node;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import java.util.List;
 
-public record PreIncrement(Expression expression, String increment) implements Expression {
+public record PreIncrement(ParserRuleContext ctx, Expression expression, String increment) implements Expression {
     @Override
     public List<? extends Node> children() {
         return List.of(expression);

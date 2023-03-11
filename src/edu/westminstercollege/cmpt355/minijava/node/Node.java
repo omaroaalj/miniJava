@@ -1,5 +1,7 @@
 package edu.westminstercollege.cmpt355.minijava.node;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import java.util.List;
 
 public sealed interface Node
@@ -12,6 +14,8 @@ public sealed interface Node
             return fullName.substring(index + 1);
         return fullName;
     }
+
+    ParserRuleContext ctx();
 
     List<? extends Node> children();
 }

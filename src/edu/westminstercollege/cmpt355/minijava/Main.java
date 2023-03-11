@@ -19,8 +19,23 @@ public class Main {
         var parser = new MiniJavaParser(new CommonTokenStream(lexer));
 
 
-        var program = parser.goal().n;
-        AST.print(program);
+        var block = parser.goal().n;
+        AST.print(block);
+
+
+        try {
+            var compiler = new Compiler(block, CLASS_NAME);
+            compiler.compile(Path.of("test_output"));
+
+            jasmin.Main.main(new String[]{
+                    "-d", "out/test_compiled",
+                    String.format("test_output/%s.minijava", CLASS_NAME)
+            });
+        }
+        catch (SyntaxException se) {
+            System.out.println("ERROR: " + se.message + " [line " + se.getNode().ctx().start.getLine() + "]");
+        }
+
 
     }
 

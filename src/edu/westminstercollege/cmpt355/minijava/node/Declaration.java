@@ -1,9 +1,11 @@
 package edu.westminstercollege.cmpt355.minijava.node;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import java.util.List;
 import java.util.Optional;
 
-public record Declaration(String name, Optional<Expression> expression) implements Node {
+public record Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression) implements Node {
 
     @Override
     public String getNodeDescription() {
