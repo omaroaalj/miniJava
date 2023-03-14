@@ -131,16 +131,16 @@ expression
 type
     returns[TypeNode n]
     : 'int' {
-        $n = new TypeNode($ctx, "int");
+        $n = new TypeNode($ctx, PrimitiveType.Int);
     }
     | 'double' {
-        $n = new TypeNode($ctx, "double");
+        $n = new TypeNode($ctx, PrimitiveType.Double);
     }
     | 'boolean' {
-        $n = new TypeNode($ctx, "boolean");
+        $n = new TypeNode($ctx, PrimitiveType.Boolean);
     }
     | NAME {
-        $n = new TypeNode($ctx, $NAME.text);
+        $n = new TypeNode($ctx, new ClassType($NAME.text));
     }
     ;
 
