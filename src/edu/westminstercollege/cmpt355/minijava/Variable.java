@@ -6,7 +6,7 @@ public class Variable {
     private String name;
     private int index;
 
-    public Variable(Type type, String name, int index) {
+    public Variable(String name, int index) {
         this.type = type;
         this.name = name;
         this.index = index;
