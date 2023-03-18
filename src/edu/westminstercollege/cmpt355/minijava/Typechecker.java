@@ -30,13 +30,23 @@ public class Typechecker {
                 System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
             case IntLiteral(ParserRuleContext ctx, String text) -> {
-
+                try{
+                    int value = Integer.parseInt(text);
+                } catch (NumberFormatException e){
+                    throw new SyntaxException("value must be of type Integer");
+                }
             }
             case DoubleLiteral(ParserRuleContext ctx, String text) -> {
-
+                try{
+                    double value = Double.parseDouble(text);
+                } catch (NumberFormatException e){
+                    throw new SyntaxException("value must be of type Double");
+                }
             }
             case BooleanLiteral(ParserRuleContext ctx, String text) -> {
-
+                if(!text.equals("true") && !text.equals("false")){
+                    throw new SyntaxException("value must be of type Boolean");
+                }
             }
             case StringLiteral(ParserRuleContext ctx, String text) -> {
 
