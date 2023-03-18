@@ -9,6 +9,17 @@ public class Typechecker {
 
     public void typecheck(SymbolTable symbols, Node node) throws SyntaxException {
         switch(node) {
+            case Block(ParserRuleContext ctx, List<Statement> statements) -> {
+                for (var statement : statements) {
+                    typecheck(symbols, statement);
+                }
+            }
+            case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
+                typecheck(symbols, expr);
+
+                Type exprType = getType(symbols, expr);
+                System.out.println("exprType of " + expr + ": " + exprType.toString());
+            }
             case IntLiteral(ParserRuleContext ctx2, String text) -> {
 
             }
