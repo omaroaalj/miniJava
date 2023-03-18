@@ -14,6 +14,15 @@ public class Typechecker {
                     typecheck(symbols, statement);
                 }
             }
+            case Declarations(ParserRuleContext ctx, TypeNode type, List<Declaration> decItems) -> {
+                for(var decItem : decItems){
+                    var variable = symbols.findVariable(decItem.name());
+                    if(variable.isPresent()){
+                        var realvar = variable.get();
+                        realvar.setType(type.type());
+                    }
+                }
+            }
             case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
                 typecheck(symbols, expr);
 
@@ -103,7 +112,7 @@ public class Typechecker {
             default -> {
                 throw new RuntimeException(String.format("Unimplemented: %s", expr.getNodeDescription()));
             }
-
         }
+        return null;
     }
 }
