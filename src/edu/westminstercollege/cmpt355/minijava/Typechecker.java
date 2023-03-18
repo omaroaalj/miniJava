@@ -18,8 +18,8 @@ public class Typechecker {
                 for(var decItem : decItems){
                     var variable = symbols.findVariable(decItem.name());
                     if(variable.isPresent()){
-                        var realvar = variable.get();
-                        realvar.setType(type.type());
+                        var realVar = variable.get();
+                        realVar.setType(type.type());
                     }
                 }
             }
@@ -29,25 +29,31 @@ public class Typechecker {
                 Type exprType = getType(symbols, expr);
                 System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
-            case IntLiteral(ParserRuleContext ctx2, String text) -> {
+            case IntLiteral(ParserRuleContext ctx, String text) -> {
 
             }
-            case DoubleLiteral(ParserRuleContext ctx2, String text) -> {
+            case DoubleLiteral(ParserRuleContext ctx, String text) -> {
 
             }
-            case BooleanLiteral(ParserRuleContext ctx2, String text) -> {
+            case BooleanLiteral(ParserRuleContext ctx, String text) -> {
 
             }
-            case StringLiteral(ParserRuleContext ctx2, String text) -> {
+            case StringLiteral(ParserRuleContext ctx, String text) -> {
 
             }
             case VariableAccess(ParserRuleContext ctx, String variableName) -> {
 
             }
             case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
-
+                typecheck(symbols, exprName);
+                typecheck(symbols, expression);
+                Type left = getType(symbols, exprName),
+                        right = getType(symbols, expression);
+                if(left != right){
+                    throw new SyntaxException(String.format("Cannot assign type %s to variable of the type %s", right.toString(), left.toString()));
+                }
             }
-            case BinaryOp(ParserRuleContext ctx1, String operator, Expression left, Expression right) -> {
+            case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
 
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
@@ -63,7 +69,12 @@ public class Typechecker {
 
             }
             case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
-
+                for(var expr : expressions){
+                    typecheck(symbols, expr);
+                    if(getType(symbols, expr) instanceof VoidType){
+                        throw new SyntaxException("Cannot print a void value.");
+                    }
+                }
             }
             default -> {
                 throw new RuntimeException(String.format("Unimplemented: %s", node.getNodeDescription()));
@@ -73,25 +84,29 @@ public class Typechecker {
 
     public Type getType(SymbolTable symbols, Expression expr) {
         switch(expr) {
-            case IntLiteral(ParserRuleContext ctx2, String text) -> {
-
+            case IntLiteral(ParserRuleContext ctx, String text) -> {
+                return PrimitiveType.Int;
             }
-            case DoubleLiteral(ParserRuleContext ctx2, String text) -> {
-
+            case DoubleLiteral(ParserRuleContext ctx, String text) -> {
+                return PrimitiveType.Double;
             }
-            case BooleanLiteral(ParserRuleContext ctx2, String text) -> {
-
+            case BooleanLiteral(ParserRuleContext ctx, String text) -> {
+                return PrimitiveType.Boolean;
             }
-            case StringLiteral(ParserRuleContext ctx2, String text) -> {
-
+            case StringLiteral(ParserRuleContext ctx, String text) -> {
+                return new ClassType("String");
             }
             case VariableAccess(ParserRuleContext ctx, String variableName) -> {
-
+                var variable = symbols.findVariable(variableName);
+                if(variable.isPresent()){
+                    var realVar = variable.get();
+                    return realVar.getType();
+                }
             }
             case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
-
+                return getType(symbols, exprName);
             }
-            case BinaryOp(ParserRuleContext ctx1, String operator, Expression left, Expression right) -> {
+            case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
 
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
