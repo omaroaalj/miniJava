@@ -19,6 +19,7 @@ public class Compiler {
     private PrintWriter out;
     private final Block block;
     private final String className;
+    private final Typechecker tc = new Typechecker();
 
     public Compiler(Block block, String className) {
 
@@ -31,6 +32,8 @@ public class Compiler {
         try (var out = new PrintWriter(Files.newBufferedWriter(asmFilePath))) {
             this.out = out;
             resolveSymbols(block);
+            Typechecker tc = new Typechecker();
+            tc.typecheck(symbols, block);
 
             out.printf(".class public %s\n", className);
             out.printf(".super java/lang/Object\n");
