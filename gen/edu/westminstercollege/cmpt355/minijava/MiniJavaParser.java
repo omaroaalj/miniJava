@@ -791,7 +791,7 @@ public class MiniJavaParser extends Parser {
 				setState(132);
 				match(T__15);
 
-				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, "int");
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, PrimitiveType.Int);
 				    
 				}
 				break;
@@ -801,7 +801,7 @@ public class MiniJavaParser extends Parser {
 				setState(134);
 				match(T__16);
 
-				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, "double");
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, PrimitiveType.Double);
 				    
 				}
 				break;
@@ -811,7 +811,7 @@ public class MiniJavaParser extends Parser {
 				setState(136);
 				match(T__17);
 
-				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, "boolean");
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, PrimitiveType.Boolean);
 				    
 				}
 				break;
@@ -821,7 +821,7 @@ public class MiniJavaParser extends Parser {
 				setState(138);
 				((TypeContext)_localctx).NAME = match(NAME);
 
-				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, (((TypeContext)_localctx).NAME!=null?((TypeContext)_localctx).NAME.getText():null));
+				        ((TypeContext)_localctx).n =  new TypeNode(_localctx, new ClassType((((TypeContext)_localctx).NAME!=null?((TypeContext)_localctx).NAME.getText():null)));
 				    
 				}
 				break;

@@ -1,3 +1,2 @@
-boolean valid;
-valid = false;
-valid = true;
+int rutabaga;
+rutabaga = 99;
