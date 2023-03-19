@@ -1,2 +1,1 @@
-// This should fail once BinaryOp's rules are implemented
-print("The current year is ", 2023 / true);
+Badger x = "Hello!"; // fail
