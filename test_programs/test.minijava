@@ -1,1 +1,1 @@
-1 + "a"; // fail
+"a" + true; // String

@@ -108,7 +108,7 @@ public class Typechecker {
                             && (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String")) ){
                         throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values.");
                     }
-                    else if(b1){
+                    else if(leftType.equals(PrimitiveType.Boolean) && rightType.equals(PrimitiveType.Boolean)){
                         throw new SyntaxException(node, "Cannot perform addition with boolean values.");
                     }
                     else if((leftType instanceof ClassType && !((ClassType) leftType).className().equals("String"))
