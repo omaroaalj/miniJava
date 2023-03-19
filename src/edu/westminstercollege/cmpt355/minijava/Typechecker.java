@@ -43,32 +43,6 @@ public class Typechecker {
                 Type exprType = getType(symbols, expr);
                 System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
-            case IntLiteral(ParserRuleContext ignored, String text) -> {
-                try{
-                    int value = Integer.parseInt(text);
-                } catch (NumberFormatException e){
-                    throw new SyntaxException(node, "value must be of type Integer");
-                }
-            }
-            case DoubleLiteral(ParserRuleContext ignored, String text) -> {
-                try{
-                    double value = Double.parseDouble(text);
-                } catch (NumberFormatException e){
-                    throw new SyntaxException(node, "value must be of type Double");
-                }
-            }
-            case BooleanLiteral(ParserRuleContext ignored, String text) -> {
-                if(!text.equals("true") && !text.equals("false")){
-                    throw new SyntaxException(node, "value must be of type Boolean");
-                }
-            }
-            case StringLiteral(ParserRuleContext ignored, String text) -> {
-                int text_length = text.length()-1;
-                int lastChar = text.charAt(text_length);
-                int firstChar = text.charAt(0);
-                if (firstChar != '"' || lastChar != '"')
-                    throw new SyntaxException(node, "value must start and end with \" ");
-            }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
                 if(variable.isEmpty()){
