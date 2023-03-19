@@ -163,9 +163,8 @@ public class Typechecker {
                     }
                 }
             }
-            default -> {
+            default ->
                 throw new RuntimeException(String.format("Unimplemented: %s", node.getNodeDescription()));
-            }
         }
     }
 
