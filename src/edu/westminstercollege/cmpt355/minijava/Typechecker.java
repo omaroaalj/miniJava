@@ -88,10 +88,18 @@ public class Typechecker {
 
             }
             case PreIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
-
+                typecheck(symbols, expression);
+                var type = getType(symbols, expression);
+                if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
+                    throw new SyntaxException(node, "Cannot increment a non numerical type.");
+                }
             }
             case PostIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
-
+                typecheck(symbols, expression);
+                var type = getType(symbols, expression);
+                if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
+                    throw new SyntaxException(node, "Cannot increment a non numerical type.");
+                }
             }
             case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
 
