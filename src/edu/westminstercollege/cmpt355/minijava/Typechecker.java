@@ -33,19 +33,19 @@ public class Typechecker {
                 try{
                     int value = Integer.parseInt(text);
                 } catch (NumberFormatException e){
-                    throw new SyntaxException("value must be of type Integer");
+                    throw new SyntaxException(node, "value must be of type Integer");
                 }
             }
             case DoubleLiteral(ParserRuleContext ctx, String text) -> {
                 try{
                     double value = Double.parseDouble(text);
                 } catch (NumberFormatException e){
-                    throw new SyntaxException("value must be of type Double");
+                    throw new SyntaxException(node, "value must be of type Double");
                 }
             }
             case BooleanLiteral(ParserRuleContext ctx, String text) -> {
                 if(!text.equals("true") && !text.equals("false")){
-                    throw new SyntaxException("value must be of type Boolean");
+                    throw new SyntaxException(node, "value must be of type Boolean");
                 }
             }
             case StringLiteral(ParserRuleContext ctx, String text) -> {
@@ -53,12 +53,12 @@ public class Typechecker {
                 int lastChar = text.charAt(text_length);
                 int firstChar = text.charAt(0);
                 if (firstChar != '"' || lastChar != '"')
-                    throw new SyntaxException("value must start and end with \" ");
+                    throw new SyntaxException(node, "value must start and end with \" ");
             }
             case VariableAccess(ParserRuleContext ctx, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
                 if(variable.isEmpty()){
-                    throw new SyntaxException(String.format("Variable %s does not exist", variableName));
+                    throw new SyntaxException(node, String.format("Variable %s does not exist", variableName));
                 }
             }
             case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
@@ -67,7 +67,7 @@ public class Typechecker {
                 Type left = getType(symbols, exprName),
                         right = getType(symbols, expression);
                 if(left != right){
-                    throw new SyntaxException(String.format("Cannot assign type %s to variable of the type %s", right.toString(), left.toString()));
+                    throw new SyntaxException(node, String.format("Cannot assign type %s to variable of the type %s", right.toString(), left.toString()));
                 }
             }
             case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
@@ -89,7 +89,7 @@ public class Typechecker {
                 for(var expr : expressions){
                     typecheck(symbols, expr);
                     if(getType(symbols, expr) instanceof VoidType){
-                        throw new SyntaxException("Cannot print a void value.");
+                        throw new SyntaxException(node, "Cannot print a void value.");
                     }
                 }
             }
