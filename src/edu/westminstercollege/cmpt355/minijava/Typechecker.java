@@ -273,9 +273,6 @@ public class Typechecker {
             case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
                 return VoidType.Instance;
             }
-            default -> {
-                throw new RuntimeException(String.format("Unimplemented: %s", expr.getNodeDescription()));
-            }
         }
         return null;
     }
