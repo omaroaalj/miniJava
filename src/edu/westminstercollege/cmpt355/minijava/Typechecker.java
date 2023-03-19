@@ -110,23 +110,6 @@ public class Typechecker {
                     } else if (nonNumericPresent && noStringsPresent) {
                         throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values.");
                     }
-
-                    //check if left or right are a classType that is not String
-                    /*
-                    else if( (leftType instanceof ClassType && !((ClassType) leftType).className().equals("String"))
-                            && (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String")) ){
-                        throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values.");
-                    }
-                    else if(leftType.equals(PrimitiveType.Boolean) && rightType.equals(PrimitiveType.Boolean)){
-                        throw new SyntaxException(node, "Cannot perform addition with boolean values.");
-                    }
-                    else if((leftType instanceof ClassType && !((ClassType) leftType).className().equals("String"))
-                            || (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String"))){
-                        throw new SyntaxException(node, "Cannot perform addition with non numerical values.");
-                    }
-
-                     */
-                    
                 }
                 else {
                     if(voidIsPresent) {
@@ -134,17 +117,6 @@ public class Typechecker {
                     } else if (nonNumericPresent) {
                         throw new SyntaxException(node, String.format("%s %s %s not possible.", leftType, operator, rightType));
                     }
-
-                    //check if left or right are a classType that is not String
-                    /*
-                    else if( leftType instanceof ClassType || rightType instanceof ClassType){
-                        throw new SyntaxException(node, leftType + " " + operator + " " + rightType + " not possible.");
-                    }
-                    else if(b1){
-                        throw new SyntaxException(node, leftType + " " + operator + " " + rightType + " not possible.");
-                    }
-
-                     */
                 }
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
@@ -256,7 +228,7 @@ public class Typechecker {
                     }
                     // case either is a classType not String, invalid op, return either
                     else if(leftType instanceof ClassType || rightType instanceof ClassType){
-                        if(rightType instanceof ClassType){
+                        if(rightType instanceof ClassType && ((ClassType)rightType).className().equals("String")){
                             return rightType;
                         }
                         else {
