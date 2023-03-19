@@ -1,2 +1,2 @@
-double z;
-z = 5; // double
+String z;
+z = "Hello!"; // String
