@@ -85,7 +85,21 @@ public class Typechecker {
                 }
             }
             case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
+                typecheck(symbols, left);
+                typecheck(symbols, right);
 
+                Type leftType = getType(symbols, left),
+                        rightType = getType(symbols, right);
+                if(operator.equals("+")){
+                    if(leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance)){
+                        throw new SyntaxException(node, "Cannot perform addition with a void value.");
+                    }
+                    //check if left or right are a classType that is not String
+                    else if( (leftType instanceof ClassType && !((ClassType) leftType).className().equals("String"))
+                            || (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String")) ){
+                        throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values");
+                    }
+                }
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
                 typecheck(symbols, expression);
@@ -150,7 +164,33 @@ public class Typechecker {
                 return getType(symbols, exprName);
             }
             case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
-
+                Type leftType = getType(symbols, left),
+                        rightType = getType(symbols, right);
+                // cases if operator is +
+                if(operator.equals("+")){
+                    // case if int, double or string
+                    if( (leftType.equals(PrimitiveType.Double) || leftType.equals(PrimitiveType.Int) || (leftType instanceof ClassType &&
+                                ((ClassType) leftType).className().equals("String"))) &&
+                            (rightType.equals(PrimitiveType.Double) || rightType.equals(PrimitiveType.Int) || (rightType instanceof ClassType &&
+                                    ((ClassType) rightType).className().equals("String")))){
+                        // case one is String
+                        if( (leftType instanceof ClassType && ((ClassType) leftType).className().equals("String")) ||
+                                (rightType instanceof ClassType && ((ClassType) rightType).className().equals("String"))){
+                            return new ClassType("String");
+                        }
+                        // case both or int/double
+                        else if((leftType.equals(PrimitiveType.Int) || leftType.equals(PrimitiveType.Double))
+                                && (rightType.equals(PrimitiveType.Int) || rightType.equals(PrimitiveType.Double))){
+                            // case one is double
+                            if(leftType.equals(PrimitiveType.Double) || rightType.equals(PrimitiveType.Double)){
+                                return PrimitiveType.Double;
+                            }
+                            else {
+                                return PrimitiveType.Int;
+                            }
+                        }
+                    }
+                }
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
                 return getType(symbols, expression);
