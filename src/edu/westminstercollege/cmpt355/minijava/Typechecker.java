@@ -80,7 +80,14 @@ public class Typechecker {
                 typecheck(symbols, expression);
                 Type left = getType(symbols, exprName),
                         right = getType(symbols, expression);
-                if(left != right){
+                if(left.equals(PrimitiveType.Double) && right.equals(PrimitiveType.Int)){
+                    //do nothing
+                }
+                else if( (left instanceof ClassType && ((ClassType)left).className().equals("String"))
+                        && (right instanceof ClassType && ((ClassType)right).className().equals("String"))) {
+                    //do nothing
+                }
+                else if(left != right){
                     throw new SyntaxException(node, String.format("Cannot assign type %s to variable of the type %s", right.toString(), left.toString()));
                 }
             }

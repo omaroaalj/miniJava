@@ -1,2 +1,2 @@
-Stoat franny;
-franny % franny; // fail
+String z;
+z = "Hello!"; // String
