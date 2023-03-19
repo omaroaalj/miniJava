@@ -112,10 +112,10 @@ public class Typechecker {
                     }
                     //check if left or right are a classType that is not String
                     else if( leftType instanceof ClassType || rightType instanceof ClassType){
-                        throw new SyntaxException(node, "Cannot perform binary operation with non numerical values.");
+                        throw new SyntaxException(node, leftType + operator + rightType + "not possible.");
                     }
                     else if(b1){
-                        throw new SyntaxException(node, "Cannot perform operation with boolean values.");
+                        throw new SyntaxException(node, leftType + operator + rightType + "not possible.");
                     }
                 }
             }
@@ -123,21 +123,21 @@ public class Typechecker {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
-                    throw new SyntaxException(node, "Cannot negate a non-numerical type.");
+                    throw new SyntaxException(node, "Cannot negate " + type);
                 }
             }
             case PreIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
-                    throw new SyntaxException(node, "Cannot increment a non-numerical type.");
+                    throw new SyntaxException(node, "Cannot use pre-increment " + type);
                 }
             }
             case PostIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
-                    throw new SyntaxException(node, "Cannot increment a non-numerical type.");
+                    throw new SyntaxException(node, "Cannot use post-increment " + type);
                 }
             }
             case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
@@ -145,12 +145,13 @@ public class Typechecker {
                 var exprType = getType(symbols, expression);
                 var stringType = new ClassType("String");
                 if (exprType.equals(VoidType.Instance)) {
-                    throw new SyntaxException(node, "Cannot use cast on a void expression.");
+                    throw new SyntaxException(node, "Cannot use cast on a void value.");
                 } else if (!castType.equals(stringType) && !(castType instanceof PrimitiveType)) {
                     throw new SyntaxException(node, castType + " not a valid cast type.");
                 } else if ((castType instanceof PrimitiveType) && exprType.equals(stringType)) {
                     throw new SyntaxException(node, "Cannot cast String to " + castType);
-                } else if ((castType.equals(PrimitiveType.Int) || castType.equals(PrimitiveType.Double)) && exprType.equals(PrimitiveType.Boolean)) {
+                } else if ((castType.equals(PrimitiveType.Int) || castType.equals(PrimitiveType.Double))
+                        && exprType.equals(PrimitiveType.Boolean)) {
                     throw new SyntaxException(node, "Cannot cast " + exprType + " to " + castType);
                 }
             }
