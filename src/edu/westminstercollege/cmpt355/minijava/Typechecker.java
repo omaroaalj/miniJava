@@ -190,8 +190,13 @@ public class Typechecker {
                             }
                         }
                     }
+                    // case either is void, just return void because invalid operation
                     else if(leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance)){
                         return VoidType.Instance;
+                    }
+                    // case either is a classType not String, invalid op, return either
+                    else if(leftType instanceof ClassType || rightType instanceof ClassType){
+                        return leftType;
                     }
                 }
             }
