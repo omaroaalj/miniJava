@@ -127,7 +127,7 @@ public class Typechecker {
 
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
-
+                return getType(symbols, expression);
             }
             case PreIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
 
@@ -136,7 +136,7 @@ public class Typechecker {
 
             }
             case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
-
+                return type.type();
             }
             case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
                 return VoidType.Instance;
