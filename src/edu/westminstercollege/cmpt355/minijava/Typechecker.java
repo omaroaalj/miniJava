@@ -57,7 +57,9 @@ public class Typechecker {
             }
             case VariableAccess(ParserRuleContext ctx, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
-
+                if(variable.isEmpty()){
+                    throw new SyntaxException(String.format("Variable %s does not exist", variableName));
+                }
             }
             case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
                 typecheck(symbols, exprName);
