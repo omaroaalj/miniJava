@@ -91,15 +91,20 @@ public class Typechecker {
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
                 boolean b = leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance);
+                boolean b1 = leftType.equals(PrimitiveType.Boolean) || rightType.equals(PrimitiveType.Boolean);
                 if(operator.equals("+")){
                     if(b){
                         throw new SyntaxException(node, "Cannot perform addition with a void value.");
                     }
                     //check if left or right are a classType that is not String
                     else if( (leftType instanceof ClassType && !((ClassType) leftType).className().equals("String"))
-                            || (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String")) ){
-                        throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values");
+                            && (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String")) ){
+                        throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values.");
                     }
+                    else if(b1){
+                        throw new SyntaxException(node, "Cannot perform addition with boolean values.");
+                    }
+                    
                 }
                 else {
                     if(b){
@@ -107,7 +112,10 @@ public class Typechecker {
                     }
                     //check if left or right are a classType that is not String
                     else if( leftType instanceof ClassType || rightType instanceof ClassType){
-                        throw new SyntaxException(node, "Cannot perform binary operation with non numerical values");
+                        throw new SyntaxException(node, "Cannot perform binary operation with non numerical values.");
+                    }
+                    else if(b1){
+                        throw new SyntaxException(node, "Cannot perform operation with boolean values.");
                     }
                 }
             }
@@ -199,7 +207,7 @@ public class Typechecker {
                                     ((ClassType) rightType).className().equals("String")))){
                         // case one is String
                         if( (leftType instanceof ClassType && ((ClassType) leftType).className().equals("String")) ||
-                                (rightType instanceof ClassType && ((ClassType) rightType).className().equals("String"))){
+                                (rightType instanceof ClassType && ((ClassType) rightType).className().equals("String"))) {
                             return new ClassType("String");
                         }
                         // case both or int/double
@@ -219,7 +227,12 @@ public class Typechecker {
                     }
                     // case either is a classType not String, invalid op, return either
                     else if(leftType instanceof ClassType || rightType instanceof ClassType){
-                        return leftType;
+                        if(rightType instanceof ClassType){
+                            return rightType;
+                        }
+                        else {
+                            return leftType;
+                        }
                     }
                 }
                 // case for all other operators
@@ -234,8 +247,13 @@ public class Typechecker {
                         }
                     }
                     // case if either is a classType, including String
-                    else if (leftType instanceof ClassType || rightType instanceof ClassType) {
-                        return leftType;
+                    else if(leftType instanceof ClassType || rightType instanceof ClassType){
+                        if(rightType instanceof ClassType){
+                            return rightType;
+                        }
+                        else {
+                            return leftType;
+                        }
                     }
                 }
             }
