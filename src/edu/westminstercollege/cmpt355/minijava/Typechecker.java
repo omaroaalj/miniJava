@@ -93,7 +93,6 @@ public class Typechecker {
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
                 boolean voidIsPresent = leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance);
-                // boolean b1 = leftType.equals(PrimitiveType.Boolean) || rightType.equals(PrimitiveType.Boolean);
                 var stringType = new ClassType("String");
                 boolean noStringsPresent = !leftType.equals(stringType) && !rightType.equals(stringType);
                 boolean nonNumericPresent =
