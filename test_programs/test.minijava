@@ -1,1 +1,1 @@
-double x; // good
+double x = false; // fail

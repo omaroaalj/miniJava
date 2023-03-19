@@ -21,8 +21,14 @@ public class Typechecker {
                         var realVar = variable.get();
                         realVar.setType(type.type());
                     }
-                    if(decItem.children().size() > 0 ){
-                        if(!getType(symbols, decItem.expression().get()).toString().equals(type.type().toString())){
+                    if(decItem.children().size() > 0 ) {
+                        if(type.type().equals(PrimitiveType.Double)){
+                            if(!getType(symbols, decItem.expression().get()).equals(PrimitiveType.Double)
+                                    && !getType(symbols, decItem.expression().get()).equals(PrimitiveType.Int)){
+                                throw new SyntaxException(node, "Initialization must match variable's declared type.");
+                            }
+                        }
+                        else if(!getType(symbols, decItem.expression().get()).equals(type.type())){
                             throw new SyntaxException(node, "Initialization must match variable's declared type.");
                         }
                     }
