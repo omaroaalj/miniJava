@@ -15,12 +15,14 @@ public class Typechecker {
                 }
             }
             case Declarations(ParserRuleContext ctx, TypeNode type, List<Declaration> decItems) -> {
+                // loop through each declaration, sets type if necessary
                 for(var decItem : decItems){
                     var variable = symbols.findVariable(decItem.name());
                     if(variable.isPresent()){
                         var realVar = variable.get();
                         realVar.setType(type.type());
                     }
+                    // check if declaration has children, then check if declared double, can have double or int values
                     if(decItem.children().size() > 0 ) {
                         if(type.type().equals(PrimitiveType.Double)){
                             if(!getType(symbols, decItem.expression().get()).equals(PrimitiveType.Double)
@@ -28,6 +30,7 @@ public class Typechecker {
                                 throw new SyntaxException(node, "Initialization must match variable's declared type.");
                             }
                         }
+                        // else make sure the declared type matches given value
                         else if(!getType(symbols, decItem.expression().get()).equals(type.type())){
                             throw new SyntaxException(node, "Initialization must match variable's declared type.");
                         }
@@ -85,20 +88,24 @@ public class Typechecker {
 
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
-
+                typecheck(symbols, expression);
+                var type = getType(symbols, expression);
+                if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
+                    throw new SyntaxException(node, "Cannot negate a non-numerical type.");
+                }
             }
             case PreIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
-                    throw new SyntaxException(node, "Cannot increment a non numerical type.");
+                    throw new SyntaxException(node, "Cannot increment a non-numerical type.");
                 }
             }
             case PostIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
-                    throw new SyntaxException(node, "Cannot increment a non numerical type.");
+                    throw new SyntaxException(node, "Cannot increment a non-numerical type.");
                 }
             }
             case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
