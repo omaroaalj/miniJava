@@ -149,10 +149,10 @@ public class Typechecker {
                 return getType(symbols, expression);
             }
             case PreIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
-
+                return getType(symbols, expression);
             }
             case PostIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
-
+                return getType(symbols, expression);
             }
             case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
                 return type.type();

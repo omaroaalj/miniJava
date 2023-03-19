@@ -1,8 +1,2 @@
-int i, j, k;
-double x, y, z;
-String s, t, u;
-Badger alice, bob, camille;
-j; // int
-x; // double
-u; // String
-bob; // Badger
+int x = 1;
+x++;
