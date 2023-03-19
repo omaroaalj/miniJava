@@ -119,10 +119,10 @@ public class Typechecker {
                     }
                     //check if left or right are a classType that is not String
                     else if( leftType instanceof ClassType || rightType instanceof ClassType){
-                        throw new SyntaxException(node, leftType + operator + rightType + "not possible.");
+                        throw new SyntaxException(node, leftType + " " + operator + " " + rightType + " not possible.");
                     }
                     else if(b1){
-                        throw new SyntaxException(node, leftType + operator + rightType + "not possible.");
+                        throw new SyntaxException(node, leftType + " " + operator + " " + rightType + " not possible.");
                     }
                 }
             }

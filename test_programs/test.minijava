@@ -1,2 +1,2 @@
-String z;
-z = "Hello!"; // String
+// This should fail once BinaryOp's rules are implemented
+print("The current year is ", 2023 / true);
