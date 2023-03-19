@@ -1,2 +1,2 @@
-Stoat franny;
-franny % franny; // fail
+double z;
+z = 5; // double
