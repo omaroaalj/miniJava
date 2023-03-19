@@ -49,7 +49,11 @@ public class Typechecker {
                 }
             }
             case StringLiteral(ParserRuleContext ctx, String text) -> {
-
+                int text_length = text.length()-1;
+                int lastChar = text.charAt(text_length);
+                int firstChar = text.charAt(0);
+                if (firstChar != '"' || lastChar != '"')
+                    throw new SyntaxException("value must start and end with \" ");
             }
             case VariableAccess(ParserRuleContext ctx, String variableName) -> {
 
