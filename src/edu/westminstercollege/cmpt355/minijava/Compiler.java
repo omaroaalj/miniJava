@@ -84,7 +84,7 @@ public class Compiler {
                     if (nameVar.isEmpty())
                         // no variable found
                         throw new SyntaxException(node, String.format("Variable '%s' used before declaration", name));
-                    System.out.println("[" + nameVar.get().getType().toString() + "]" + nameVar.get().getName());
+                    //System.out.println("[" + nameVar.get().getType().toString() + "]" + nameVar.get().getName());
                 }
                 case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression1) -> {
                     if(symbols.findVariable(name).isPresent()){
