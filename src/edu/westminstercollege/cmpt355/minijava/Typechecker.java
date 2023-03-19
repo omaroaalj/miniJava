@@ -17,13 +17,13 @@ public class Typechecker {
             case Declarations(ParserRuleContext ctx, TypeNode type, List<Declaration> decItems) -> {
                 for(var decItem : decItems){
                     typecheck(symbols, decItem.expression().get());
-                    if(!type.equals(getType(symbols, decItem.expression().get()))){
-                        throw new SyntaxException(node, "Initialization must match variable's declared type.");
-                    }
                     var variable = symbols.findVariable(decItem.name());
                     if(variable.isPresent()){
                         var realVar = variable.get();
                         realVar.setType(type.type());
+                    }
+                    if(!getType(symbols, decItem.expression().get()).toString().equals(type.type().toString())){
+                        throw new SyntaxException(node, "Initialization must match variable's declared type.");
                     }
                 }
             }

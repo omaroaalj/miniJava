@@ -1,1 +1,1 @@
-double x = false; // fail
+double x = 5.0; // good
