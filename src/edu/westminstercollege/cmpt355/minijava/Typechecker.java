@@ -190,6 +190,9 @@ public class Typechecker {
                             }
                         }
                     }
+                    else if(leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance)){
+                        return VoidType.Instance;
+                    }
                 }
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
