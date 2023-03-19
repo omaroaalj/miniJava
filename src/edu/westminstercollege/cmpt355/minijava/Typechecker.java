@@ -97,13 +97,22 @@ public class Typechecker {
 
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
-                boolean b = leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance);
-                boolean b1 = leftType.equals(PrimitiveType.Boolean) || rightType.equals(PrimitiveType.Boolean);
+                boolean voidIsPresent = leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance);
+                // boolean b1 = leftType.equals(PrimitiveType.Boolean) || rightType.equals(PrimitiveType.Boolean);
+                var stringType = new ClassType("String");
+                boolean noStringsPresent = !leftType.equals(stringType) && !rightType.equals(stringType);
+                boolean nonNumericPresent =
+                        (!leftType.equals(PrimitiveType.Int) && !leftType.equals(PrimitiveType.Double))
+                                || (!rightType.equals(PrimitiveType.Int) && !rightType.equals(PrimitiveType.Double));
                 if(operator.equals("+")){
-                    if(b){
+                    if(voidIsPresent) {
                         throw new SyntaxException(node, "Cannot perform addition with a void value.");
+                    } else if (nonNumericPresent && noStringsPresent) {
+                        throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values.");
                     }
+
                     //check if left or right are a classType that is not String
+                    /*
                     else if( (leftType instanceof ClassType && !((ClassType) leftType).className().equals("String"))
                             && (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String")) ){
                         throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values.");
@@ -115,19 +124,27 @@ public class Typechecker {
                             || (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String"))){
                         throw new SyntaxException(node, "Cannot perform addition with non numerical values.");
                     }
+
+                     */
                     
                 }
                 else {
-                    if(b){
+                    if(voidIsPresent) {
                         throw new SyntaxException(node, "Cannot perform binary operation with a void value.");
+                    } else if (nonNumericPresent) {
+                        throw new SyntaxException(node, String.format("%s %s %s not possible.", leftType, operator, rightType));
                     }
+
                     //check if left or right are a classType that is not String
+                    /*
                     else if( leftType instanceof ClassType || rightType instanceof ClassType){
                         throw new SyntaxException(node, leftType + " " + operator + " " + rightType + " not possible.");
                     }
                     else if(b1){
                         throw new SyntaxException(node, leftType + " " + operator + " " + rightType + " not possible.");
                     }
+
+                     */
                 }
             }
             case Negate(ParserRuleContext ctx, Expression expression) -> {
