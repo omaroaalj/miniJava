@@ -78,17 +78,12 @@ public class Typechecker {
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression expression) -> {
                 typecheck(symbols, exprName);
                 typecheck(symbols, expression);
-                Type left = getType(symbols, exprName),
-                        right = getType(symbols, expression);
-                if(left.equals(PrimitiveType.Double) && right.equals(PrimitiveType.Int)){
-                    //do nothing
-                }
-                else if( (left instanceof ClassType && ((ClassType)left).className().equals("String"))
-                        && (right instanceof ClassType && ((ClassType)right).className().equals("String"))) {
-                    //do nothing
-                }
-                else if(left != right){
-                    throw new SyntaxException(node, String.format("Cannot assign type %s to variable of the type %s", right, left));
+                Type leftType = getType(symbols, exprName),
+                        rightType = getType(symbols, expression);
+                
+                if (!leftType.equals(rightType)
+                        && (!leftType.equals(PrimitiveType.Double) || !rightType.equals(PrimitiveType.Int))) {
+                    throw new SyntaxException(node, String.format("Cannot assign type %s to variable of the type %s", rightType, leftType));
                 }
             }
             case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
