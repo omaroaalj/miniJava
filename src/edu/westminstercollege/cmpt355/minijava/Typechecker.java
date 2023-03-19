@@ -90,14 +90,24 @@ public class Typechecker {
 
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
+                boolean b = leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance);
                 if(operator.equals("+")){
-                    if(leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance)){
+                    if(b){
                         throw new SyntaxException(node, "Cannot perform addition with a void value.");
                     }
                     //check if left or right are a classType that is not String
                     else if( (leftType instanceof ClassType && !((ClassType) leftType).className().equals("String"))
                             || (rightType instanceof ClassType && !((ClassType) rightType).className().equals("String")) ){
                         throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values");
+                    }
+                }
+                else {
+                    if(b){
+                        throw new SyntaxException(node, "Cannot perform binary operation with a void value.");
+                    }
+                    //check if left or right are a classType that is not String
+                    else if( leftType instanceof ClassType || rightType instanceof ClassType){
+                        throw new SyntaxException(node, "Cannot perform binary operation with non numerical values");
                     }
                 }
             }
@@ -178,6 +188,9 @@ public class Typechecker {
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
                 // cases if operator is +
+                boolean b = (leftType.equals(PrimitiveType.Int) || leftType.equals(PrimitiveType.Double))
+                        && (rightType.equals(PrimitiveType.Int) || rightType.equals(PrimitiveType.Double));
+                boolean b1 = leftType.equals(PrimitiveType.Double) || rightType.equals(PrimitiveType.Double);
                 if(operator.equals("+")){
                     // case if int, double or string
                     if( (leftType.equals(PrimitiveType.Double) || leftType.equals(PrimitiveType.Int) || (leftType instanceof ClassType &&
@@ -190,10 +203,9 @@ public class Typechecker {
                             return new ClassType("String");
                         }
                         // case both or int/double
-                        else if((leftType.equals(PrimitiveType.Int) || leftType.equals(PrimitiveType.Double))
-                                && (rightType.equals(PrimitiveType.Int) || rightType.equals(PrimitiveType.Double))){
+                        else if(b){
                             // case one is double
-                            if(leftType.equals(PrimitiveType.Double) || rightType.equals(PrimitiveType.Double)){
+                            if(b1){
                                 return PrimitiveType.Double;
                             }
                             else {
@@ -207,6 +219,22 @@ public class Typechecker {
                     }
                     // case either is a classType not String, invalid op, return either
                     else if(leftType instanceof ClassType || rightType instanceof ClassType){
+                        return leftType;
+                    }
+                }
+                // case for all other operators
+                else {
+                    // case if left/right int or double
+                    if (b) {
+                        // case one is double
+                        if (b1) {
+                            return PrimitiveType.Double;
+                        } else {
+                            return PrimitiveType.Int;
+                        }
+                    }
+                    // case if either is a classType, including String
+                    else if (leftType instanceof ClassType || rightType instanceof ClassType) {
                         return leftType;
                     }
                 }
