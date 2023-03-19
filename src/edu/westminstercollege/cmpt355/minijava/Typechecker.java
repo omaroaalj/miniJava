@@ -123,7 +123,18 @@ public class Typechecker {
                 }
             }
             case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
-
+                var castType = type.type();
+                var exprType = getType(symbols, expression);
+                var stringType = new ClassType("String");
+                if (exprType.equals(VoidType.Instance)) {
+                    throw new SyntaxException(node, "Cannot use cast on a void expression.");
+                } else if (!castType.equals(stringType) && !(castType instanceof PrimitiveType)) {
+                    throw new SyntaxException(node, castType + " not a valid cast type.");
+                } else if ((castType instanceof PrimitiveType) && exprType.equals(stringType)) {
+                    throw new SyntaxException(node, "Cannot cast String to " + castType);
+                } else if ((castType.equals(PrimitiveType.Int) || castType.equals(PrimitiveType.Double)) && exprType.equals(PrimitiveType.Boolean)) {
+                    throw new SyntaxException(node, "Cannot cast " + exprType + " to " + castType);
+                }
             }
             case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
                 for(var expr : expressions){
