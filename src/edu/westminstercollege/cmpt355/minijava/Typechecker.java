@@ -9,12 +9,12 @@ public class Typechecker {
 
     public void typecheck(SymbolTable symbols, Node node) throws SyntaxException {
         switch(node) {
-            case Block(ParserRuleContext ctx, List<Statement> statements) -> {
+            case Block(ParserRuleContext ignored, List<Statement> statements) -> {
                 for (var statement : statements) {
                     typecheck(symbols, statement);
                 }
             }
-            case Declarations(ParserRuleContext ctx, TypeNode type, List<Declaration> decItems) -> {
+            case Declarations(ParserRuleContext ignored, TypeNode type, List<Declaration> decItems) -> {
                 // loop through each declaration, sets type if necessary
                 for(var decItem : decItems){
                     var variable = symbols.findVariable(decItem.name());
@@ -37,45 +37,45 @@ public class Typechecker {
                     }
                 }
             }
-            case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
+            case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 typecheck(symbols, expr);
 
                 Type exprType = getType(symbols, expr);
                 System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
-            case IntLiteral(ParserRuleContext ctx, String text) -> {
+            case IntLiteral(ParserRuleContext ignored, String text) -> {
                 try{
                     int value = Integer.parseInt(text);
                 } catch (NumberFormatException e){
                     throw new SyntaxException(node, "value must be of type Integer");
                 }
             }
-            case DoubleLiteral(ParserRuleContext ctx, String text) -> {
+            case DoubleLiteral(ParserRuleContext ignored, String text) -> {
                 try{
                     double value = Double.parseDouble(text);
                 } catch (NumberFormatException e){
                     throw new SyntaxException(node, "value must be of type Double");
                 }
             }
-            case BooleanLiteral(ParserRuleContext ctx, String text) -> {
+            case BooleanLiteral(ParserRuleContext ignored, String text) -> {
                 if(!text.equals("true") && !text.equals("false")){
                     throw new SyntaxException(node, "value must be of type Boolean");
                 }
             }
-            case StringLiteral(ParserRuleContext ctx, String text) -> {
+            case StringLiteral(ParserRuleContext ignored, String text) -> {
                 int text_length = text.length()-1;
                 int lastChar = text.charAt(text_length);
                 int firstChar = text.charAt(0);
                 if (firstChar != '"' || lastChar != '"')
                     throw new SyntaxException(node, "value must start and end with \" ");
             }
-            case VariableAccess(ParserRuleContext ctx, String variableName) -> {
+            case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
                 if(variable.isEmpty()){
                     throw new SyntaxException(node, String.format("Variable %s does not exist", variableName));
                 }
             }
-            case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
+            case Assignment(ParserRuleContext ignored, Expression exprName, Expression expression) -> {
                 typecheck(symbols, exprName);
                 typecheck(symbols, expression);
                 Type left = getType(symbols, exprName),
@@ -88,10 +88,10 @@ public class Typechecker {
                     //do nothing
                 }
                 else if(left != right){
-                    throw new SyntaxException(node, String.format("Cannot assign type %s to variable of the type %s", right.toString(), left.toString()));
+                    throw new SyntaxException(node, String.format("Cannot assign type %s to variable of the type %s", right, left));
                 }
             }
-            case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
+            case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
                 typecheck(symbols, left);
                 typecheck(symbols, right);
 
@@ -119,28 +119,28 @@ public class Typechecker {
                     }
                 }
             }
-            case Negate(ParserRuleContext ctx, Expression expression) -> {
+            case Negate(ParserRuleContext ignored, Expression expression) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
                     throw new SyntaxException(node, "Cannot negate " + type);
                 }
             }
-            case PreIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
+            case PreIncrement(ParserRuleContext ignored, Expression expression, String ignored2) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
                     throw new SyntaxException(node, "Cannot use pre-increment " + type);
                 }
             }
-            case PostIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
+            case PostIncrement(ParserRuleContext ignored, Expression expression, String ignored2) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
                     throw new SyntaxException(node, "Cannot use post-increment " + type);
                 }
             }
-            case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
+            case Cast(ParserRuleContext ignored, TypeNode type, Expression expression) -> {
                 var castType = type.type();
                 var exprType = getType(symbols, expression);
                 var stringType = new ClassType("String");
@@ -155,7 +155,7 @@ public class Typechecker {
                     throw new SyntaxException(node, "Cannot cast " + exprType + " to " + castType);
                 }
             }
-            case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
+            case Print(ParserRuleContext ignored, List<Expression> expressions) -> {
                 for(var expr : expressions){
                     typecheck(symbols, expr);
                     if(getType(symbols, expr) instanceof VoidType){
@@ -171,29 +171,29 @@ public class Typechecker {
 
     public Type getType(SymbolTable symbols, Expression expr) {
         switch(expr) {
-            case IntLiteral(ParserRuleContext ctx, String text) -> {
+            case IntLiteral(ParserRuleContext ignored, String ignored2) -> {
                 return PrimitiveType.Int;
             }
-            case DoubleLiteral(ParserRuleContext ctx, String text) -> {
+            case DoubleLiteral(ParserRuleContext ignored, String ignored2) -> {
                 return PrimitiveType.Double;
             }
-            case BooleanLiteral(ParserRuleContext ctx, String text) -> {
+            case BooleanLiteral(ParserRuleContext ignored, String ignored2) -> {
                 return PrimitiveType.Boolean;
             }
-            case StringLiteral(ParserRuleContext ctx, String text) -> {
+            case StringLiteral(ParserRuleContext ignored, String ignored2) -> {
                 return new ClassType("String");
             }
-            case VariableAccess(ParserRuleContext ctx, String variableName) -> {
+            case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
                 if(variable.isPresent()){
                     var realVar = variable.get();
                     return realVar.getType();
                 }
             }
-            case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
+            case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored2) -> {
                 return getType(symbols, exprName);
             }
-            case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
+            case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
                 // cases if operator is +
@@ -258,19 +258,19 @@ public class Typechecker {
                     }
                 }
             }
-            case Negate(ParserRuleContext ctx, Expression expression) -> {
+            case Negate(ParserRuleContext ignored, Expression expression) -> {
                 return getType(symbols, expression);
             }
-            case PreIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
+            case PreIncrement(ParserRuleContext ignored, Expression expression, String ignored2) -> {
                 return getType(symbols, expression);
             }
-            case PostIncrement(ParserRuleContext ctx, Expression expression, String increment) -> {
+            case PostIncrement(ParserRuleContext ignored, Expression expression, String ignored2) -> {
                 return getType(symbols, expression);
             }
-            case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
+            case Cast(ParserRuleContext ignored, TypeNode type, Expression ignored2) -> {
                 return type.type();
             }
-            case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
+            case Print(ParserRuleContext ignored, List<Expression> ignored2) -> {
                 return VoidType.Instance;
             }
         }

@@ -1,3 +1,5 @@
-Badger bob;
-bob + "b"; // String
-"b" + bob; // String
+int x;
+int y;
+int z;
+double w;
+w = x + y + z + w;
