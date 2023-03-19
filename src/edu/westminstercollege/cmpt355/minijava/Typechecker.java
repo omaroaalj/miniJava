@@ -52,6 +52,7 @@ public class Typechecker {
 
             }
             case VariableAccess(ParserRuleContext ctx, String variableName) -> {
+                var variable = symbols.findVariable(variableName);
 
             }
             case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
