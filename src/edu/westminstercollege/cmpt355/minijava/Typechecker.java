@@ -41,7 +41,7 @@ public class Typechecker {
                 typecheck(symbols, expr);
 
                 Type exprType = getType(symbols, expr);
-                System.out.println("exprType of " + expr + ": " + exprType.toString());
+                // System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
@@ -76,7 +76,7 @@ public class Typechecker {
                     if(voidIsPresent) {
                         throw new SyntaxException(node, "Cannot perform addition with a void value.");
                     } else if (nonNumericPresent && noStringsPresent) {
-                        throw new SyntaxException(node, "Cannot perform addition with non numerical/non String values.");
+                        throw new SyntaxException(node, String.format("Addition involving %s and %s not possible.", leftType, rightType));
                     }
                 }
                 else {
