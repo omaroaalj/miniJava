@@ -1,5 +1,2 @@
-int x;
-int y;
-int z;
-double w;
-w = x + y + z + w;
+boolean x;
+x++; // fail

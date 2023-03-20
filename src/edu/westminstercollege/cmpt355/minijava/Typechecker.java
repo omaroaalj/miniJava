@@ -98,14 +98,14 @@ public class Typechecker {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
-                    throw new SyntaxException(node, "Cannot use pre-increment " + type);
+                    throw new SyntaxException(node, "Cannot pre-increment " + type);
                 }
             }
             case PostIncrement(ParserRuleContext ignored, Expression expression, String ignored2) -> {
                 typecheck(symbols, expression);
                 var type = getType(symbols, expression);
                 if(!type.equals(PrimitiveType.Int) && !type.equals(PrimitiveType.Double)){
-                    throw new SyntaxException(node, "Cannot use post-increment " + type);
+                    throw new SyntaxException(node, "Cannot post-increment " + type);
                 }
             }
             case Cast(ParserRuleContext ignored, TypeNode type, Expression expression) -> {
