@@ -6,10 +6,9 @@ public class Variable {
     private String name;
     private int index;
 
-    public Variable(String name, int index) {
+    public Variable(String name) {
         this.type = type;
         this.name = name;
-        this.index = index;
     }
 
     public Type getType() { return type; }
