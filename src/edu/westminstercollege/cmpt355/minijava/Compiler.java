@@ -55,7 +55,8 @@ public class Compiler {
                     """, className);
             out.printf(".method public static main([Ljava/lang/String;)V\n");
             out.printf(".limit stack 100\n");
-            out.printf(".limit locals %d\n", symbols.getVariableCount() * 2 + 1); // + 1 because of args
+            symbols.allocateLocalVariable(1); // allocate space for args[]
+            out.printf(".limit locals %d\n", symbols.getVariableCount());
             out.println();
             /*
             // Generate code for program here 🙂

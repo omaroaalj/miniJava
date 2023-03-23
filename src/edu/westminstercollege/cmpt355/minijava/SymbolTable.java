@@ -8,7 +8,10 @@ public class SymbolTable {
 
     private Map<String, Variable> variables = new HashMap<>();
     // args is index 0
-
+    public int index = 0;
+    public int allocateLocalVariable(int size){
+        return index += size;
+    }
     public Variable registerVariable(String name) {
         Variable v = variables.get(name);
         if (v == null) {
@@ -20,7 +23,7 @@ public class SymbolTable {
     }
 
     public int getVariableCount() {
-        return variables.size();
+        return index;
     }
 
     public Optional<Variable> findVariable(String name) {
