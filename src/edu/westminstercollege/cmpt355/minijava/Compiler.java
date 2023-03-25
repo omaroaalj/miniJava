@@ -148,11 +148,12 @@ public class Compiler {
                 if(expression.isPresent()) {
                     Type exprType = tc.getType(symbols, expression.get());
                     if(exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)) {
-                        //store int value?
+                        // load/store int/boolean value
                         out.printf("iload_1\n");
                         out.printf("istore_1\n");
                     }
                     else {
+                        // load/store double
                         out.printf("dload_1\n");
                         out.printf("dstore_1\n");
                     }
