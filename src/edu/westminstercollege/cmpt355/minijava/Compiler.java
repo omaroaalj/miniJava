@@ -110,10 +110,16 @@ public class Compiler {
         });
     }
     private void generateCode(PrintWriter out, SymbolTable symbols, Node node) throws SyntaxException {
-        switch(node) {
+        switch (node) {
+            case EmptyStatement(ParserRuleContext ctx) -> {} // do nothing
+
             case Block(ParserRuleContext ctx, List<Statement> statements) -> {
-                out.println();
+                for (var statement : statements)
+                    generateCode(out, symbols, statement);
             }
+
+            
+
             default -> {
                 throw new SyntaxException("Unimplemented");
             }
