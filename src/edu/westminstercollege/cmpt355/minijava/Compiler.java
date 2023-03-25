@@ -123,14 +123,19 @@ public class Compiler {
             }
             case DoubleLiteral(ParserRuleContext ctx, String text) -> {
                 out.printf("ldc2_w %f\n", Double.parseDouble(text));
-                out.println("pop2");
+                out.println("pop2\n");
             }
             case IntLiteral(ParserRuleContext ctx, String text) -> {
                 out.printf("ldc %d\n", Integer.parseInt(text));
-                out.println("pop");
+                out.println("pop\n");
             }
-
-
+            case BooleanLiteral(ParserRuleContext ctx, String text) -> {
+                if (text.equals("true"))
+                    out.printf("iconst_1\n");
+                else
+                    out.printf("iconst_0\n");
+                out.printf("pop\n");
+            }
             
 
             default -> {
