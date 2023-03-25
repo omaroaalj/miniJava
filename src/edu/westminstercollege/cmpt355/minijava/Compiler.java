@@ -114,8 +114,10 @@ public class Compiler {
             case EmptyStatement(ParserRuleContext ctx) -> {} // do nothing
 
             case Block(ParserRuleContext ctx, List<Statement> statements) -> {
-                for (var statement : statements)
+                for (var statement : statements) {
+                    out.printf(".line %d", statement.ctx().getStart().getLine());
                     generateCode(out, symbols, statement);
+                }
             }
 
             
