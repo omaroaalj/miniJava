@@ -136,6 +136,14 @@ public class Compiler {
                     out.printf("iconst_0\n");
                 out.printf("pop\n");
             }
+            case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
+                Type exprType = tc.getType(symbols, expr);
+                generateCode(out, symbols, expr);
+                if (exprType.equals(PrimitiveType.Int))
+                    out.printf("dup\n");
+                else
+                    out.printf("dup2\n");
+            }
             
 
             default -> {
