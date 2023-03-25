@@ -114,15 +114,18 @@ public class Compiler {
             case Block(ParserRuleContext ctx, List<Statement> statements) -> {
                 //System.out.println("This was called");
                 for (var statement : statements) {
-                    out.printf(".line %d", statement.ctx().getStart().getLine());
+                    //out.printf(".line %d", statement.ctx().getStart().getLine());
                     generateCode(out, symbols, statement);
 
                 }
             }
             case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
                 generateCode(out, symbols, expr);
-                Variable var = symbols.findVariable(expr.children().get(0).toString()).get();
+                //Variable var = symbols.findVariable(expr.children().get(0).toString()).get();
                 out.println("pop2");
+            }
+            case DoubleLiteral(ParserRuleContext ctx, String text) -> {
+                out.printf("ldc2_w %f\n", Double.parseDouble(text));
             }
 
             
