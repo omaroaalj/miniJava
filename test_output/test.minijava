@@ -18,7 +18,7 @@ return
 .limit stack 100
 .limit locals 1
 
-ldc2_w 1.000000
-pop2
+ldc 1
+pop
 return
 .end method
