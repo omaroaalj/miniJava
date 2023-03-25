@@ -120,21 +120,44 @@ public class Compiler {
             }
             case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
                 generateCode(out, symbols, expr);
+                Type exprType = tc.getType(symbols, expr);
+                if(exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)){
+                    out.printf("pop\n");
+                } else {
+                    out.printf("pop2\n");
+                }
             }
             case DoubleLiteral(ParserRuleContext ctx, String text) -> {
                 out.printf("ldc2_w %f\n", Double.parseDouble(text));
-                out.println("pop2\n");
             }
             case IntLiteral(ParserRuleContext ctx, String text) -> {
                 out.printf("ldc %d\n", Integer.parseInt(text));
-                out.println("pop\n");
             }
             case BooleanLiteral(ParserRuleContext ctx, String text) -> {
                 if (text.equals("true"))
                     out.printf("iconst_1\n");
                 else
                     out.printf("iconst_0\n");
-                out.printf("pop\n");
+            }
+            case Declarations(ParserRuleContext ctx, TypeNode type, List<Declaration> decItems) -> {
+                for(var decItem : decItems){
+                    generateCode(out, symbols, decItem);
+                }
+            }
+            case Declaration(ParserRuleContext ctx1, String name1, Optional<Expression> expression) -> {
+                if(expression.isPresent()) {
+                    Type exprType = tc.getType(symbols, expression.get());
+                    if(exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)) {
+                        //store int value?
+                        out.printf("iload_1\n");
+                        out.printf("istore_1\n");
+                    }
+                    else {
+                        out.printf("dload_1\n");
+                        out.printf("dstore_1\n");
+                    }
+
+                }
             }
             case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
                 Type exprType = tc.getType(symbols, expr);
@@ -144,7 +167,7 @@ public class Compiler {
                 else
                     out.printf("dup2\n");
             }
-            
+
 
             default -> {
                 throw new SyntaxException("Unimplemented");
