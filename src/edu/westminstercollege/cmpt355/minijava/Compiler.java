@@ -127,6 +127,9 @@ public class Compiler {
             case DoubleLiteral(ParserRuleContext ctx, String text) -> {
                 out.printf("ldc2_w %f\n", Double.parseDouble(text));
             }
+            case IntLiteral(ParserRuleContext ctx, String text) -> {
+                out.printf("ldc %d\n", Integer.parseInt(text));
+            }
 
             
 
