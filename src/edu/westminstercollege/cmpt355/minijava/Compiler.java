@@ -60,7 +60,7 @@ public class Compiler {
             out.println();
 
             // Generate code for program here 🙂
-            //generateCode(out, symbols, block);
+            generateCode(out, symbols, block);
 
 
 
