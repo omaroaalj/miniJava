@@ -23,8 +23,10 @@ return
 ldc 1
 pop
 
+
 .line 2
 ldc2_w 1.000000
 pop2
+
 return
 .end method
