@@ -1,3 +1,2 @@
 double x;
-int y;
-double z;
+x = 5;

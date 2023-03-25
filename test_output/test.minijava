@@ -16,7 +16,6 @@ return
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 6
+.limit locals 3
 
-return
-.end method
+.line 1

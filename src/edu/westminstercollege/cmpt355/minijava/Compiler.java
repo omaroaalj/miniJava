@@ -58,16 +58,14 @@ public class Compiler {
             symbols.allocateLocalVariable(1); // allocate space for args[]
             out.printf(".limit locals %d\n", symbols.getVariableCount());
             out.println();
-            /*
+
             // Generate code for program here 🙂
-            for (var statement : block.statements()) {
-                //generateCode(statement);
-            }
-            */
+            //generateCode(out, symbols, block);
+
 
 
             // another way
-            // program.statements().forEach(this::generateCode);
+            //block.statements().forEach(this::generateCode);
 
             out.printf("return\n");
             out.printf(".end method\n");
@@ -123,6 +121,7 @@ public class Compiler {
             }
             case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
                 generateCode(out, symbols, expr);
+                Variable var = symbols.findVariable(expr.children().get(0).toString()).get();
                 out.println("pop2");
             }
 
