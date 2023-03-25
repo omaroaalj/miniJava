@@ -114,9 +114,8 @@ public class Compiler {
             case Block(ParserRuleContext ctx, List<Statement> statements) -> {
                 //System.out.println("This was called");
                 for (var statement : statements) {
-                    out.printf(".line number", statement.ctx().getStart().getLine());
+                    out.printf("\n.line %d\n", statement.ctx().getStart().getLine());
                     generateCode(out, symbols, statement);
-
                 }
             }
             case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
