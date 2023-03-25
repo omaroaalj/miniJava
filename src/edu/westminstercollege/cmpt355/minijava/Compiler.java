@@ -114,10 +114,16 @@ public class Compiler {
             case EmptyStatement(ParserRuleContext ctx) -> {} // do nothing
 
             case Block(ParserRuleContext ctx, List<Statement> statements) -> {
+                //System.out.println("This was called");
                 for (var statement : statements) {
                     out.printf(".line %d", statement.ctx().getStart().getLine());
                     generateCode(out, symbols, statement);
+
                 }
+            }
+            case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
+                generateCode(out, symbols, expr);
+                out.println("pop2");
             }
 
             
