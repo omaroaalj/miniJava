@@ -157,6 +157,12 @@ public class Compiler {
 
                 }
             }
+            case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
+                out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;");
+                for (var expr : expressions) {
+
+                }
+            }
             case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
                 Type exprType = tc.getType(symbols, expr);
                 generateCode(out, symbols, expr);
