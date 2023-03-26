@@ -146,16 +146,13 @@ public class Compiler {
             }
             case Declaration(ParserRuleContext ctx1, String name1, Optional<Expression> expression) -> {
                 if(expression.isPresent()) {
+                    generateCode(out, symbols, expression.get());
                     Type exprType = tc.getType(symbols, expression.get());
                     if(exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)) {
-                        // load/store int/boolean value
-                        out.printf("iload_1\n");
-                        out.printf("istore_1\n");
+                        out.printf("dup\n");
                     }
                     else {
-                        // load/store double
-                        out.printf("dload_1\n");
-                        out.printf("dstore_1\n");
+                        out.printf("dup2\n");
                     }
 
                 }
