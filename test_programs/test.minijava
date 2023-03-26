@@ -1,2 +1,1 @@
-String x = "Hello!";
-print(x);
+double x = 5, y = 6, z = 5;

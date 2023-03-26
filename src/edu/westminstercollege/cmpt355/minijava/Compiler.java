@@ -160,17 +160,17 @@ public class Compiler {
                     Type exprType = tc.getType(symbols, expression.get());
                     var stringType = new ClassType("String");
                     if(varType.equals(PrimitiveType.Int) || varType.equals(PrimitiveType.Boolean)) {
-                        out.printf("istore_%d\n", var.getIndex());
+                        out.printf("istore %d\n", var.getIndex());
                     }
                     else if(varType.equals(PrimitiveType.Double) && exprType.equals(PrimitiveType.Int)){
                         out.printf("i2d\n");
-                        out.printf("dstore_%d\n", var.getIndex());
+                        out.printf("dstore %d\n", var.getIndex());
                     }
                     else if(varType.equals(stringType)){
-                        out.printf("astore_%d\n", var.getIndex());
+                        out.printf("astore %d\n", var.getIndex());
                     }
                     else {
-                        out.printf("dstore_%d\n", var.getIndex());
+                        out.printf("dstore %d\n", var.getIndex());
                     }
 
                 }
@@ -211,28 +211,28 @@ public class Compiler {
                 }
                 else if (exprType.equals(PrimitiveType.Int)){
                     out.printf("dup\n");
-                    out.printf("istore_%d\n", var.getIndex());
+                    out.printf("istore %d\n", var.getIndex());
                 }
                 else if (exprType.equals(stringType)){
                     out.printf("dup\n");
-                    out.printf("astore_%d\n", var.getIndex());
+                    out.printf("astore %d\n", var.getIndex());
                 }
                 else{
                     out.printf("dup2\n");
-                    out.printf("dstore_%d\n", var.getIndex());
+                    out.printf("dstore %d\n", var.getIndex());
                 }
             }
             case VariableAccess(ParserRuleContext ctx, String variableName) -> {
                 Variable var = symbols.findVariable(variableName).get();
                 var stringType = new ClassType("String");
                 if(var.getType().equals(PrimitiveType.Double)){
-                    out.printf("dload_%d\n", var.getIndex());
+                    out.printf("dload %d\n", var.getIndex());
                 }
                 else if (var.getType().equals(stringType)){
-                    out.printf("aload_%d\n", var.getIndex());
+                    out.printf("aload %d\n", var.getIndex());
                 }
                 else
-                    out.printf("iload_%d\n", var.getIndex());
+                    out.printf("iload %d\n", var.getIndex());
             }
             default -> {
                 throw new SyntaxException("Unimplemented");
