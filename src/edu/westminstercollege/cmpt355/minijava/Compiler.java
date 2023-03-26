@@ -167,6 +167,27 @@ public class Compiler {
 
                 }
             }
+            case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
+                // out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;");
+                String printlnArg = "";
+                var stringType = new ClassType("String");
+                Type exprType;
+                for (var expr : expressions) {
+                    out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;");
+                    exprType = tc.getType(symbols, expr);
+                    if (exprType.equals(PrimitiveType.Int))
+                        printlnArg = "I";
+                    else if (exprType.equals(PrimitiveType.Double))
+                        printlnArg = "D";
+                    else if (exprType.equals(PrimitiveType.Boolean))
+                        printlnArg = "Z";
+                    else if (exprType.equals(stringType))
+                        printlnArg = "Ljava/lang/String;";
+                    else
+                        throw new SyntaxException("Print argument Unimplemented");
+                    out.printf(String.format("invokevirtual java/io/PrintStream/println(%s)V", printlnArg));
+                }
+            }
             case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
                 Variable var = symbols.findVariable(((VariableAccess)name).variableName()).get();
                 Type exprType = tc.getType(symbols, name);
