@@ -121,7 +121,10 @@ public class Compiler {
             case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
                 generateCode(out, symbols, expr);
                 Type exprType = tc.getType(symbols, expr);
-                if (exprType.equals(PrimitiveType.Double))
+                if (exprType.equals(VoidType.Instance)){
+                    //do nothing
+                }
+                else if (exprType.equals(PrimitiveType.Double))
                     out.printf("pop2\n");
                 else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean))
                     out.printf("pop\n");
@@ -206,6 +209,15 @@ public class Compiler {
                 else{
                     out.printf("dup2\n");
                     out.printf("dstore_%d\n", symbols.getVariableCount() - 2);
+                }
+            }
+            case VariableAccess(ParserRuleContext ctx, String variableName) -> {
+                Variable var = symbols.findVariable(variableName).get();
+                if(var.getType().equals(PrimitiveType.Double)){
+                    out.printf("dload_%d\n", var.getIndex());
+                }
+                else{
+                    out.printf("iload_%d\n", var.getIndex());
                 }
             }
 
