@@ -173,7 +173,8 @@ public class Compiler {
                 var stringType = new ClassType("String");
                 Type exprType;
                 for (var expr : expressions) {
-                    out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;");
+                    out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
+                    generateCode(out, symbols, expr);
                     exprType = tc.getType(symbols, expr);
                     if (exprType.equals(PrimitiveType.Int))
                         printlnArg = "I";
@@ -185,7 +186,7 @@ public class Compiler {
                         printlnArg = "Ljava/lang/String;";
                     else
                         throw new SyntaxException("Print argument Unimplemented");
-                    out.printf(String.format("invokevirtual java/io/PrintStream/println(%s)V", printlnArg));
+                    out.printf(String.format("invokevirtual java/io/PrintStream/println(%s)V\n", printlnArg));
                 }
             }
             case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
