@@ -141,6 +141,9 @@ public class Compiler {
                 else
                     out.printf("iconst_0\n");
             }
+            case StringLiteral(ParserRuleContext ctx1, String text) -> {
+                out.printf("ldc %s\n", text);
+            }
             case Declarations(ParserRuleContext ctx, TypeNode type, List<Declaration> decItems) -> {
                 for(var decItem : decItems){
                     generateCode(out, symbols, decItem);
