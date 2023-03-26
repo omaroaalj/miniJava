@@ -22,12 +22,12 @@ public class Typechecker {
                         var realVar = variable.get();
                         realVar.setType(type.type());
                         if(type.type().equals(PrimitiveType.Double)){
+                            realVar.setIndex(symbols.getVariableCount()+1);
                             symbols.allocateLocalVariable(2);
-                            realVar.setIndex(2);
                         }
                         else{
+                            realVar.setIndex(symbols.getVariableCount()+1);
                             symbols.allocateLocalVariable(1);
-                            realVar.setIndex(1);
                         }
                     }
                     // check if declaration has children, then check if declared double, can have double or int values

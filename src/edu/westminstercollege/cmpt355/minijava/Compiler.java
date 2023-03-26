@@ -144,18 +144,25 @@ public class Compiler {
                     generateCode(out, symbols, decItem);
                 }
             }
-            case Declaration(ParserRuleContext ctx1, String name, Optional<Expression> expression) -> {
+            case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression) -> {
                 // check if there is an initialization
                 if(expression.isPresent()) {
                     // genCode for that value so it is on the stack
                     generateCode(out, symbols, expression.get());
-                    Type exprType = tc.getType(symbols, expression.get());
                     Variable var = symbols.findVariable(name).get();
-                    if(exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)) {
+
+                    Type varType = var.getType();
+                    Type exprType = tc.getType(symbols, expression.get());
+
+                    if(varType.equals(PrimitiveType.Int) || varType.equals(PrimitiveType.Boolean)) {
                         out.printf("istore_%d\n", var.getIndex());
                     }
+                    else if(varType.equals(PrimitiveType.Double) && exprType.equals(PrimitiveType.Int)){
+                        out.printf("i2d\n");
+                        out.printf("dstore_%d\n", var.getIndex());
+                    }
                     else {
-                        out.printf("dstore_d\n", var.getIndex());
+                        out.printf("dstore_%d\n", var.getIndex());
                     }
 
                 }

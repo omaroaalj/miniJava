@@ -1,2 +1,2 @@
-double y;
-y = 5;
+double x = 4;
+int y = 1;

@@ -16,16 +16,16 @@ return
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 3
+.limit locals 4
 
 
 .line 1
+ldc 4
+i2d
+dstore_1
 
 .line 2
-ldc 5
-i2d
-dup2
-dstore_2
-pop2
+ldc 1
+istore_3
 return
 .end method
