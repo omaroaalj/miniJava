@@ -1,1 +1,3 @@
-double x = 5, y = 6, z = 5;
+boolean z;
+z = true;
+print(z); // true

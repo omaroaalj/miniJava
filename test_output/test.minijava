@@ -16,18 +16,20 @@ return
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 7
+.limit locals 2
 
 
 .line 1
-ldc 5
-i2d
-dstore 1
-ldc 6
-i2d
-dstore 3
-ldc 5
-i2d
-dstore 5
+
+.line 2
+iconst_1
+dup
+istore 1
+pop
+
+.line 3
+getstatic java/lang/System/out Ljava/io/PrintStream;
+iload 1
+invokevirtual java/io/PrintStream/println(Z)V
 return
 .end method

@@ -209,7 +209,7 @@ public class Compiler {
                     out.printf("dup2\n");
                     out.printf("dstore_%d\n", var.getIndex());
                 }
-                else if (exprType.equals(PrimitiveType.Int)){
+                else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)){
                     out.printf("dup\n");
                     out.printf("istore %d\n", var.getIndex());
                 }
