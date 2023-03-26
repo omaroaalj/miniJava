@@ -121,11 +121,10 @@ public class Compiler {
             case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
                 generateCode(out, symbols, expr);
                 Type exprType = tc.getType(symbols, expr);
-                if(exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)){
-                    out.printf("pop\n");
-                } else {
+                if (exprType.equals(PrimitiveType.Double))
                     out.printf("pop2\n");
-                }
+                else
+                    out.printf("pop\n");
             }
             case DoubleLiteral(ParserRuleContext ctx, String text) -> {
                 out.printf("ldc2_w %f\n", Double.parseDouble(text));
