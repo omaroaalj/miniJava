@@ -16,12 +16,16 @@ return
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 1
+.limit locals 2
 
 
 .line 1
-getstatic java/lang/System/out Ljava/io/PrintStream;
 ldc "Hello!"
+astore_1
+
+.line 2
+getstatic java/lang/System/out Ljava/io/PrintStream;
+aload_1
 invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 return
 .end method

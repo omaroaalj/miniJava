@@ -25,7 +25,7 @@ public class Typechecker {
                             realVar.setIndex(symbols.getVariableCount()+1);
                             symbols.allocateLocalVariable(2);
                         }
-                        else{
+                        else {
                             realVar.setIndex(symbols.getVariableCount()+1);
                             symbols.allocateLocalVariable(1);
                         }
