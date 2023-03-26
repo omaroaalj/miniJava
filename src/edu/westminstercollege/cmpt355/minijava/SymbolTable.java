@@ -9,6 +9,7 @@ public class SymbolTable {
     private Map<String, Variable> variables = new HashMap<>();
     // args is index 0
     public int index = 0;
+    private int varIndex = 0;
     public int allocateLocalVariable(int size){
         return index += size;
     }

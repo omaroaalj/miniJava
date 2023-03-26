@@ -34,7 +34,7 @@ public class Main {
             });
         }
         catch (SyntaxException se) {
-            System.out.print("ERROR syntax exception: " + se.getMessage());
+            System.out.println("ERROR syntax exception: " + se.getMessage());
             //System.out.println("ERROR: " + se.message + " [line " + se.getNode().ctx().start.getLine() + "]");
         }
 

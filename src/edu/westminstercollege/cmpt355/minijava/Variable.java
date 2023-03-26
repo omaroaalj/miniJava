@@ -21,6 +21,10 @@ public class Variable {
 
     public int getIndex() { return index; }
 
+    public void setIndex(int index) {
+        this.index += index;
+    }
+
     public String toString() { return name + "[" + type.toString() + "]"; }
 
 }

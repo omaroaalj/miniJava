@@ -144,26 +144,41 @@ public class Compiler {
                     generateCode(out, symbols, decItem);
                 }
             }
-            case Declaration(ParserRuleContext ctx1, String name1, Optional<Expression> expression) -> {
+            case Declaration(ParserRuleContext ctx1, String name, Optional<Expression> expression) -> {
+                // check if there is an initialization
                 if(expression.isPresent()) {
+                    // genCode for that value so it is on the stack
                     generateCode(out, symbols, expression.get());
                     Type exprType = tc.getType(symbols, expression.get());
+                    Variable var = symbols.findVariable(name).get();
                     if(exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)) {
-                        out.printf("dup\n");
+                        out.printf("istore_%d\n", var.getIndex());
                     }
                     else {
-                        out.printf("dup2\n");
+                        out.printf("dstore_d\n", var.getIndex());
                     }
 
                 }
             }
             case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
-                Type exprType = tc.getType(symbols, expr);
+                Variable var = symbols.findVariable(((VariableAccess)name).variableName()).get();
+                Type exprType = tc.getType(symbols, name);
+                Type assigType = tc.getType(symbols, expr);
+
                 generateCode(out, symbols, expr);
-                if (exprType.equals(PrimitiveType.Int))
-                    out.printf("dup\n");
-                else
+                if (exprType.equals(PrimitiveType.Double) && assigType.equals(PrimitiveType.Int)) {
+                    out.printf("i2d\n");
                     out.printf("dup2\n");
+                    out.printf("dstore_%d\n", var.getIndex());
+                }
+                else if (exprType.equals(PrimitiveType.Int)){
+                    out.printf("dup\n");
+                    out.printf("istore_%d\n", var.getIndex());
+                }
+                else{
+                    out.printf("dup2\n");
+                    out.printf("dstore_%d\n", symbols.getVariableCount() - 2);
+                }
             }
 
 
