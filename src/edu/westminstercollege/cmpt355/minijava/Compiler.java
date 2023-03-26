@@ -123,7 +123,7 @@ public class Compiler {
                 Type exprType = tc.getType(symbols, expr);
                 if (exprType.equals(PrimitiveType.Double))
                     out.printf("pop2\n");
-                else
+                else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean))
                     out.printf("pop\n");
             }
             case DoubleLiteral(ParserRuleContext ctx, String text) -> {
