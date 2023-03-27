@@ -235,7 +235,7 @@ public class Compiler {
                     out.printf("iload %d\n", var.getIndex());
             }
             case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
-                int exprInts = 0;
+                int numberOfInts = 0;
                 generateCode(out, symbols, left);
 
                 // convert both expressions to double if any are ints, then convert back to int if both were ints
@@ -243,19 +243,23 @@ public class Compiler {
                 var leftType = tc.getType(symbols, left);
                 if (leftType.equals(PrimitiveType.Int)) {
                     out.println("i2d");
-                    exprInts++;
+                    numberOfInts++;
                 }
                 generateCode(out, symbols, right);
                 var rightType = tc.getType(symbols, right);
                 if (rightType.equals(PrimitiveType.Int)) {
                     out.println("i2d");
-                    exprInts++;
+                    numberOfInts++;
                 }
 
                 switch (operator) {
                     case "+" -> out.println("dadd");
+                    case "-" -> out.println("dsub");
+                    case "*" -> out.println("dmul");
+                    case "/" -> out.println("ddiv");
+                    case "%" -> out.println("drem");
                 }
-                if (exprInts == 2) // were both expressions ints?
+                if (numberOfInts == 2) // were both expressions ints?
                     out.println("d2i");
             }
             default -> {
