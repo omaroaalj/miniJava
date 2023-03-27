@@ -197,7 +197,7 @@ public class Compiler {
                 }
                 // new line after each print statement
                 out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
-                out.printf("invokevirtual java/io/PrintStream/println()V\n");
+                out.println("invokevirtual java/io/PrintStream/println()V");
             }
             case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
                 Variable var = symbols.findVariable(((VariableAccess)name).variableName()).get();
