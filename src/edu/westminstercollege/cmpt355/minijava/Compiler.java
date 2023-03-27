@@ -234,6 +234,18 @@ public class Compiler {
                 else
                     out.printf("iload %d\n", var.getIndex());
             }
+            case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
+                Type exprType = tc.getType(symbols, expression);
+                generateCode(out, symbols, expression);
+                boolean success = false;
+                if (type.type().equals(PrimitiveType.Double) && exprType.equals(PrimitiveType.Int)) {
+                        out.printf("i2d\n");
+                    } else if (type.type().equals(PrimitiveType.Int) && exprType.equals(PrimitiveType.Double)) {
+                        out.printf("d2i\n");
+                    } else {
+                        // do nothing
+                    }
+            }
             default -> {
                 throw new SyntaxException("Unimplemented");
             }
