@@ -234,6 +234,30 @@ public class Compiler {
                 else
                     out.printf("iload %d\n", var.getIndex());
             }
+            case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
+                int exprInts = 0;
+                generateCode(out, symbols, left);
+
+                // convert both expressions to double if any are ints, then convert back to int if both were ints
+
+                var leftType = tc.getType(symbols, left);
+                if (leftType.equals(PrimitiveType.Int)) {
+                    out.println("i2d");
+                    exprInts++;
+                }
+                generateCode(out, symbols, right);
+                var rightType = tc.getType(symbols, right);
+                if (rightType.equals(PrimitiveType.Int)) {
+                    out.println("i2d");
+                    exprInts++;
+                }
+
+                switch (operator) {
+                    case "+" -> out.println("dadd");
+                }
+                if (exprInts == 2) // were both expressions ints?
+                    out.println("d2i");
+            }
             default -> {
                 throw new SyntaxException("Unimplemented");
             }
