@@ -274,6 +274,18 @@ public class Compiler {
                         // do nothing
                     }
             }
+            case Negate(ParserRuleContext ctx, Expression expr) -> {
+                generateCode(out, symbols, expr);
+                var exprType = tc.getType(symbols, expr);
+                if (exprType == PrimitiveType.Int) {
+                    out.println("ineg");
+                } else if (exprType == PrimitiveType.Double) {
+                    out.println("dneg");
+                }
+                else
+                    throw new RuntimeException(String.format(
+                            "Internal compiler error: type of negate is %s", exprType));
+            }
             default -> {
                 throw new SyntaxException("Unimplemented");
             }
