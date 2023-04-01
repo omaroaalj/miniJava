@@ -238,22 +238,61 @@ public class Compiler {
             }
             case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
                 int numberOfInts = 0;
-                generateCode(out, symbols, left);
+                var stringType = new ClassType("String");
 
                 // convert both expressions to double if any are ints, then convert back to int if both were ints
                 var leftType = tc.getType(symbols, left);
-                if (leftType.equals(PrimitiveType.Int)) {
-                    out.println("i2d");
-                    numberOfInts++;
-                }
-                generateCode(out, symbols, right);
                 var rightType = tc.getType(symbols, right);
-                if (rightType.equals(PrimitiveType.Int)) {
-                    out.println("i2d");
-                    numberOfInts++;
+                boolean b = (leftType.equals(stringType) || rightType.equals(stringType));
+                if(b && operator.equals("+")) {
+                    if(leftType.equals(stringType) && rightType.equals(stringType)) {
+                        generateCode(out, symbols, left);
+                        generateCode(out, symbols, right);
+                    } else if (leftType.equals(PrimitiveType.Int)) {
+                        generateCode(out, symbols, left);
+                        out.println("invokestatic java/lang/Integer.toString(I)Ljava/lang/String;");
+                        generateCode(out, symbols, right);
+                    } else if (rightType.equals(PrimitiveType.Int)){
+                        generateCode(out, symbols, left);
+                        generateCode(out, symbols, right);
+                        out.println("invokestatic java/lang/Integer.toString(I)Ljava/lang/String;");
+                    } else if (leftType.equals(PrimitiveType.Double)) {
+                        generateCode(out, symbols, left);
+                        out.println("invokestatic java/lang/Double.toString(D)Ljava/lang/String;");
+                        generateCode(out, symbols, right);
+                    } else if (rightType.equals(PrimitiveType.Double)) {
+                        generateCode(out, symbols, left);
+                        generateCode(out, symbols, right);
+                        out.println("invokestatic java/lang/Double.toString(D)Ljava/lang/String;");
+                    } else if (leftType.equals(PrimitiveType.Boolean)) {
+                        generateCode(out, symbols, left);
+                        out.println("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;");
+                        generateCode(out, symbols, right);
+                    } else if (rightType.equals(PrimitiveType.Boolean)) {
+                        generateCode(out, symbols, left);
+                        generateCode(out, symbols, right);
+                        out.println("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;");
+                    }
+                } else {
+                        generateCode(out, symbols, left);
+                        if (leftType.equals(PrimitiveType.Int)) {
+                            out.println("i2d");
+                            numberOfInts++;
+                        }
+                        generateCode(out, symbols, right);
+                        if (rightType.equals(PrimitiveType.Int)) {
+                            out.println("i2d");
+                            numberOfInts++;
+                        }
                 }
                 switch (operator) {
-                    case "+" -> out.println("dadd");
+                    case "+" -> {
+                        if (b) {
+                            out.println("invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;");
+                        } else {
+                            out.println("dadd");
+                        }
+                    }
                     case "-" -> out.println("dsub");
                     case "*" -> out.println("dmul");
                     case "/" -> out.println("ddiv");
@@ -265,19 +304,27 @@ public class Compiler {
             case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
                 Type exprType = tc.getType(symbols, expression);
                 generateCode(out, symbols, expression);
-                boolean success = false;
+                var stringType = new ClassType("String");
                 if (type.type().equals(PrimitiveType.Double) && exprType.equals(PrimitiveType.Int)) {
                         out.printf("i2d\n");
                     } else if (type.type().equals(PrimitiveType.Int) && exprType.equals(PrimitiveType.Double)) {
                         out.printf("d2i\n");
+                    } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Int)) {
+                        out.printf("invokestatic java/lang/Integer.toString(I)Ljava/lang/String;\n");
+                    } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Double)) {
+                        out.printf("invokestatic java/lang/Double.toString(D)Ljava/lang/String;\n");
+                    } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Boolean)) {
+                        out.printf("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;\n");
+                    } else if (type.type().equals(stringType) && exprType.equals(stringType)) {
+                        //do nothing
                     } else {
-                        // do nothing
+                        throw new SyntaxException(String.format("Cannot cast type %s to type %s", exprType, type.type()));
                     }
+                }
+                default -> {
+                    throw new SyntaxException("Unimplemented");
+                }
             }
-            default -> {
-                throw new SyntaxException("Unimplemented");
-            }
-        }
     }
 
     /*
