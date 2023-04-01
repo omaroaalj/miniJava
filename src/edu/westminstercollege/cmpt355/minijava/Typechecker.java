@@ -177,12 +177,12 @@ public class Typechecker {
                 if(operator.equals("+")){
                     // case if int, double or string
                     if( (leftType.equals(PrimitiveType.Double) || leftType.equals(PrimitiveType.Int) || (leftType instanceof ClassType &&
-                                ((ClassType) leftType).className().equals("String"))) &&
+                                ((ClassType) leftType).getClassName().equals("String"))) &&
                             (rightType.equals(PrimitiveType.Double) || rightType.equals(PrimitiveType.Int) || (rightType instanceof ClassType &&
-                                    ((ClassType) rightType).className().equals("String")))){
+                                    ((ClassType) rightType).getClassName().equals("String")))){
                         // case one is String
-                        if( (leftType instanceof ClassType && ((ClassType) leftType).className().equals("String")) ||
-                                (rightType instanceof ClassType && ((ClassType) rightType).className().equals("String"))) {
+                        if( (leftType instanceof ClassType && ((ClassType) leftType).getClassName().equals("String")) ||
+                                (rightType instanceof ClassType && ((ClassType) rightType).getClassName().equals("String"))) {
                             return new ClassType("String");
                         }
                         // case both or int/double
@@ -202,7 +202,7 @@ public class Typechecker {
                     }
                     // case either is a classType not String, invalid op, return either
                     else if(leftType instanceof ClassType || rightType instanceof ClassType){
-                        if(rightType instanceof ClassType && ((ClassType)rightType).className().equals("String")){
+                        if(rightType instanceof ClassType && ((ClassType)rightType).getClassName().equals("String")){
                             return rightType;
                         }
                         else {
@@ -246,6 +246,9 @@ public class Typechecker {
             }
             case Print(ParserRuleContext ignored, List<Expression> ignored2) -> {
                 return VoidType.Instance;
+            }
+            default -> {
+                System.out.println("GetType() Unimplemented");
             }
         }
         return null;
