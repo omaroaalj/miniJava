@@ -383,68 +383,6 @@ public class Compiler {
                     throw new RuntimeException(String.format(
                             "Internal compiler error: type of pre-increment is %s", exprType));
             }
-            case Negate(ParserRuleContext ctx, Expression expr) -> {
-                generateCode(out, symbols, expr);
-                var exprType = tc.getType(symbols, expr);
-                if (exprType == PrimitiveType.Int) {
-                    out.println("ineg");
-                } else if (exprType == PrimitiveType.Double) {
-                    out.println("dneg");
-                }
-                else
-                    throw new RuntimeException(String.format(
-                            "Internal compiler error: type of negate is %s", exprType));
-            }
-            case PreIncrement(ParserRuleContext ctx, Expression expr, String increment) -> {
-                var varName = (VariableAccess)expr;
-                var varValue = symbols.findVariable(varName.variableName()).get();
-                var exprType = tc.getType(symbols, varName);
-                var varIndex = varValue.getIndex();
-                if (exprType == PrimitiveType.Int) {
-                    if (increment.equals("++"))
-                        out.println(String.format("iinc %d 1", varIndex));
-                    else
-                        out.println(String.format("iinc %d -1", varIndex));
-                    out.println(String.format("iload %d", varIndex));
-                } else if (exprType == PrimitiveType.Double) {
-                    out.println(String.format("dload %d", varIndex));
-                    out.println("dconst_1");
-                    if (increment.equals("++"))
-                        out.println("dadd");
-                    else
-                        out.println("dsub");
-                    out.println("dup2");
-                    out.println(String.format("dstore %d", varIndex));
-                }
-                else
-                    throw new RuntimeException(String.format(
-                            "Internal compiler error: type of pre-increment is %s", exprType));
-            }
-            case PostIncrement(ParserRuleContext ctx, Expression expr, String increment) -> {
-                var varName = (VariableAccess)expr;
-                var varValue = symbols.findVariable(varName.variableName()).get();
-                var exprType = tc.getType(symbols, varName);
-                var varIndex = varValue.getIndex();
-                if (exprType == PrimitiveType.Int) {
-                    out.println(String.format("iload %d", varIndex));
-                    if (increment.equals("++"))
-                        out.println(String.format("iinc %d 1", varIndex));
-                    else
-                        out.println(String.format("iinc %d -1", varIndex));
-                } else if (exprType == PrimitiveType.Double) {
-                    out.println(String.format("dload %d", varIndex));
-                    out.println("dup2");
-                    out.println("dconst_1");
-                    if (increment.equals("++"))
-                        out.println("dadd");
-                    else
-                        out.println("dsub");
-                    out.println(String.format("dstore %d", varIndex));
-                }
-                else
-                    throw new RuntimeException(String.format(
-                            "Internal compiler error: type of pre-increment is %s", exprType));
-            }
             default -> {
                 throw new SyntaxException("Unimplemented");
             }
