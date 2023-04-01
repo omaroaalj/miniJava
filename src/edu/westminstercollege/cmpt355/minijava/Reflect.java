@@ -58,7 +58,19 @@ public class Reflect {
 
         // Use getModifiers() on the java.lang.reflect.Field object to check whether it is static.
 
-        throw new RuntimeException("Unimplemented");
+        //throw new RuntimeException("Unimplemented");
+
+        java.lang.reflect.Field field;
+        try{
+            field = clazz.getField(name);
+        } catch (NoSuchFieldException nsf){
+            //wtf
+        }
+        var type = typeFromClass(clazz);
+        if(type.isPresent())
+            return Optional.of(new edu.westminstercollege.cmpt355.minijava.Field(new ClassType(clazz.getName()), name, type.get()));
+        else
+            return Optional.empty();
     }
 
     /**
