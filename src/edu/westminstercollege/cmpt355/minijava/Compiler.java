@@ -72,10 +72,10 @@ public class Compiler {
         }
     }
 
-     // Make sure that all symbols (in this case, names of variables) make sense,
-     // i.e. we should not be using the value of a variable before we have assigned
-     // to it (Eval does not have declarations).
-      private void resolveSymbols(Block block) throws SyntaxException {
+    // Make sure that all symbols (in this case, names of variables) make sense,
+    // i.e. we should not be using the value of a variable before we have assigned
+    // to it (Eval does not have declarations).
+    private void resolveSymbols(Block block) throws SyntaxException {
         AST.postOrder(block, node -> {
             switch (node) {
                 case VariableAccess(ParserRuleContext ctx, String name) -> {
@@ -274,16 +274,16 @@ public class Compiler {
                         out.println("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;");
                     }
                 } else {
-                        generateCode(out, symbols, left);
-                        if (leftType.equals(PrimitiveType.Int)) {
-                            out.println("i2d");
-                            numberOfInts++;
-                        }
-                        generateCode(out, symbols, right);
-                        if (rightType.equals(PrimitiveType.Int)) {
-                            out.println("i2d");
-                            numberOfInts++;
-                        }
+                    generateCode(out, symbols, left);
+                    if (leftType.equals(PrimitiveType.Int)) {
+                        out.println("i2d");
+                        numberOfInts++;
+                    }
+                    generateCode(out, symbols, right);
+                    if (rightType.equals(PrimitiveType.Int)) {
+                        out.println("i2d");
+                        numberOfInts++;
+                    }
                 }
                 switch (operator) {
                     case "+" -> {
@@ -306,25 +306,87 @@ public class Compiler {
                 generateCode(out, symbols, expression);
                 var stringType = new ClassType("String");
                 if (type.type().equals(PrimitiveType.Double) && exprType.equals(PrimitiveType.Int)) {
-                        out.printf("i2d\n");
-                    } else if (type.type().equals(PrimitiveType.Int) && exprType.equals(PrimitiveType.Double)) {
-                        out.printf("d2i\n");
-                    } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Int)) {
-                        out.printf("invokestatic java/lang/Integer.toString(I)Ljava/lang/String;\n");
-                    } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Double)) {
-                        out.printf("invokestatic java/lang/Double.toString(D)Ljava/lang/String;\n");
-                    } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Boolean)) {
-                        out.printf("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;\n");
-                    } else if (type.type().equals(stringType) && exprType.equals(stringType)) {
-                        //do nothing
-                    } else {
-                        throw new SyntaxException(String.format("Cannot cast type %s to type %s", exprType, type.type()));
-                    }
-                }
-                default -> {
-                    throw new SyntaxException("Unimplemented");
+                    out.printf("i2d\n");
+                } else if (type.type().equals(PrimitiveType.Int) && exprType.equals(PrimitiveType.Double)) {
+                    out.printf("d2i\n");
+                } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Int)) {
+                    out.printf("invokestatic java/lang/Integer.toString(I)Ljava/lang/String;\n");
+                } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Double)) {
+                    out.printf("invokestatic java/lang/Double.toString(D)Ljava/lang/String;\n");
+                } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Boolean)) {
+                    out.printf("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;\n");
+                } else if (type.type().equals(stringType) && exprType.equals(stringType)) {
+                    //do nothing
+                } else {
+                    throw new SyntaxException(String.format("Cannot cast type %s to type %s", exprType, type.type()));
                 }
             }
+            case Negate(ParserRuleContext ctx, Expression expr) -> {
+                generateCode(out, symbols, expr);
+                var exprType = tc.getType(symbols, expr);
+                if (exprType == PrimitiveType.Int) {
+                    out.println("ineg");
+                } else if (exprType == PrimitiveType.Double) {
+                    out.println("dneg");
+                }
+                else
+                    throw new RuntimeException(String.format(
+                            "Internal compiler error: type of negate is %s", exprType));
+            }
+            case PreIncrement(ParserRuleContext ctx, Expression expr, String increment) -> {
+                var varName = (VariableAccess)expr;
+                var varValue = symbols.findVariable(varName.variableName()).get();
+                var exprType = tc.getType(symbols, varName);
+                var varIndex = varValue.getIndex();
+                if (exprType == PrimitiveType.Int) {
+                    if (increment.equals("++"))
+                        out.println(String.format("iinc %d 1", varIndex));
+                    else
+                        out.println(String.format("iinc %d -1", varIndex));
+                    out.println(String.format("iload %d", varIndex));
+                } else if (exprType == PrimitiveType.Double) {
+                    out.println(String.format("dload %d", varIndex));
+                    out.println("dconst_1");
+                    if (increment.equals("++"))
+                        out.println("dadd");
+                    else
+                        out.println("dsub");
+                    out.println("dup2");
+                    out.println(String.format("dstore %d", varIndex));
+                }
+                else
+                    throw new RuntimeException(String.format(
+                            "Internal compiler error: type of pre-increment is %s", exprType));
+            }
+            case PostIncrement(ParserRuleContext ctx, Expression expr, String increment) -> {
+                var varName = (VariableAccess)expr;
+                var varValue = symbols.findVariable(varName.variableName()).get();
+                var exprType = tc.getType(symbols, varName);
+                var varIndex = varValue.getIndex();
+                if (exprType == PrimitiveType.Int) {
+                    out.println(String.format("iload %d", varIndex));
+                    if (increment.equals("++"))
+                        out.println(String.format("iinc %d 1", varIndex));
+                    else
+                        out.println(String.format("iinc %d -1", varIndex));
+                } else if (exprType == PrimitiveType.Double) {
+                    out.println(String.format("dload %d", varIndex));
+                    out.println("dup2");
+                    out.println("dconst_1");
+                    if (increment.equals("++"))
+                        out.println("dadd");
+                    else
+                        out.println("dsub");
+                    out.println(String.format("dstore %d", varIndex));
+                }
+                else
+                    throw new RuntimeException(String.format(
+                            "Internal compiler error: type of pre-increment is %s", exprType));
+            }
+            default -> {
+                throw new SyntaxException("Unimplemented");
+            }
+        }
     }
 
     /*
