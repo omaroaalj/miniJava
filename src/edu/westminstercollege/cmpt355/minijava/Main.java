@@ -54,6 +54,7 @@ public class Main {
             // An exception was thrown by the compiled program (not a compiler problem 🙂)
             ex.getTargetException().printStackTrace();
         }
+        System.out.println(Reflect.findField(Math.class, "PI"));
 
     }
 
