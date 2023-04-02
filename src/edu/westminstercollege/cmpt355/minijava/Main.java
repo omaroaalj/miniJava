@@ -55,9 +55,18 @@ public class Main {
             // An exception was thrown by the compiled program (not a compiler problem 🙂)
             ex.getTargetException().printStackTrace();
         }
-        System.out.println(Reflect.findField(Math.class, "PI"));
-        System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Double.TYPE, Double.TYPE)));
-        System.out.println(Reflect.findMethod(java.io.PrintStream.class, "println", List.of()));
+        // Find Field tests:
+        //System.out.println(Reflect.findField(System.class, "out"));
+        //System.out.println(Reflect.findField(java.awt.Point.class, "x"));
+        //System.out.println(Reflect.findField(Math.class, "pie"));
+
+        // Find Method tests:
+        //System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Double.TYPE, Double.TYPE)));
+        //System.out.println(Reflect.findMethod(java.io.PrintStream.class, "println", List.of()));
+        //System.out.println(Reflect.findMethod(Math.class, "zowie", List.of()));
+        // System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Integer.TYPE, Integer.TYPE)));
+
+        // Find Constructor tests:
 
 
     }
