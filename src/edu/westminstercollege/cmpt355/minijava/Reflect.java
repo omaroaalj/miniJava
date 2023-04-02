@@ -63,15 +63,23 @@ public class Reflect {
         //throw new RuntimeException("Unimplemented");
 
         java.lang.reflect.Field field;
-        try{
+        try {
             field = clazz.getField(name);
-        } catch (NoSuchFieldException nsf){
-            //wtf
+        } catch (NoSuchFieldException nsf) {
+            return Optional.empty();
         }
-        var type = typeFromClass(clazz);
-        if(type.isPresent())
-            return Optional.of(new edu.westminstercollege.cmpt355.minijava.Field(new ClassType(clazz.getName()), name, type.get()));
-        else
+        var fieldType = typeFromClass(field.getType());
+        if (fieldType.isPresent()) {
+            edu.westminstercollege.cmpt355.minijava.Field foundField;
+            if (Modifier.isStatic(field.getModifiers()))
+                foundField = new Field(new StaticType(clazz.getName()), name, fieldType.get());
+            else
+                foundField = new Field(new ClassType(clazz.getName()), name, fieldType.get());
+            System.out.print("Field Static Type?: ");
+            System.out.println(foundField.containingType() instanceof StaticType);
+            return Optional.of(foundField);
+
+        } else
             return Optional.empty();
     }
 
@@ -120,7 +128,7 @@ public class Reflect {
                         foundMethod = new Method(new StaticType(clazz.getName()), name, matchingParameters, returnType);
                     else
                         foundMethod = new Method(new ClassType(clazz.getName()), name, matchingParameters, returnType);
-                    System.out.print("Static Type: ");
+                    System.out.print("Method Static Type?: ");
                     System.out.println(foundMethod.containingType() instanceof StaticType);
                     return Optional.of(foundMethod);
                 }
@@ -153,6 +161,32 @@ public class Reflect {
         // - the return type is always void;
         // - the class type is never a StaticType.
 
-        throw new RuntimeException("Unimplemented");
+        //throw new RuntimeException("Unimplemented");
+        java.lang.reflect.Constructor<?>[] constructors = clazz.getConstructors();
+        for (var constructor : constructors) {
+            var constructorParameterTypes = constructor.getParameterTypes();
+            // same number of parameter types?
+            if (constructorParameterTypes.length == parameterTypes.size()) {
+                List<Type> matchingParameters = new ArrayList<>();
+                // find any matching parameters
+                int i = 0;
+                for (var parameterType : parameterTypes) {
+                    // does parameter type match a type from miniJava and is a part of parameterTypes?
+                    if (typeFromClass(parameterType).isPresent() && constructorParameterTypes[i].equals(parameterType))
+                        matchingParameters.add(typeFromClass(parameterType).get());
+                    i++;
+                }
+                // are the number of matching parameters equal to parameter types and is there a miniJava return type?
+                if (matchingParameters.size() == constructorParameterTypes.length) {
+                    edu.westminstercollege.cmpt355.minijava.Method foundConstructor;
+                    foundConstructor = new Method(
+                            new ClassType(clazz.getName()), "<init>", matchingParameters, VoidType.Instance);
+                    System.out.print("Constructor Static Type?: ");
+                    System.out.println(foundConstructor.containingType() instanceof StaticType);
+                    return Optional.of(foundConstructor);
+                }
+            }
+        }
+        return Optional.empty();
     }
 }
