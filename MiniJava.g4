@@ -126,6 +126,21 @@ expression
     | <assoc=right> l=expression '=' r=expression {
         $n = new Assignment($ctx, $l.n, $r.n);
     }
+    | expression '.' NAME {
+        $n = new FieldAccess($ctx, $expression.n, $NAME.text);
+    }
+    | e=expression '.' NAME '(' (args+=expression (',' args+=expression)*)? ')' {
+        var methodArgs = new ArrayList<Expression>();
+        for (var arg : $args)
+            methodArgs.add(arg.n);
+        $n = new MethodCall($ctx, $e.n, $NAME.text, methodArgs);
+    }
+    | 'new' NAME '(' (args+=expression (',' args+=expression)*)? ')' {
+        var constructorArgs = new ArrayList<Expression>();
+        for (var arg : $args)
+            constructorArgs.add(arg.n);
+        $n = new ConstructorCall($ctx, $NAME.text, constructorArgs);
+    }
     ;
 
 type
