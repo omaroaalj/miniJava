@@ -107,18 +107,19 @@ public class Reflect {
                     // does parameter type match a type from miniJava and is a part of parameterTypes?
                     if (typeFromClass(parameterType).isPresent() && parameterTypes.contains(parameterType))
                         matchingParameters.add(typeFromClass(parameterType).get());
-                    // are the number of matching parameters equal to parameter types and is there a miniJava return type?
-                    if (matchingParameters.size() == parameterTypes.size() &&
-                            typeFromClass(method.getReturnType()).isPresent()) {
-                        var returnType = typeFromClass(method.getReturnType()).get();
-                        edu.westminstercollege.cmpt355.minijava.Method foundMethod;
-                        if (Modifier.isStatic(method.getModifiers()))
-                            foundMethod = new Method(new StaticType(clazz.getName()), name, matchingParameters, returnType);
-                        else
-                            foundMethod = new Method(new ClassType(clazz.getName()), name, matchingParameters, returnType);
-                        System.out.println(foundMethod.containingType());
-                        return Optional.of(foundMethod);
-                    }
+                }
+                // are the number of matching parameters equal to parameter types and is there a miniJava return type?
+                if (matchingParameters.size() == parameterTypes.size() &&
+                        typeFromClass(method.getReturnType()).isPresent()) {
+                    var returnType = typeFromClass(method.getReturnType()).get();
+                    edu.westminstercollege.cmpt355.minijava.Method foundMethod;
+                    if (Modifier.isStatic(method.getModifiers()))
+                        foundMethod = new Method(new StaticType(clazz.getName()), name, matchingParameters, returnType);
+                    else
+                        foundMethod = new Method(new ClassType(clazz.getName()), name, matchingParameters, returnType);
+                    System.out.print("Static Type: ");
+                    System.out.println(foundMethod.containingType() instanceof StaticType);
+                    return Optional.of(foundMethod);
                 }
             }
         }

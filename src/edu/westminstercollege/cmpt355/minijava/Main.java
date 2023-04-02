@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
+import java.util.List;
 
 public class Main {
 
@@ -55,6 +56,9 @@ public class Main {
             ex.getTargetException().printStackTrace();
         }
         System.out.println(Reflect.findField(Math.class, "PI"));
+        System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Double.TYPE, Double.TYPE)));
+        System.out.println(Reflect.findMethod(java.io.PrintStream.class, "println", List.of()));
+
 
     }
 
