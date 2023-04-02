@@ -99,17 +99,20 @@ public class Reflect {
         //throw new RuntimeException("Unimplemented");
         java.lang.reflect.Method[] methods = clazz.getMethods();
         for (var method : methods) { // look through each method
+            var methodParameterTypes = method.getParameterTypes();
             // same name and same number of parameter types?
-            if (method.getName().equals(name) && method.getParameterTypes().length == parameterTypes.size()) {
+            if (method.getName().equals(name) && methodParameterTypes.length == parameterTypes.size()) {
                 List<Type> matchingParameters = new ArrayList<>();
                 // find any matching parameters
-                for (var parameterType : method.getParameterTypes()) {
+                int i = 0;
+                for (var parameterType : parameterTypes) {
                     // does parameter type match a type from miniJava and is a part of parameterTypes?
-                    if (typeFromClass(parameterType).isPresent() && parameterTypes.contains(parameterType))
+                    if (typeFromClass(parameterType).isPresent() && methodParameterTypes[i].equals(parameterType))
                         matchingParameters.add(typeFromClass(parameterType).get());
+                    i++;
                 }
                 // are the number of matching parameters equal to parameter types and is there a miniJava return type?
-                if (matchingParameters.size() == parameterTypes.size() &&
+                if (matchingParameters.size() == methodParameterTypes.length &&
                         typeFromClass(method.getReturnType()).isPresent()) {
                     var returnType = typeFromClass(method.getReturnType()).get();
                     edu.westminstercollege.cmpt355.minijava.Method foundMethod;
