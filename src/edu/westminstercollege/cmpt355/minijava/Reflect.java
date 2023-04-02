@@ -1,7 +1,9 @@
 package edu.westminstercollege.cmpt355.minijava;
 
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 public class Reflect {
 
@@ -94,7 +96,33 @@ public class Reflect {
         // Note that this method returns a *miniJava* Method object, not a java.lang.reflect.Method! This means that
         // the return/parameter types will need to be mapped to Types.
 
-        throw new RuntimeException("Unimplemented");
+        //throw new RuntimeException("Unimplemented");
+        java.lang.reflect.Method[] methods = clazz.getMethods();
+        for (var method : methods) { // look through each method
+            // same name and same number of parameter types?
+            if (method.getName().equals(name) && method.getParameterTypes().length == parameterTypes.size()) {
+                List<Type> matchingParameters = new ArrayList<>();
+                // find any matching parameters
+                for (var parameterType : method.getParameterTypes()) {
+                    // does parameter type match a type from miniJava and is a part of parameterTypes?
+                    if (typeFromClass(parameterType).isPresent() && parameterTypes.contains(parameterType))
+                        matchingParameters.add(typeFromClass(parameterType).get());
+                    // are the number of matching parameters equal to parameter types and is there a miniJava return type?
+                    if (matchingParameters.size() == parameterTypes.size() &&
+                            typeFromClass(method.getReturnType()).isPresent()) {
+                        var returnType = typeFromClass(method.getReturnType()).get();
+                        edu.westminstercollege.cmpt355.minijava.Method foundMethod;
+                        if (Modifier.isStatic(method.getModifiers()))
+                            foundMethod = new Method(new StaticType(clazz.getName()), name, matchingParameters, returnType);
+                        else
+                            foundMethod = new Method(new ClassType(clazz.getName()), name, matchingParameters, returnType);
+                        System.out.println(foundMethod.containingType());
+                        return Optional.of(foundMethod);
+                    }
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     /**
