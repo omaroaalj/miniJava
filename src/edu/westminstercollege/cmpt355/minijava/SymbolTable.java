@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ArrayList;
 
 public class SymbolTable {
 
@@ -54,19 +55,54 @@ public class SymbolTable {
         }
     }
 
-    public Optional<Class> classFromType(Type type){
-        return Optional.empty();
+    public Optional<Class<?>> classFromType(Type type){
+        if (type.equals(PrimitiveType.Int))
+            return Optional.of(Integer.TYPE);
+        else if (type.equals(PrimitiveType.Double))
+            return Optional.of(Double.TYPE);
+        else if (type.equals(PrimitiveType.Boolean))
+            return Optional.of(Boolean.TYPE);
+        else if (type.equals(VoidType.Instance))
+            return Optional.of(Void.TYPE);
+        else if (type instanceof ClassType clazz)
+            return findJavaClass(clazz.getClassName());
+        else
+            return Optional.empty();
     }
 
-    public Optional<Field> findField(ClassType classType, String fieldName){
-        return Optional.empty();
+    public Optional<Field> findField(ClassType classType, String fieldName) {
+        var clazz = classFromType(classType);
+        if (clazz.isPresent())
+            return Reflect.findField(clazz.get(), fieldName);
+        else
+            return Optional.empty();
     }
 
     public Optional<Method> findMethod(ClassType classType, String methodName, List<Type> parameterTypes){
-        return Optional.empty();
+        var clazz = classFromType(classType);
+        List<Class<?>> clazzParameterTypes = new ArrayList<>();
+        for (var parameterType : parameterTypes) {
+            var clazzParameterType = classFromType(parameterType);
+            if (clazzParameterType.isPresent())
+                clazzParameterTypes.add(clazzParameterType.get());
+        }
+        if (clazz.isPresent() && clazzParameterTypes.size() == parameterTypes.size())
+            return Reflect.findMethod(clazz.get(), methodName, clazzParameterTypes);
+        else
+            return Optional.empty();
     }
 
     public Optional<Method> findConstructor(ClassType classType, List<Type> parameterTypes){
-        return Optional.empty();
+        var clazz = classFromType(classType);
+        List<Class<?>> clazzParameterTypes = new ArrayList<>();
+        for (var parameterType : parameterTypes) {
+            var clazzParameterType = classFromType(parameterType);
+            if (clazzParameterType.isPresent())
+                clazzParameterTypes.add(clazzParameterType.get());
+        }
+        if (clazz.isPresent() && clazzParameterTypes.size() == parameterTypes.size())
+            return Reflect.findConstructor(clazz.get(), clazzParameterTypes);
+        else
+            return Optional.empty();
     }
 }
