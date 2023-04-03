@@ -42,15 +42,15 @@ public class SymbolTable {
                     return Optional.empty();
                 }
                 else {
-                    return Optional.of(clazz.getClass());
+                    return Optional.of(clazz.get());
                 }
             }
             else {
-                return Optional.of(clazz.getClass());
+                return Optional.of(clazz.get());
             }
         }
         else {
-            return Optional.of(clazz.getClass());
+            return Optional.of(clazz.get());
         }
     }
 
