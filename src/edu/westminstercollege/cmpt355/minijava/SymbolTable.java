@@ -32,7 +32,7 @@ public class SymbolTable {
         return Optional.ofNullable(variables.get(name));
     }
 
-    public static Optional<Class> findJavaClass(String className) {
+    public static Optional<Class<?>> findJavaClass(String className) {
         var clazz = Reflect.classForName(className);
         if(clazz.isEmpty()){
             clazz = Reflect.classForName(String.format("java.lang." + className));
@@ -42,15 +42,15 @@ public class SymbolTable {
                     return Optional.empty();
                 }
                 else {
-                    return Optional.of(clazz.get());
+                    return clazz;
                 }
             }
             else {
-                return Optional.of(clazz.get());
+                return clazz;
             }
         }
         else {
-            return Optional.of(clazz.get());
+            return clazz;
         }
     }
 
