@@ -13,6 +13,7 @@ public record VariableAccess(ParserRuleContext ctx, String variableName) impleme
     public String getVariableName(){
         return variableName;
     }
+
     @Override
     public List<? extends Node> children() {
         return List.of();

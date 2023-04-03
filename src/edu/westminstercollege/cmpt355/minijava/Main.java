@@ -65,7 +65,7 @@ public class Main {
         //System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Double.TYPE, Double.TYPE)));
         //System.out.println(Reflect.findMethod(java.io.PrintStream.class, "println", List.of()));
         //System.out.println(Reflect.findMethod(Math.class, "zowie", List.of()));
-        // System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Integer.TYPE, Integer.TYPE)));
+        //System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Integer.TYPE, Integer.TYPE)));
 
         // Find Constructor tests:
         //System.out.println(Reflect.findConstructor(Object.class, List.of()));
@@ -74,14 +74,14 @@ public class Main {
 
         // SymbolTable methods (make sure to make methods static to test them)
             // findJavaClass
-        // System.out.println(SymbolTable.findJavaClass("java.util.Scanner"));
+        //System.out.println(SymbolTable.findJavaClass("java.util.Scanner"));
             // classFromType
-        // System.out.println(SymbolTable.classFromType(VoidType.Instance).get());
-        // System.out.println(SymbolTable.classFromType(PrimitiveType.Int).get());
-        // System.out.println(SymbolTable.classFromType(PrimitiveType.Double).get());
-        // System.out.println(SymbolTable.classFromType(PrimitiveType.Boolean).get());
+        //System.out.println(SymbolTable.classFromType(VoidType.Instance).get());
+        //System.out.println(SymbolTable.classFromType(PrimitiveType.Int).get());
+        //System.out.println(SymbolTable.classFromType(PrimitiveType.Double).get());
+        //System.out.println(SymbolTable.classFromType(PrimitiveType.Boolean).get());
             // findField
-        // System.out.println(SymbolTable.findField(new ClassType("Badger"), "Bob")); // hard to test w/out minijava file
+        //System.out.println(SymbolTable.findField(new ClassType("Badger"), "Bob")); // hard to test w/out minijava file
 
     }
 

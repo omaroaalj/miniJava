@@ -20,5 +20,4 @@ return
 
 
 .line 1
-return
-.end method
+getstatic java/lang/System/out Ljava/io/PrintStream;

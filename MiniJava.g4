@@ -67,8 +67,8 @@ decItem
     : NAME {
         $n = new Declaration($ctx, $NAME.text, Optional.empty());
     }
-    | NAME '=' expression {
-        $n = new Declaration($ctx, $NAME.text, Optional.of($expression.n));
+    | NAME '=' e=expression {
+        $n = new Declaration($ctx, $NAME.text, Optional.of($e.n));
     }
     ;
 
@@ -97,25 +97,25 @@ expression
     | NAME  {
         $n = new VariableAccess($ctx, $NAME.text);
     }
-    | '(' expression ')' {
-        $n = $expression.n;
+    | '(' e=expression ')' {
+        $n = $e.n;
     }
     | e=expression op=('++' | '--') {
             $n = new PostIncrement($ctx, $e.n, $op.text); // $op.text may be ++ or --
     }
-    | op=('++' | '--' | '+' | '-') expression {
+    | op=('++' | '--' | '+' | '-') e=expression {
         if($op.text.equals("++") || $op.text.equals("--")){
-            $n = new PreIncrement($ctx, $expression.n, $op.text);
+            $n = new PreIncrement($ctx, $e.n, $op.text);
         }
         else if($op.text.equals("-")) {
-            $n = new Negate($ctx, $expression.n);
+            $n = new Negate($ctx, $e.n);
         }
         else {
-            $n = $expression.n;
+            $n = $e.n;
         }
     }
-    | '(' type ')' expression {
-        $n = new Cast($ctx, $type.n, $expression.n);
+    | '(' type ')' e=expression {
+        $n = new Cast($ctx, $type.n, $e.n);
     }
     | l=expression op=('*' | '/' | '%') r=expression {
         $n = new BinaryOp($ctx, $op.text, $l.n, $r.n);
@@ -126,8 +126,8 @@ expression
     | <assoc=right> l=expression '=' r=expression {
         $n = new Assignment($ctx, $l.n, $r.n);
     }
-    | expression '.' NAME {
-        $n = new FieldAccess($ctx, $expression.n, $NAME.text);
+    | e=expression '.' NAME {
+        $n = new FieldAccess($ctx, $e.n, $NAME.text);
     }
     | e=expression '.' NAME '(' (args+=expression (',' args+=expression)*)? ')' {
         var methodArgs = new ArrayList<Expression>();

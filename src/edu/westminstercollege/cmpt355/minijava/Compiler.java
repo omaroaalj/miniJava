@@ -391,6 +391,9 @@ public class Compiler {
                     throw new RuntimeException(String.format(
                             "Internal compiler error: type of pre-increment is %s", exprType));
             }
+            case FieldAccess(ParserRuleContext ctx, Expression expression, String fieldName) -> {
+
+            }
             default -> {
                 throw new SyntaxException("Unimplemented");
             }
