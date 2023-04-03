@@ -1,6 +1,7 @@
 package edu.westminstercollege.cmpt355.minijava;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,5 +30,25 @@ public class SymbolTable {
 
     public Optional<Variable> findVariable(String name) {
         return Optional.ofNullable(variables.get(name));
+    }
+
+    public Optional<Class> findJavaClass(String className) {
+        return Optional.empty();
+    }
+
+    public Optional<Class> classFromType(Type type){
+        return Optional.empty();
+    }
+
+    public Optional<Field> findField(ClassType classType, String fieldName){
+        return Optional.empty();
+    }
+
+    public Optional<Method> findMethod(ClassType classType, String methodName, List<Type> parameterTypes){
+        return Optional.empty();
+    }
+
+    public Optional<Method> findConstructor(ClassType classType, List<Type> parameterTypes){
+        return Optional.empty();
     }
 }
