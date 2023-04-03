@@ -47,9 +47,8 @@ public class Typechecker {
             }
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 typecheck(symbols, expr);
-
                 Type exprType = getType(symbols, expr);
-                // System.out.println("exprType of " + expr + ": " + exprType.toString());
+                System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
@@ -168,6 +167,13 @@ public class Typechecker {
                     if (clazz.isPresent()) {
                         return new StaticType(variableName);
                     }
+                }
+            }
+            case FieldAccess(ParserRuleContext ignored, Expression expression, String fieldName) -> {
+                var clazz = expression.getClass();
+                var field = Reflect.findField(clazz, fieldName);
+                if(field.isPresent()){
+                    return field.get().type();
                 }
             }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored2) -> {
