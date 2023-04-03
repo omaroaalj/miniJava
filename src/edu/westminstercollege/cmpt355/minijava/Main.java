@@ -67,7 +67,9 @@ public class Main {
         // System.out.println(Reflect.findMethod(Math.class, "pow", List.of(Integer.TYPE, Integer.TYPE)));
 
         // Find Constructor tests:
-
+        //System.out.println(Reflect.findConstructor(Object.class, List.of()));
+        //System.out.println(Reflect.findConstructor(String.class, List.of(String.class)));
+        //System.out.println(Reflect.findConstructor(Math.class, List.of()));
 
     }
 
