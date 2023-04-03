@@ -33,6 +33,22 @@ public class SymbolTable {
     }
 
     public Optional<Class> findJavaClass(String className) {
+        var clazz = Reflect.classForName(className);
+        if(clazz.isEmpty()){
+            clazz = Reflect.classForName(String.format("java.lang." + className));
+            if(clazz.isEmpty()){
+                clazz = Reflect.classForName(String.format("java.util." + className));
+                if(clazz.isEmpty()){
+                    return Optional.empty();
+                }
+            }
+            else {
+                return Optional.of(clazz.getClass());
+            }
+        }
+        else {
+            return Optional.of(clazz.getClass());
+        }
         return Optional.empty();
     }
 
