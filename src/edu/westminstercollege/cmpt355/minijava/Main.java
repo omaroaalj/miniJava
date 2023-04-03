@@ -71,6 +71,8 @@ public class Main {
         //System.out.println(Reflect.findConstructor(String.class, List.of(String.class)));
         //System.out.println(Reflect.findConstructor(Math.class, List.of()));
 
+        // Find JavaClass
+        System.out.println(SymbolTable.findJavaClass("Scanner"));
     }
 
     private static String getClassNameFromPath(String path) {
