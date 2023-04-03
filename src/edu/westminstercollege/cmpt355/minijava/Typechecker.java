@@ -163,6 +163,12 @@ public class Typechecker {
                     var realVar = variable.get();
                     return realVar.getType();
                 }
+                else {
+                    var clazz = symbols.findJavaClass(variableName);
+                    if (clazz.isPresent()) {
+                        return new StaticType(variableName);
+                    }
+                }
             }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored2) -> {
                 return getType(symbols, exprName);

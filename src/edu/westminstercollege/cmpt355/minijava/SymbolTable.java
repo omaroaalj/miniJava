@@ -33,7 +33,7 @@ public class SymbolTable {
         return Optional.ofNullable(variables.get(name));
     }
 
-    public static Optional<Class<?>> findJavaClass(String className) {
+    public Optional<Class<?>> findJavaClass(String className) {
         var clazz = Reflect.classForName(className);
         if(clazz.isEmpty()){
             clazz = Reflect.classForName(String.format("java.lang." + className));

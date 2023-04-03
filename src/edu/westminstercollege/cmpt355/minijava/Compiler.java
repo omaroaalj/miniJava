@@ -80,10 +80,14 @@ public class Compiler {
             switch (node) {
                 case VariableAccess(ParserRuleContext ctx, String name) -> {
                     var nameVar = symbols.findVariable(name);
-                    if (nameVar.isEmpty())
+                    if (nameVar.isEmpty()) {
                         // no variable found
-                        throw new SyntaxException(node, String.format("Variable '%s' used before declaration", name));
-                    //System.out.println("[" + nameVar.get().getType().toString() + "]" + nameVar.get().getName());
+                        var nameClass = symbols.findJavaClass(name);
+                        if(nameClass.isEmpty()){
+                            // no classes found
+                            throw new SyntaxException(node, String.format("Variable '%s' used before declaration", name));
+                        }
+                    }
                 }
                 case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression1) -> {
                     if(symbols.findVariable(name).isPresent()){
@@ -233,8 +237,12 @@ public class Compiler {
                 else if (var.getType().equals(stringType)){
                     out.printf("aload %d\n", var.getIndex());
                 }
-                else
+                else if (var.getType().equals(PrimitiveType.Int) || var.getType().equals(PrimitiveType.Boolean)) {
                     out.printf("iload %d\n", var.getIndex());
+                }
+                else if (var.getType() instanceof StaticType){
+                    // do nothing
+                }
             }
             case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
                 int numberOfInts = 0;

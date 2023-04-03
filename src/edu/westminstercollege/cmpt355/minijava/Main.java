@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.List;
@@ -71,8 +72,17 @@ public class Main {
         //System.out.println(Reflect.findConstructor(String.class, List.of(String.class)));
         //System.out.println(Reflect.findConstructor(Math.class, List.of()));
 
-        // Find JavaClass
-        System.out.println(SymbolTable.findJavaClass("java.util.Scanner"));
+        // SymbolTable methods (make sure to make methods static to test them)
+            // findJavaClass
+        // System.out.println(SymbolTable.findJavaClass("java.util.Scanner"));
+            // classFromType
+        // System.out.println(SymbolTable.classFromType(VoidType.Instance).get());
+        // System.out.println(SymbolTable.classFromType(PrimitiveType.Int).get());
+        // System.out.println(SymbolTable.classFromType(PrimitiveType.Double).get());
+        // System.out.println(SymbolTable.classFromType(PrimitiveType.Boolean).get());
+            // findField
+        // System.out.println(SymbolTable.findField(new ClassType("Badger"), "Bob")); // hard to test w/out minijava file
+
     }
 
     private static String getClassNameFromPath(String path) {
