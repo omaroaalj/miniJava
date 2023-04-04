@@ -97,6 +97,21 @@ expression
     | NAME  {
         $n = new VariableAccess($ctx, $NAME.text);
     }
+    | e=expression '.' NAME {
+        $n = new FieldAccess($ctx, $e.n, $NAME.text);
+    }
+    | e=expression '.' NAME '(' (args+=expression (',' args+=expression)*)? ')' {
+        var methodArgs = new ArrayList<Expression>();
+        for (var arg : $args)
+            methodArgs.add(arg.n);
+        $n = new MethodCall($ctx, $e.n, $NAME.text, methodArgs);
+    }
+    | 'new' NAME '(' (args+=expression (',' args+=expression)*)? ')' {
+        var constructorArgs = new ArrayList<Expression>();
+        for (var arg : $args)
+            constructorArgs.add(arg.n);
+        $n = new ConstructorCall($ctx, $NAME.text, constructorArgs);
+    }
     | '(' e=expression ')' {
         $n = $e.n;
     }
@@ -125,21 +140,6 @@ expression
     }
     | <assoc=right> l=expression '=' r=expression {
         $n = new Assignment($ctx, $l.n, $r.n);
-    }
-    | e=expression '.' NAME {
-        $n = new FieldAccess($ctx, $e.n, $NAME.text);
-    }
-    | e=expression '.' NAME '(' (args+=expression (',' args+=expression)*)? ')' {
-        var methodArgs = new ArrayList<Expression>();
-        for (var arg : $args)
-            methodArgs.add(arg.n);
-        $n = new MethodCall($ctx, $e.n, $NAME.text, methodArgs);
-    }
-    | 'new' NAME '(' (args+=expression (',' args+=expression)*)? ')' {
-        var constructorArgs = new ArrayList<Expression>();
-        for (var arg : $args)
-            constructorArgs.add(arg.n);
-        $n = new ConstructorCall($ctx, $NAME.text, constructorArgs);
     }
     ;
 
