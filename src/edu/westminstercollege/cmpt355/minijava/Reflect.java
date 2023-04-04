@@ -75,8 +75,8 @@ public class Reflect {
                 foundField = new Field(new StaticType(clazz.getName()), name, fieldType.get());
             else
                 foundField = new Field(new ClassType(clazz.getName()), name, fieldType.get());
-            System.out.print("Field Static Type?: ");
-            System.out.println(foundField.containingType() instanceof StaticType);
+            //System.out.print("Field Static Type?: ");
+            //System.out.println(foundField.containingType() instanceof StaticType);
             return Optional.of(foundField);
 
         } else

@@ -393,9 +393,34 @@ public class Compiler {
                             "Internal compiler error: type of pre-increment is %s", exprType));
             }
             case FieldAccess(ParserRuleContext ignored, Expression expression, String fieldName) -> {
-                //out.println("aload_0");
+                var stringType = new ClassType("String");
                 var classType = tc.getType(symbols, expression);
-                out.printf("getstatic " + "java/lang/Math.PI D\n");
+                //find class path
+                String classPath = String.valueOf(symbols.findJavaClass(((ClassType) classType).getClassName()).get());
+                classPath = classPath.substring(6);
+                //find field in order to find its type
+                var field = symbols.findField((ClassType) classType, fieldName);
+                String printArg = "";
+                if(field.get().type().equals(PrimitiveType.Double))
+                    printArg = " D";
+                else if (field.get().type().equals(PrimitiveType.Int))
+                    printArg = " I";
+                else if (field.get().type().equals(PrimitiveType.Boolean))
+                    printArg = " Z";
+                else if (field.get().type().equals(VoidType.Instance))
+                    printArg = " V";
+                else if (field.get().type().equals(stringType))
+                    printArg = " Ljava/lang/String;";
+                else
+                    throw new SyntaxException(node, "Invalid field access type");
+                //is it a static or nonstatic field access
+                if(classType instanceof StaticType){
+                        out.println("getstatic " + classPath + "." + fieldName + printArg);
+                }
+                else {
+                    generateCode(out, symbols, expression);
+                    out.println("getfield " + classPath + "/" + fieldName + printArg);
+                }
             }
             default -> {
                 throw new SyntaxException("Unimplemented");

@@ -47,8 +47,8 @@ public class Typechecker {
             }
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 typecheck(symbols, expr);
-                Type exprType = getType(symbols, expr);
-                System.out.println("exprType of " + expr + ": " + exprType.toString());
+                //Type exprType = getType(symbols, expr);
+                //System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
