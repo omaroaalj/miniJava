@@ -22,4 +22,9 @@ return
 .line 1
 getstatic java/lang/System/out Ljava/io/PrintStream;
 aload_0
-getfield PI
+getfield
+invokevirtual java/io/PrintStream/print(D)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
+return
+.end method

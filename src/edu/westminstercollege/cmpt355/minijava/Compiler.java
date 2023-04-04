@@ -394,7 +394,7 @@ public class Compiler {
             }
             case FieldAccess(ParserRuleContext ignored, Expression ignored1, String fieldName) -> {
                 out.println("aload_0");
-                out.println("getfield " + fieldName);
+                out.println("getfield");
             }
             default -> {
                 throw new SyntaxException("Unimplemented");
