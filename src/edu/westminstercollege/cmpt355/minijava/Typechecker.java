@@ -64,6 +64,18 @@ public class Typechecker {
                     throw new SyntaxException(node, String.format("Field %s does not exist", fieldName));
                 }
             }
+            case MethodCall(ParserRuleContext ignored, Expression expression, String methodName, List<Expression> arguments) -> {
+                typecheck(symbols, expression); // check what is before .
+                List<Type> argumentTypes = new ArrayList<>();
+                for (var argument : arguments) {
+                    typecheck(symbols, argument);
+                    argumentTypes.add(getType(symbols, argument));
+                }
+                var classType = getType(symbols, expression);
+                var method = symbols.findMethod((ClassType) classType, methodName, argumentTypes);
+                if (method.isEmpty())
+                    throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
+            }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression expression) -> {
                 typecheck(symbols, exprName);
                 typecheck(symbols, expression);
