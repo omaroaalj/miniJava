@@ -1,1 +1,1 @@
-_print(Math.E);
+_print((String)System.out);

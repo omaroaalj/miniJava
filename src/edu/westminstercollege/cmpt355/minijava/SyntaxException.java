@@ -4,7 +4,6 @@ import edu.westminstercollege.cmpt355.minijava.node.Node;
 
 public class SyntaxException extends Exception {
     private Node node;
-    public String message;
 
     public SyntaxException() {
         super();
@@ -27,8 +26,8 @@ public class SyntaxException extends Exception {
     }
 
     public SyntaxException(Node node, String message){
+        super(message);
         this.node = node;
-        this.message = message;
     }
 
     public Node getNode(){
