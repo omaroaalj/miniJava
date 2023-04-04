@@ -393,9 +393,9 @@ public class Compiler {
                             "Internal compiler error: type of pre-increment is %s", exprType));
             }
             case FieldAccess(ParserRuleContext ignored, Expression expression, String fieldName) -> {
-                out.println("aload_0");
+                //out.println("aload_0");
                 var classType = tc.getType(symbols, expression);
-                out.printf("getfield " + "java/lang/Math.PI D\n");
+                out.printf("getstatic " + "java/lang/Math.PI D\n");
             }
             default -> {
                 throw new SyntaxException("Unimplemented");
