@@ -4,6 +4,7 @@ import edu.westminstercollege.cmpt355.minijava.node.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class Typechecker {
 
@@ -181,6 +182,15 @@ public class Typechecker {
                 if(field.isPresent()){
                     return field.get().type();
                 }
+            }
+            case MethodCall(ParserRuleContext ignored, Expression expression, String methodName, List<Expression> arguments) -> {
+                List<Type> argumentTypes = new ArrayList<>();
+                var classType = getType(symbols, expression);
+                for (var argument : arguments)
+                    argumentTypes.add(getType(symbols, argument));
+                var method = symbols.findMethod((ClassType) classType, methodName, argumentTypes);
+                if (method.isPresent())
+                    return method.get().returnType();
             }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored2) -> {
                 return getType(symbols, exprName);
