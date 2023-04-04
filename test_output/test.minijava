@@ -21,3 +21,5 @@ return
 
 .line 1
 getstatic java/lang/System/out Ljava/io/PrintStream;
+aload_0
+getfield PI

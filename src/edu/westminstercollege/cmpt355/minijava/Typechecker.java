@@ -171,9 +171,9 @@ public class Typechecker {
             }
             case FieldAccess(ParserRuleContext ignored, Expression expression, String fieldName) -> {
                 var clazz = expression.getClass();
-                var field = Reflect.findField(clazz, fieldName);
-                if(field.isPresent()){
-                    return field.get().type();
+                var type = Reflect.typeFromClass(clazz);
+                if(type.isPresent()){
+                    return type.get();
                 }
             }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored2) -> {
