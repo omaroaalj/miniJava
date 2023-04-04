@@ -79,6 +79,11 @@ public class Typechecker {
                 if (method.isEmpty())
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
             }
+            case ConstructorCall(ParserRuleContext ctx, String className, List<Expression> arguments) -> {
+                for(var arg : arguments){
+                    typecheck(symbols, arg);
+                }
+            }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression expression) -> {
                 typecheck(symbols, exprName);
                 typecheck(symbols, expression);
@@ -98,16 +103,19 @@ public class Typechecker {
                         rightType = getType(symbols, right);
                 boolean voidIsPresent = leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance);
                 var stringType = new ClassType("String");
-                boolean noStringsPresent = !leftType.equals(stringType) && !rightType.equals(stringType);
+                boolean noStringsPresent = !(leftType.equals(stringType)) && !(rightType.equals(stringType));
+                //System.out.println(!(leftType.equals(stringType)));
                 boolean nonNumericPresent =
                         (!leftType.equals(PrimitiveType.Int) && !leftType.equals(PrimitiveType.Double))
                                 || (!rightType.equals(PrimitiveType.Int) && !rightType.equals(PrimitiveType.Double));
                 if(operator.equals("+")){
                     if(voidIsPresent) {
                         throw new SyntaxException(node, "Cannot perform addition with a void value.");
-                    } else if (nonNumericPresent && noStringsPresent) {
+                    } /*else if (nonNumericPresent && noStringsPresent) {
                         throw new SyntaxException(node, String.format("Addition involving %s and %s not possible.", leftType, rightType));
                     }
+                    */
+
                 }
                 else {
                     if(voidIsPresent) {

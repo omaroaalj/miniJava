@@ -1,4 +1,5 @@
 package edu.westminstercollege.cmpt355.minijava;
+import java.util.Objects;
 
 public sealed class ClassType implements Type permits StaticType {
     String className;
@@ -14,8 +15,13 @@ public sealed class ClassType implements Type permits StaticType {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (obj == null || !(obj instanceof ClassType)) {
+            return false;
+        }
+        ClassType other = (ClassType) obj;
+        return Objects.equals(this.className, other.className);
     }
+
 
     public int hashCode() {
         return super.hashCode();

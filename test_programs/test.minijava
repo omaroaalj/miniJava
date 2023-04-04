@@ -1,1 +1,1 @@
-_print(Math.PI);
+_print("" + Math.PI);
