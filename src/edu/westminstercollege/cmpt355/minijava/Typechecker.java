@@ -159,8 +159,7 @@ public class Typechecker {
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
                 if(variable.isPresent()){
-                    var realVar = variable.get();
-                    return realVar.getType();
+                    return variable.get().getType();
                 }
                 else {
                     var clazz = symbols.findJavaClass(variableName);

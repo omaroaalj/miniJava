@@ -187,6 +187,7 @@ public class Compiler {
                     out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
                     generateCode(out, symbols, expr);
                     exprType = tc.getType(symbols, expr);
+                    System.out.println(exprType);
                     if (exprType.equals(PrimitiveType.Int))
                         printlnArg = "I";
                     else if (exprType.equals(PrimitiveType.Double))
