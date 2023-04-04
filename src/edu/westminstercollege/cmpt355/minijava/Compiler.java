@@ -281,6 +281,10 @@ public class Compiler {
                         generateCode(out, symbols, left);
                         generateCode(out, symbols, right);
                         out.println("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;");
+                    } else if (leftType.equals(stringType) && !rightType.equals(stringType)) {
+                        generateCode(out, symbols, left);
+                        generateCode(out, symbols, right);
+                        out.println("invokestatic java/lang/String.valueOf(Ljava/lang/Object;)Ljava/lang/String;");
                     }
                 } else {
                     generateCode(out, symbols, left);
@@ -403,7 +407,6 @@ public class Compiler {
                 //find field in order to find its type
                 var field = symbols.findField((ClassType) classType, fieldName);
                 String printArg = "";
-                System.out.println(field.get().type());
                 if(field.get().type().equals(PrimitiveType.Double))
                     printArg = " D";
                 else if (field.get().type().equals(PrimitiveType.Int))
