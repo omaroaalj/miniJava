@@ -78,7 +78,7 @@ public class Compiler {
     private void resolveSymbols(Block block) throws SyntaxException {
         AST.postOrder(block, node -> {
             switch (node) {
-                case VariableAccess(ParserRuleContext ctx, String name) -> {
+                case VariableAccess(ParserRuleContext ignored, String name) -> {
                     var nameVar = symbols.findVariable(name);
                     if (nameVar.isEmpty()) {
                         // no variable found
@@ -89,7 +89,7 @@ public class Compiler {
                         }
                     }
                 }
-                case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression1) -> {
+                case Declaration(ParserRuleContext ignored, String name, Optional<Expression> ignored1) -> {
                     if(symbols.findVariable(name).isPresent()){
                         throw new SyntaxException(node, String.format("Variable '%s' already declared", name));
                     }
@@ -97,7 +97,7 @@ public class Compiler {
                         symbols.registerVariable(name);
                     }
                 }
-                case Assignment(ParserRuleContext ctx, Expression exprName, Expression expression) -> {
+                case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored1) -> {
                     if (exprName instanceof VariableAccess expr) {
                         if (symbols.findVariable(expr.getVariableName()).isEmpty()) {
                             throw new SyntaxException(node, String.format("Variable '%s' used before assignment", expr.getVariableName()));
@@ -113,16 +113,16 @@ public class Compiler {
     }
     private void generateCode(PrintWriter out, SymbolTable symbols, Node node) throws SyntaxException {
         switch (node) {
-            case EmptyStatement(ParserRuleContext ctx) -> {} // do nothing
+            case EmptyStatement(ParserRuleContext ignored) -> {} // do nothing
 
-            case Block(ParserRuleContext ctx, List<Statement> statements) -> {
+            case Block(ParserRuleContext ignored, List<Statement> statements) -> {
                 //System.out.println("This was called");
                 for (var statement : statements) {
                     out.printf("\n.line %d\n", statement.ctx().getStart().getLine());
                     generateCode(out, symbols, statement);
                 }
             }
-            case ExpressionStatement(ParserRuleContext ctx, Expression expr) -> {
+            case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 generateCode(out, symbols, expr);
                 Type exprType = tc.getType(symbols, expr);
                 if (exprType.equals(VoidType.Instance)){
@@ -133,27 +133,27 @@ public class Compiler {
                 else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean))
                     out.printf("pop\n");
             }
-            case DoubleLiteral(ParserRuleContext ctx, String text) -> {
+            case DoubleLiteral(ParserRuleContext ignored, String text) -> {
                 out.printf("ldc2_w %f\n", Double.parseDouble(text));
             }
-            case IntLiteral(ParserRuleContext ctx, String text) -> {
+            case IntLiteral(ParserRuleContext ignored, String text) -> {
                 out.printf("ldc %d\n", Integer.parseInt(text));
             }
-            case BooleanLiteral(ParserRuleContext ctx, String text) -> {
+            case BooleanLiteral(ParserRuleContext ignored, String text) -> {
                 if (text.equals("true"))
                     out.printf("iconst_1\n");
                 else
                     out.printf("iconst_0\n");
             }
-            case StringLiteral(ParserRuleContext ctx1, String text) -> {
+            case StringLiteral(ParserRuleContext ignored, String text) -> {
                 out.printf("ldc %s\n", text);
             }
-            case Declarations(ParserRuleContext ctx, TypeNode type, List<Declaration> decItems) -> {
+            case Declarations(ParserRuleContext ignored, TypeNode ignored1, List<Declaration> decItems) -> {
                 for(var decItem : decItems){
                     generateCode(out, symbols, decItem);
                 }
             }
-            case Declaration(ParserRuleContext ctx, String name, Optional<Expression> expression) -> {
+            case Declaration(ParserRuleContext ignored, String name, Optional<Expression> expression) -> {
                 // check if there is an initialization
                 if(expression.isPresent()) {
                     // genCode for that value so it is on the stack
@@ -179,7 +179,7 @@ public class Compiler {
 
                 }
             }
-            case Print(ParserRuleContext ctx, List<Expression> expressions) -> {
+            case Print(ParserRuleContext ignored, List<Expression> expressions) -> {
                 String printlnArg = "";
                 var stringType = new ClassType("String");
                 Type exprType;
@@ -197,14 +197,14 @@ public class Compiler {
                     else if (exprType.equals(stringType))
                         printlnArg = "Ljava/lang/String;";
                     else
-                        throw new SyntaxException("Print argument Unimplemented");
+                        printlnArg = "Ljava/lang/String;";
                     out.printf(String.format("invokevirtual java/io/PrintStream/print(%s)V\n", printlnArg));
                 }
                 // new line after each print statement
                 out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
                 out.println("invokevirtual java/io/PrintStream/println()V");
             }
-            case Assignment(ParserRuleContext ctx, Expression name, Expression expr) -> {
+            case Assignment(ParserRuleContext ignored, Expression name, Expression expr) -> {
                 Variable var = symbols.findVariable(((VariableAccess)name).variableName()).get();
                 Type exprType = tc.getType(symbols, name);
                 Type assigType = tc.getType(symbols, expr);
@@ -229,7 +229,7 @@ public class Compiler {
                     out.printf("dstore %d\n", var.getIndex());
                 }
             }
-            case VariableAccess(ParserRuleContext ctx, String variableName) -> {
+            case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 Variable var = symbols.findVariable(variableName).get();
                 var stringType = new ClassType("String");
                 if(var.getType().equals(PrimitiveType.Double)){
@@ -245,7 +245,7 @@ public class Compiler {
                     // do nothing
                 }
             }
-            case BinaryOp(ParserRuleContext ctx, String operator, Expression left, Expression right) -> {
+            case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
                 int numberOfInts = 0;
                 var stringType = new ClassType("String");
 
@@ -310,7 +310,7 @@ public class Compiler {
                 if (numberOfInts == 2) // were both expressions ints?
                     out.println("d2i");
             }
-            case Cast(ParserRuleContext ctx, TypeNode type, Expression expression) -> {
+            case Cast(ParserRuleContext ignored, TypeNode type, Expression expression) -> {
                 Type exprType = tc.getType(symbols, expression);
                 generateCode(out, symbols, expression);
                 var stringType = new ClassType("String");
@@ -327,10 +327,11 @@ public class Compiler {
                 } else if (type.type().equals(stringType) && exprType.equals(stringType)) {
                     //do nothing
                 } else {
-                    throw new SyntaxException(String.format("Cannot cast type %s to type %s", exprType, type.type()));
+                    // typechecker should throw exception if there is an issue
+                    out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
                 }
             }
-            case Negate(ParserRuleContext ctx, Expression expr) -> {
+            case Negate(ParserRuleContext ignored, Expression expr) -> {
                 generateCode(out, symbols, expr);
                 var exprType = tc.getType(symbols, expr);
                 if (exprType == PrimitiveType.Int) {
@@ -342,7 +343,7 @@ public class Compiler {
                     throw new RuntimeException(String.format(
                             "Internal compiler error: type of negate is %s", exprType));
             }
-            case PreIncrement(ParserRuleContext ctx, Expression expr, String increment) -> {
+            case PreIncrement(ParserRuleContext ignored, Expression expr, String increment) -> {
                 var varName = (VariableAccess)expr;
                 var varValue = symbols.findVariable(varName.variableName()).get();
                 var exprType = tc.getType(symbols, varName);
@@ -367,7 +368,7 @@ public class Compiler {
                     throw new RuntimeException(String.format(
                             "Internal compiler error: type of pre-increment is %s", exprType));
             }
-            case PostIncrement(ParserRuleContext ctx, Expression expr, String increment) -> {
+            case PostIncrement(ParserRuleContext ignored, Expression expr, String increment) -> {
                 var varName = (VariableAccess)expr;
                 var varValue = symbols.findVariable(varName.variableName()).get();
                 var exprType = tc.getType(symbols, varName);
@@ -398,9 +399,11 @@ public class Compiler {
                 //find class path
                 String classPath = String.valueOf(symbols.findJavaClass(((ClassType) classType).getClassName()).get());
                 classPath = classPath.substring(6);
+                classPath = classPath.replace('.', '/');
                 //find field in order to find its type
                 var field = symbols.findField((ClassType) classType, fieldName);
                 String printArg = "";
+                System.out.println(field.get().type());
                 if(field.get().type().equals(PrimitiveType.Double))
                     printArg = " D";
                 else if (field.get().type().equals(PrimitiveType.Int))
@@ -411,8 +414,11 @@ public class Compiler {
                     printArg = " V";
                 else if (field.get().type().equals(stringType))
                     printArg = " Ljava/lang/String;";
-                else
-                    throw new SyntaxException(node, "Invalid field access type");
+                else {
+                    String s = field.get().type().toString();
+                    String s1 = " L" + s.substring(10, s.length()-1) + ";";
+                    printArg = s1.replace('.','/');
+                }
                 //is it a static or nonstatic field access
                 if(classType instanceof StaticType){
                         out.println("getstatic " + classPath + "." + fieldName + printArg);

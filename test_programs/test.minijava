@@ -1,1 +1,1 @@
-_print((String)System.out);
+_print(Math.PI);

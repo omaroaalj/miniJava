@@ -54,10 +54,13 @@ public class Typechecker {
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
                 if(variable.isEmpty()){
-                    throw new SyntaxException(node, String.format("Variable %s does not exist", variableName));
+                    var clazz = symbols.findJavaClass(variableName);
+                    if(clazz.isEmpty())
+                        throw new SyntaxException(node, String.format("Variable %s does not exist", variableName));
                 }
             }
             case FieldAccess(ParserRuleContext ignored, Expression expression, String fieldName) -> {
+                typecheck(symbols, expression);
                 var classType = getType(symbols, expression);
                 var field = symbols.findField((ClassType) classType, fieldName);
                 if(field.isEmpty()){
@@ -136,13 +139,14 @@ public class Typechecker {
                 }
             }
             case Cast(ParserRuleContext ignored, TypeNode type, Expression expression) -> {
+                typecheck(symbols, expression);
                 var castType = type.type();
                 var exprType = getType(symbols, expression);
                 var stringType = new ClassType("String");
                 if (exprType.equals(VoidType.Instance)) {
                     throw new SyntaxException(node, "Cannot use cast on a void value.");
-                } else if (!castType.equals(stringType) && !(castType instanceof PrimitiveType)) {
-                    throw new SyntaxException(node, castType + " not a valid cast type.");
+                } else if (castType.equals(stringType)){
+                    // do nothing
                 } else if ((castType instanceof PrimitiveType) && exprType.equals(stringType)) {
                     throw new SyntaxException(node, "Cannot cast String to " + castType);
                 } else if ((castType.equals(PrimitiveType.Int) || castType.equals(PrimitiveType.Double))
