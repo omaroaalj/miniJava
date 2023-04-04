@@ -56,6 +56,13 @@ public class Typechecker {
                     throw new SyntaxException(node, String.format("Variable %s does not exist", variableName));
                 }
             }
+            case FieldAccess(ParserRuleContext ignored, Expression expression, String fieldName) -> {
+                var classType = getType(symbols, expression);
+                var field = symbols.findField((ClassType) classType, fieldName);
+                if(field.isEmpty()){
+                    throw new SyntaxException(node, String.format("Field %s does not exist", fieldName));
+                }
+            }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression expression) -> {
                 typecheck(symbols, exprName);
                 typecheck(symbols, expression);

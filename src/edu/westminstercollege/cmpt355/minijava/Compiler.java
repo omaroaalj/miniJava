@@ -187,7 +187,7 @@ public class Compiler {
                     out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
                     generateCode(out, symbols, expr);
                     exprType = tc.getType(symbols, expr);
-                    System.out.println(exprType);
+                    //System.out.println(exprType);
                     if (exprType.equals(PrimitiveType.Int))
                         printlnArg = "I";
                     else if (exprType.equals(PrimitiveType.Double))
@@ -392,9 +392,10 @@ public class Compiler {
                     throw new RuntimeException(String.format(
                             "Internal compiler error: type of pre-increment is %s", exprType));
             }
-            case FieldAccess(ParserRuleContext ignored, Expression ignored1, String fieldName) -> {
+            case FieldAccess(ParserRuleContext ignored, Expression expression, String fieldName) -> {
                 out.println("aload_0");
-                out.println("getfield");
+                var classType = tc.getType(symbols, expression);
+                out.printf("getfield " + "java/lang/Math.PI D\n");
             }
             default -> {
                 throw new SyntaxException("Unimplemented");
