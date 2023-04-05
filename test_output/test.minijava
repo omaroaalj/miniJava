@@ -21,9 +21,12 @@ return
 
 .line 1
 getstatic java/lang/System/out Ljava/io/PrintStream;
-new java/util/Random
+new java/util/Date
 dup
-invokenonvirtual java/util/Random.<init>()V
+ldc 2002
+ldc 1
+ldc 3
+invokenonvirtual java/util/Date.<init>(III)V
 invokevirtual java/lang/Object.toString()Ljava/lang/String;
 invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
 getstatic java/lang/System/out Ljava/io/PrintStream;

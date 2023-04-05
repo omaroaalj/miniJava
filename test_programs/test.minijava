@@ -1,1 +1,1 @@
-_print((String)new Random()); // 23.0
+_print((String)new Date(2002, 1, 3));

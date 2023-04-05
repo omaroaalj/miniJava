@@ -459,12 +459,8 @@ public class Compiler {
                         argumentTypes.add(argument);
                 }
                 out.print("invokenonvirtual " + classPath + ".<init>(");
-                for (int i = 0; i < argumentTypes.size(); i++) {
-                    var type = argumentTypes.get(i);
+                for (String type : argumentTypes) {
                     out.print(type);
-                    if (i != argumentTypes.size() - 1) {
-                        out.print(", ");
-                    }
                 }
                 out.println(")V");
             }
