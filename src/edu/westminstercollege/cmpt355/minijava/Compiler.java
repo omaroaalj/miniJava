@@ -449,7 +449,7 @@ public class Compiler {
                     }
                     argumentTypes.add(argument);
                 }
-                out.print("invokenonvirtual " + classPath + ".\"<init>\" (");
+                out.print("invokenonvirtual " + classPath + ".<init>(");
                 for (int i = 0; i < argumentTypes.size(); i++) {
                     var type = argumentTypes.get(i);
                     out.print(type);

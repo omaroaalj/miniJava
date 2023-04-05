@@ -24,7 +24,7 @@ getstatic java/lang/System/out Ljava/io/PrintStream;
 new java/lang/String
 dup
 ldc "hello"
-invokenonvirtual java/lang/String."<init>" (Ljava/lang/String;)V
+invokenonvirtual java/lang/String.<init>(Ljava/lang/String;)V
 invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
 getstatic java/lang/System/out Ljava/io/PrintStream;
 invokevirtual java/io/PrintStream/println()V
