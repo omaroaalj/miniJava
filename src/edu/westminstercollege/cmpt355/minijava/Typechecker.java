@@ -111,10 +111,10 @@ public class Typechecker {
                 if(operator.equals("+")){
                     if(voidIsPresent) {
                         throw new SyntaxException(node, "Cannot perform addition with a void value.");
-                    } /*else if (nonNumericPresent && noStringsPresent) {
+                    } else if (nonNumericPresent && noStringsPresent) {
                         throw new SyntaxException(node, String.format("Addition involving %s and %s not possible.", leftType, rightType));
                     }
-                    */
+
 
                 }
                 else {

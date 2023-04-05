@@ -22,8 +22,8 @@ return
 .line 1
 getstatic java/lang/System/out Ljava/io/PrintStream;
 ldc ""
-getstatic java/lang/Math.PI D
-invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+getstatic java/lang/System.out Ljava/io/PrintStream;
+invokestatic java/lang/String.valueOf(Ljava/lang/Object;)Ljava/lang/String;
 invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
 invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
 getstatic java/lang/System/out Ljava/io/PrintStream;
