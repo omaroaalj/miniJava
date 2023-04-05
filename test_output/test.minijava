@@ -21,10 +21,10 @@ return
 
 .line 1
 getstatic java/lang/System/out Ljava/io/PrintStream;
-new java/lang/String
+new java/util/Random
 dup
-ldc "hello"
-invokenonvirtual java/lang/String.<init>(Ljava/lang/String;)V
+invokenonvirtual java/util/Random.<init>()V
+invokevirtual java/lang/Object.toString()Ljava/lang/String;
 invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
 getstatic java/lang/System/out Ljava/io/PrintStream;
 invokevirtual java/io/PrintStream/println()V

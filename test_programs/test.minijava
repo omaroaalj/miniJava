@@ -1,1 +1,1 @@
-_print(new String("hello"));
+_print((String)new Random()); // 23.0

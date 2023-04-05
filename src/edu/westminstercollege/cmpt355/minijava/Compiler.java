@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class Compiler {
@@ -435,29 +436,37 @@ public class Compiler {
             case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
                 var classPath = symbols.findJavaClass(className).get().toString();
                 classPath = classPath.substring(6);
-                classPath = classPath.replace('.','/');
+                classPath = classPath.replace('.', '/');
                 out.println("new " + classPath);
                 out.println("dup");
                 List<String> argumentTypes = new ArrayList<>();
-                for(var arg : arguments){
+                for (var arg : arguments) {
                     generateCode(out, symbols, arg);
                     var argument = symbols.classFromType(tc.getType(symbols, arg)).get().toString();
-                    argument = argument.substring(6);
-                    argument = argument.replace('.','/');
-                    switch (argument){
-                        case "java/lang/String" -> argument = "Ljava/lang/String";
+                    System.out.println(argument);
+                    switch (argument) {
+                        case "class java.lang.String" -> argument = "Ljava/lang/String;";
+                        case "int" -> argument = "I";
+                        case "double" -> argument = "D";
+                        case "boolean" -> argument = "Z";
+                        case "void" -> argument = "V";
+                        default -> {
+                            argument = argument.substring(6);
+                            argument = argument.replace('.','/');
+                            argument = "L" + argument + ";";
+                        }
                     }
-                    argumentTypes.add(argument);
+                        argumentTypes.add(argument);
                 }
                 out.print("invokenonvirtual " + classPath + ".<init>(");
                 for (int i = 0; i < argumentTypes.size(); i++) {
                     var type = argumentTypes.get(i);
                     out.print(type);
                     if (i != argumentTypes.size() - 1) {
-                        out.print(";, ");
+                        out.print(", ");
                     }
                 }
-                out.println(";)V");
+                out.println(")V");
             }
             default -> {
                 throw new SyntaxException("Unimplemented");
