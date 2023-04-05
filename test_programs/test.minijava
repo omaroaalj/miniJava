@@ -1,1 +1,1 @@
-_print("" + System.out);
+_print(new String("hello"));

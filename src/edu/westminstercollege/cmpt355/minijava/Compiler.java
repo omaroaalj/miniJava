@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -431,133 +432,36 @@ public class Compiler {
                     out.println("getfield " + classPath + "/" + fieldName + printArg);
                 }
             }
+            case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
+                var classPath = symbols.findJavaClass(className).get().toString();
+                classPath = classPath.substring(6);
+                classPath = classPath.replace('.','/');
+                out.println("new " + classPath);
+                out.println("dup");
+                List<String> argumentTypes = new ArrayList<>();
+                for(var arg : arguments){
+                    generateCode(out, symbols, arg);
+                    var argument = symbols.classFromType(tc.getType(symbols, arg)).get().toString();
+                    argument = argument.substring(6);
+                    argument = argument.replace('.','/');
+                    switch (argument){
+                        case "java/lang/String" -> argument = "Ljava/lang/String";
+                    }
+                    argumentTypes.add(argument);
+                }
+                out.print("invokenonvirtual " + classPath + ".\"<init>\" (");
+                for (int i = 0; i < argumentTypes.size(); i++) {
+                    var type = argumentTypes.get(i);
+                    out.print(type);
+                    if (i != argumentTypes.size() - 1) {
+                        out.print(";, ");
+                    }
+                }
+                out.println(";)V");
+            }
             default -> {
                 throw new SyntaxException("Unimplemented");
             }
         }
     }
-
-    /*
-    private void generateCode(Statement statement) {
-        switch (statement) {
-            case EmptyStatement() -> {
-                //do nothing?
-            }
-            case Block(List<Statement> stmts) -> {
-
-                for (var stmt : stmts)
-                    generateCode(stmt);
-                // args.forEach(this::generateCode);
-                // generateCode should handle each kind of statement later
-            }
-            case Declarations(TypeNode type, List<Declaration> decItems) -> {
-                for(var dec : decItems){
-                    generateCode(dec);
-                    //need to make private void generateCode(Declaration dec){}
-                }
-
-            }
-
-            case Assignment(String varName, Expression value) -> {
-                // x = ...
-                Variable var = symbols.findVariable(varName).get();
-                generateCode(value); // get value to be assigned on top of the stack
-                out.printf("dstore %d\n", var.getIndex());
-            }
-            default -> {}
-        }
-    }
-
-    private void generateCode(PrintArgument argument) {
-        switch (argument) {
-            case Expression e -> {
-                out.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
-                generateCode(e);
-                out.println("invokevirtual java/io/PrintStream/println(D)V");
-            }
-            case StringArgument(String text) -> {
-                // out is a static variable
-                out.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
-                // load constant
-                out.printf("ldc %s\n", text);
-                // invoke virtual - calling a method
-                // L - class names
-                // V - void return type
-                out.println("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
-            }
-
-            default ->
-                    throw new RuntimeException(String.format("Unimplemented: %s", argument.getNodeDescription()));
-        }
-    }
-
-    private void generateCode(Expression expr) {
-        switch (expr) {
-            case Literal(String text) -> {
-                // jasmin expects doubles/floats for numbers, 2 slots for doubles
-                out.printf("ldc2_w %f\n", Double.parseDouble(text));
-            }
-            case Add(Expression left, Expression right) -> {
-                generateCode(left);
-                generateCode(right);
-                out.println("dadd");
-            }
-            case Subtract(Expression left, Expression right) -> {
-                generateCode(left);
-                generateCode(right);
-                out.println("dsub");
-            }
-            case Multiply(Expression left, Expression right) -> {
-                generateCode(left);
-                generateCode(right);
-                out.println("dmul");
-            }
-            case Divide(Expression left, Expression right) -> {
-                generateCode(left);
-                generateCode(right);
-                out.println("ddiv");
-            }
-
-            case Negate(Expression child) -> {
-                generateCode(child);
-                out.println("dneg");
-            }
-
-            case SquareRoot(Expression child) -> {
-                generateCode(child);
-                // call Math.sqrt() method
-                out.println("invokestatic java/lang/Math/sqrt(D)D");
-            }
-
-            case Power(Expression left, Expression right) -> {
-                generateCode(left);
-                generateCode(right);
-                // any method that takes two or more parameters, do not put commas
-                out.println("invokestatic java/lang/Math/pow(DD)D");
-            }
-
-            case VariableAccess(String variableName) -> {
-                Variable v = symbols.findVariable(variableName).get();
-                // add \n when using printf
-                out.printf("dload %d\n", v.getIndex());
-            }
-
-            case Input(List<PrintArgument> args) -> {
-                // Print out the arguments
-                for (var arg : args)
-                    generateCode(arg);
-
-                // Read a double value from the user (???)
-                // Load the value of "in" (the static Scanner variable)
-                out.printf("getstatic %s/in Ljava/util/Scanner;\n", className);
-                // Call the nextDouble() method
-                out.println("invokevirtual java/util/Scanner/nextDouble()D");
-            }
-
-            default ->
-                    throw new RuntimeException(String.format("Unimplemented: %s", expr.getNodeDescription()));
-        }
-    }
-
-    // */
 }

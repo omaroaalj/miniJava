@@ -80,8 +80,19 @@ public class Typechecker {
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
             }
             case ConstructorCall(ParserRuleContext ctx, String className, List<Expression> arguments) -> {
+                List<Type> argumentTypes = new ArrayList<>();
                 for(var arg : arguments){
                     typecheck(symbols, arg);
+                    argumentTypes.add(getType(symbols, arg));
+                }
+                var clazz = symbols.findJavaClass(className);
+                if(clazz.isEmpty()){
+                    throw new SyntaxException(node, String.format("Class %s does not exist", className));
+                } else {
+                    var constructor = symbols.findConstructor((ClassType) Reflect.typeFromClass(clazz.get()).get(), argumentTypes);
+                    if(constructor.isEmpty()){
+                        throw new SyntaxException(node, String.format("Constructor for class %s does not exist with given argument types", className));
+                    }
                 }
             }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression expression) -> {
@@ -215,6 +226,15 @@ public class Typechecker {
                 var method = symbols.findMethod((ClassType) classType, methodName, argumentTypes);
                 if (method.isPresent())
                     return method.get().returnType();
+            }
+            case ConstructorCall(ParserRuleContext ctx, String className, List<Expression> arguments) -> {
+                List<Type> argumentTypes = new ArrayList<>();
+                for(var arg : arguments){
+                    argumentTypes.add(getType(symbols, arg));
+                }
+                var clazz = symbols.findJavaClass(className);
+                var constructor = symbols.findConstructor((ClassType) Reflect.typeFromClass(clazz.get()).get(), argumentTypes);
+                return constructor.get().containingType();
             }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored2) -> {
                 return getType(symbols, exprName);
