@@ -1,5 +1,22 @@
-Badger b1 = new Badger("Snufflegrumps");
-Badger b2 = new Badger("Badger McBadgerface"), b3 = new Badger("Stinkleton Whiskers");
-_print(b1); // Badger[name=Snufflegrumps]
-_print(b2); // Badger[name=Badger McBadgerface]
-_print(Badger.population()); // 4
+Scanner in = new Scanner(System.in);
+double P, r;
+
+System.out.print("Enter a principal: $");
+P = in.nextDouble();
+
+System.out.print("Enter an interest rate (e.g. 1.25): ");
+r = in.nextDouble() / 100.0;
+
+System.out.println("Principal: $" + P + ", interest rate: " + r * 100 + "%");
+
+double B = P * (1 + r);
+System.out.println("\tAfter one term: $" + B);
+B = B * (1 + r);
+System.out.println("\tAfter two terms: $" + B);
+B = B * (1 + r);
+System.out.println("\tAfter three terms: $" + B);
+B = B * (1 + r);
+System.out.println("\tAfter four terms: $" + B);
+B = B * (1 + r);
+System.out.println("\tAfter five terms: $" + B);
+

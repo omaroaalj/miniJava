@@ -16,49 +16,153 @@ return
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 4
+.limit locals 8
 
 
 .line 1
-new Badger
+new java/util/Scanner
 dup
-ldc "Snufflegrumps"
-invokenonvirtual Badger.<init>(Ljava/lang/String;)V
+getstatic java/lang/System.in Ljava/io/InputStream;
+invokenonvirtual java/util/Scanner.<init>(Ljava/io/InputStream;)V
 astore 1
 
 .line 2
-new Badger
-dup
-ldc "Badger McBadgerface"
-invokenonvirtual Badger.<init>(Ljava/lang/String;)V
-astore 2
-new Badger
-dup
-ldc "Stinkleton Whiskers"
-invokenonvirtual Badger.<init>(Ljava/lang/String;)V
-astore 3
-
-.line 3
-getstatic java/lang/System/out Ljava/io/PrintStream;
-aload 1
-invokevirtual java/lang/Object.toString()Ljava/lang/String;
-invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
-getstatic java/lang/System/out Ljava/io/PrintStream;
-invokevirtual java/io/PrintStream/println()V
 
 .line 4
-getstatic java/lang/System/out Ljava/io/PrintStream;
-aload 2
-invokevirtual java/lang/Object.toString()Ljava/lang/String;
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "Enter a principal: $"
 invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
-getstatic java/lang/System/out Ljava/io/PrintStream;
-invokevirtual java/io/PrintStream/println()V
 
 .line 5
-getstatic java/lang/System/out Ljava/io/PrintStream;
-invokestatic Badger/population()I
-invokevirtual java/io/PrintStream/print(I)V
-getstatic java/lang/System/out Ljava/io/PrintStream;
-invokevirtual java/io/PrintStream/println()V
+aload 1
+invokevirtual java/util/Scanner/nextDouble()D
+dup2
+dstore 2
+pop2
+
+.line 7
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "Enter an interest rate (e.g. 1.25): "
+invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
+
+.line 8
+aload 1
+invokevirtual java/util/Scanner/nextDouble()D
+ldc2_w 100.000000
+ddiv
+dup2
+dstore 4
+pop2
+
+.line 10
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "Principal: $"
+dload 2
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+ldc ", interest rate: "
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+dload 4
+ldc 100
+i2d
+dmul
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+ldc "%"
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+
+.line 12
+dload 2
+ldc 1
+i2d
+dload 4
+dadd
+dmul
+dstore 6
+
+.line 13
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "\tAfter one term: $"
+dload 6
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+
+.line 14
+dload 6
+ldc 1
+i2d
+dload 4
+dadd
+dmul
+dup2
+dstore 6
+pop2
+
+.line 15
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "\tAfter two terms: $"
+dload 6
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+
+.line 16
+dload 6
+ldc 1
+i2d
+dload 4
+dadd
+dmul
+dup2
+dstore 6
+pop2
+
+.line 17
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "\tAfter three terms: $"
+dload 6
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+
+.line 18
+dload 6
+ldc 1
+i2d
+dload 4
+dadd
+dmul
+dup2
+dstore 6
+pop2
+
+.line 19
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "\tAfter four terms: $"
+dload 6
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+
+.line 20
+dload 6
+ldc 1
+i2d
+dload 4
+dadd
+dmul
+dup2
+dstore 6
+pop2
+
+.line 21
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "\tAfter five terms: $"
+dload 6
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 return
 .end method

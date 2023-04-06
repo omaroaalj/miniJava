@@ -250,7 +250,7 @@ public class Compiler {
                 }
                 else {
                     out.printf("aload %d\n", var.getIndex());
-                    out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
+                    //out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
                 }
             }
             case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
