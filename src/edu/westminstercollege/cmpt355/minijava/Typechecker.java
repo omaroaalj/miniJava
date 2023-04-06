@@ -41,7 +41,11 @@ public class Typechecker {
                         }
                         // else make sure the declared type matches given value
                         else if(!getType(symbols, decItem.expression().get()).equals(type.type())){
-                            throw new SyntaxException(node, String.format("Initialization must match variable's declared type: variable %s does not conform to type %s", decItem.name(), getType(symbols, decItem.expression().get()).toString()));
+                            if(getType(symbols, decItem.expression().get()) instanceof ClassType && type.type() instanceof ClassType){
+                                // do nothing for now
+                            } else {
+                                throw new SyntaxException(node, String.format("Initialization must match variable's declared type: variable %s does not conform to type %s", decItem.name(), getType(symbols, decItem.expression().get()).toString()));
+                            }
                         }
                     }
                 }

@@ -128,8 +128,8 @@ public class Reflect {
                         foundMethod = new Method(new StaticType(clazz.getName()), name, matchingParameters, returnType);
                     else
                         foundMethod = new Method(new ClassType(clazz.getName()), name, matchingParameters, returnType);
-                    System.out.print("Method Static Type?: ");
-                    System.out.println(foundMethod.containingType() instanceof StaticType);
+                    //System.out.print("Method Static Type?: ");
+                    //System.out.println(foundMethod.containingType() instanceof StaticType);
                     return Optional.of(foundMethod);
                 }
             }
@@ -181,8 +181,8 @@ public class Reflect {
                     edu.westminstercollege.cmpt355.minijava.Method foundConstructor;
                     foundConstructor = new Method(
                             new ClassType(clazz.getName()), "<init>", matchingParameters, VoidType.Instance);
-                    System.out.print("Constructor Static Type?: ");
-                    System.out.println(foundConstructor.containingType() instanceof StaticType);
+                    //System.out.print("Constructor Static Type?: ");
+                    //System.out.println(foundConstructor.containingType() instanceof StaticType);
                     return Optional.of(foundConstructor);
                 }
             }

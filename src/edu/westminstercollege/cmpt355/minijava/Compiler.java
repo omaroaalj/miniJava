@@ -174,8 +174,11 @@ public class Compiler {
                     else if(varType.equals(stringType)){
                         out.printf("astore %d\n", var.getIndex());
                     }
-                    else {
+                    else if(varType.equals(PrimitiveType.Double)){
                         out.printf("dstore %d\n", var.getIndex());
+                    }
+                    else {
+                        out.printf("astore %d\n", var.getIndex());
                     }
 
                 }

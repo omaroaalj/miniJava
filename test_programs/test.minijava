@@ -1,1 +1,1 @@
-System.out.println("Hello, miniJava world!"); // Hello, miniJava world!
+Scanner in = new Scanner(System.in);
