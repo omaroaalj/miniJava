@@ -12,9 +12,47 @@ public class SymbolTable {
     // args is index 0
     public int index = 0;
     private int varIndex = 0;
+
+    enum Level {
+        Class, Method, Block
+    }
+
+    private Level level;
+    private SymbolTable parent;
+
+    public SymbolTable(Level level) {
+        this.level = level;
+    }
+
+    public Optional<Variable> findVariable(String name) {
+        var maybeVar = Optional.ofNullable(variables.get(name));
+        var ancestor = parent;
+        while (maybeVar.isEmpty()) {
+            if (ancestor != null)
+                maybeVar = ancestor.findVariable(name);
+            else
+                break;
+        }
+        return maybeVar;
+    }
+
+    public int allocateVariable(int size) {
+        if (level == Level.Method) {
+            // the same code as before...
+            return index += size;
+        } else if (level == Level.Block) {
+            // bump it up a level
+            return parent.allocateVariable(size);
+        } else {
+            throw new RuntimeException("Internal compiler error: symbol table");
+        }
+    }
+
+    /*
     public int allocateLocalVariable(int size){
         return index += size;
     }
+    */
     public Variable registerVariable(String name) {
         Variable v = variables.get(name);
         if (v == null) {
@@ -28,10 +66,11 @@ public class SymbolTable {
     public int getVariableCount() {
         return index;
     }
-
+    /*
     public Optional<Variable> findVariable(String name) {
         return Optional.ofNullable(variables.get(name));
     }
+    */
 
     public Optional<Class<?>> findJavaClass(String className) {
         var clazz = Reflect.classForName(className);
