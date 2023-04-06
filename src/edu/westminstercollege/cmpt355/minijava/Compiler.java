@@ -200,8 +200,10 @@ public class Compiler {
                         printlnArg = "Z";
                     else if (exprType.equals(stringType))
                         printlnArg = "Ljava/lang/String;";
-                    else
+                    else {
                         printlnArg = "Ljava/lang/String;";
+                        out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
+                    }
                     out.printf(String.format("invokevirtual java/io/PrintStream/print(%s)V\n", printlnArg));
                 }
                 // new line after each print statement
