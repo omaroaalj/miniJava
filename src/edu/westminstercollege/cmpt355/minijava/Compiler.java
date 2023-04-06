@@ -444,9 +444,8 @@ public class Compiler {
             case MethodCall(ParserRuleContext ignored, Expression expr, String methodName, List<Expression> arguments) -> {
                 // find classType and classPath based of expr
                 var classType = tc.getType(symbols, expr);
-                String classPath = String.valueOf(symbols.findJavaClass(((ClassType) classType).getClassName()).get());
-                classPath = classPath.substring(6);
-                classPath = classPath.replace('.', '/');
+                String classPath = symbols.findJavaClass(((ClassType) classType).getClassName()).get().descriptorString();
+                classPath = classPath.substring(1, classPath.length()-1);
                     // find arguments Types in order to find the exact Method.
                     // from there we can find its return type.
                     List<Type> argumentTypes = new ArrayList<>();
@@ -524,9 +523,8 @@ public class Compiler {
                 }
             }
             case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
-                var classPath = symbols.findJavaClass(className).get().toString();
-                classPath = classPath.substring(6);
-                classPath = classPath.replace('.', '/');
+                var classPath = symbols.findJavaClass(className).get().descriptorString();
+                classPath = classPath.substring(1, classPath.length()-1);
                 out.println("new " + classPath);
                 out.println("dup");
                 List<String> argumentTypes = new ArrayList<>();
