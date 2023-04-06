@@ -4,7 +4,6 @@ public class Badger {
     public static final Badger Diggy = new Badger("Diggy McStripes"); // name suggested by ChatGPT
 
     public final String name;
-
     public Badger(String name) {
         this.name = name;
         ++badgerCount;

@@ -411,11 +411,11 @@ public class Compiler {
                 var stringType = new ClassType("String");
                 var classType = tc.getType(symbols, expression);
                 //find class path
-                String classPath = String.valueOf(symbols.findJavaClass(((ClassType) classType).getClassName()).get());
-                classPath = classPath.substring(6);
-                classPath = classPath.replace('.', '/');
+                String classPath = symbols.findJavaClass(((ClassType) classType).getClassName()).get().descriptorString();
+                classPath = classPath.substring(1, classPath.length()-1);
                 //find field in order to find its type
                 var field = symbols.findField((ClassType) classType, fieldName);
+                System.out.println(field.get().type());
                 String printArg = "";
                 if(field.get().type().equals(PrimitiveType.Double))
                     printArg = " D";
