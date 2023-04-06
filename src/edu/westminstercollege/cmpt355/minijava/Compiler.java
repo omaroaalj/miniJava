@@ -424,7 +424,7 @@ public class Compiler {
                     printArg = s1.replace('.','/');
                 }
                 //is it a static or nonstatic field access
-                if(classType instanceof StaticType){
+                if(classType instanceof StaticType) {
                         out.println("getstatic " + classPath + "." + fieldName + printArg);
                 }
                 else {
@@ -442,7 +442,7 @@ public class Compiler {
                     // from there we can find its return type.
                     List<Type> argumentTypes = new ArrayList<>();
                     for(var arg : arguments){
-                        generateCode(out, symbols, arg);
+                        //generateCode(out, symbols, arg);
                         var argument = Reflect.typeFromClass(symbols.classFromType(tc.getType(symbols, arg)).get()).get();
                         argumentTypes.add(argument);
                     }
@@ -463,6 +463,9 @@ public class Compiler {
                         }
                     }
                     if(classType instanceof StaticType) {
+                        for(var arg : arguments) {
+                            generateCode(out, symbols, arg);
+                        }
                         // begin printing actual assembly for static method call
                         out.print("invokestatic " + classPath + "/" + methodName + "(");
                         // print every argumentType
@@ -488,6 +491,9 @@ public class Compiler {
                 else {
                     // start with generatingCode for expr
                     generateCode(out, symbols, expr);
+                    for(var arg : arguments) {
+                        generateCode(out, symbols, arg);
+                    }
                     out.print("invokevirtual " + classPath + "/" + methodName + "(");
                         for (var type : argumentTypes) {
                             var type1 = symbols.classFromType(type).get().toString();
