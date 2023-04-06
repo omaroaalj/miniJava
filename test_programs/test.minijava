@@ -1,1 +1,5 @@
-Scanner in = new Scanner(System.in);
+Badger b1 = new Badger("Snufflegrumps");
+Badger b2 = new Badger("Badger McBadgerface"), b3 = new Badger("Stinkleton Whiskers");
+_print(b1); // Badger[name=Snufflegrumps]
+_print(b2); // Badger[name=Badger McBadgerface]
+_print(Badger.population()); // 4

@@ -248,6 +248,10 @@ public class Compiler {
                 else if (var.getType() instanceof StaticType){
                     // do nothing
                 }
+                else {
+                    out.printf("aload %d\n", var.getIndex());
+                    out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
+                }
             }
             case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
                 int numberOfInts = 0;

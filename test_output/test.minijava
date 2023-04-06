@@ -16,14 +16,49 @@ return
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 2
+.limit locals 4
 
 
 .line 1
-new java/util/Scanner
+new Badger
 dup
-getstatic java/lang/System.in Ljava/io/InputStream;
-invokenonvirtual java/util/Scanner.<init>(Ljava/io/InputStream;)V
+ldc "Snufflegrumps"
+invokenonvirtual Badger.<init>(Ljava/lang/String;)V
 astore 1
+
+.line 2
+new Badger
+dup
+ldc "Badger McBadgerface"
+invokenonvirtual Badger.<init>(Ljava/lang/String;)V
+astore 2
+new Badger
+dup
+ldc "Stinkleton Whiskers"
+invokenonvirtual Badger.<init>(Ljava/lang/String;)V
+astore 3
+
+.line 3
+getstatic java/lang/System/out Ljava/io/PrintStream;
+aload 1
+invokevirtual java/lang/Object.toString()Ljava/lang/String;
+invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
+
+.line 4
+getstatic java/lang/System/out Ljava/io/PrintStream;
+aload 2
+invokevirtual java/lang/Object.toString()Ljava/lang/String;
+invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
+
+.line 5
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokestatic Badger/population()I
+invokevirtual java/io/PrintStream/print(I)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
 return
 .end method
