@@ -415,7 +415,6 @@ public class Compiler {
                 classPath = classPath.substring(1, classPath.length()-1);
                 //find field in order to find its type
                 var field = symbols.findField((ClassType) classType, fieldName);
-                System.out.println(field.get().type());
                 String printArg = "";
                 if(field.get().type().equals(PrimitiveType.Double))
                     printArg = " D";
