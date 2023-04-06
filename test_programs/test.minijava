@@ -1,1 +1,1 @@
-_print((String)new Date(2002, 1, 3));
+_print("abc123".length()); // 6

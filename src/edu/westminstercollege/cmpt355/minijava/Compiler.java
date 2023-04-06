@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class Compiler {
@@ -433,6 +432,82 @@ public class Compiler {
                     out.println("getfield " + classPath + "/" + fieldName + printArg);
                 }
             }
+            case MethodCall(ParserRuleContext ignored, Expression expr, String methodName, List<Expression> arguments) -> {
+                // find classType and classPath based of expr
+                var classType = tc.getType(symbols, expr);
+                String classPath = String.valueOf(symbols.findJavaClass(((ClassType) classType).getClassName()).get());
+                classPath = classPath.substring(6);
+                classPath = classPath.replace('.', '/');
+                    // find arguments Types in order to find the exact Method.
+                    // from there we can find its return type.
+                    List<Type> argumentTypes = new ArrayList<>();
+                    for(var arg : arguments){
+                        generateCode(out, symbols, arg);
+                        var argument = Reflect.typeFromClass(symbols.classFromType(tc.getType(symbols, arg)).get()).get();
+                        argumentTypes.add(argument);
+                    }
+                    // find java method, then use it to find return type
+                    var method = symbols.findMethod((ClassType)classType, methodName, argumentTypes);
+                    var returnType = method.get().returnType();
+                    // convert returnType to assembly equivalent
+                    var returnTypeChar = symbols.classFromType(returnType).get().toString();
+                    switch (returnTypeChar) {
+                        case "double" -> returnTypeChar = "D";
+                        case "boolean" -> returnTypeChar = "Z";
+                        case "int" -> returnTypeChar = "I";
+                        case "void" -> returnTypeChar = "V";
+                        default -> {
+                            returnTypeChar = returnTypeChar.substring(6);
+                            returnTypeChar = returnTypeChar.replace('.','/');
+                            returnTypeChar = "L" + returnTypeChar + ";";
+                        }
+                    }
+                    if(classType instanceof StaticType) {
+                        // begin printing actual assembly for static method call
+                        out.print("invokestatic " + classPath + "/" + methodName + "(");
+                        // print every argumentType
+                        for (var type : argumentTypes) {
+                            var type1 = symbols.classFromType(type).get().toString();
+                            switch (type1) {
+                                case "double" -> out.print("D");
+                                case "boolean" -> out.print("Z");
+                                case "int" -> out.print("I");
+                                case "void" -> out.print("V");
+                                default -> {
+                                    type1 = type1.substring(6);
+                                    type1 = type1.replace('.','/');
+                                    type1 = "L" + type1 + ";";
+                                    out.print(type1);
+                                }
+                            }
+                        }
+                    // finish invokestatic line with returnType
+                    out.println(")" + returnTypeChar);
+                }
+                // if the method is nonstatic
+                else {
+                    // start with generatingCode for expr
+                    generateCode(out, symbols, expr);
+                    out.print("invokevirtual " + classPath + "/" + methodName + "(");
+                        for (var type : argumentTypes) {
+                            var type1 = symbols.classFromType(type).get().toString();
+                            switch (type1) {
+                                case "double" -> out.print("D");
+                                case "boolean" -> out.print("Z");
+                                case "int" -> out.print("I");
+                                case "void" -> out.print("V");
+                                default -> {
+                                    type1 = type1.substring(6);
+                                    type1 = type1.replace('.','/');
+                                    type1 = "L" + type1 + ";";
+                                    out.print(type1);
+                                }
+                            }
+                        }
+                        // finish invokevirtual line with returnType
+                        out.println(")" + returnTypeChar);
+                }
+            }
             case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
                 var classPath = symbols.findJavaClass(className).get().toString();
                 classPath = classPath.substring(6);
@@ -443,9 +518,7 @@ public class Compiler {
                 for (var arg : arguments) {
                     generateCode(out, symbols, arg);
                     var argument = symbols.classFromType(tc.getType(symbols, arg)).get().toString();
-                    System.out.println(argument);
                     switch (argument) {
-                        case "class java.lang.String" -> argument = "Ljava/lang/String;";
                         case "int" -> argument = "I";
                         case "double" -> argument = "D";
                         case "boolean" -> argument = "Z";
