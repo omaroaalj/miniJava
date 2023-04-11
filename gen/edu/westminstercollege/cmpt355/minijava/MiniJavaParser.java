@@ -311,7 +311,7 @@ public class MiniJavaParser extends Parser {
 
 				        var importParts = new ArrayList<String>();
 				        for (var importName : ((ImpContext)_localctx).importNames)
-				            importParts.add(importName.text);
+				            importParts.add(String.valueOf(importName));
 				        ((ImpContext)_localctx).n =  new ClassImport(_localctx, importParts);
 				    
 				}
@@ -348,7 +348,7 @@ public class MiniJavaParser extends Parser {
 
 				        var importParts = new ArrayList<String>();
 				        for (var importName : ((ImpContext)_localctx).importNames)
-				            importParts.add(importName.text);
+				            importParts.add(String.valueOf(importName));
 				        ((ImpContext)_localctx).n =  new PackageImport(_localctx, importParts);
 				    
 				}
@@ -525,7 +525,7 @@ public class MiniJavaParser extends Parser {
 				        for (var p : ((MethodContext)_localctx).parameters)
 				            parameterList.add(p.n);
 
-				        ((MethodContext)_localctx).n =  new MethodDefinition(_localctx, ((MethodContext)_localctx).type.n, (((MethodContext)_localctx).NAME!=null?((MethodContext)_localctx).NAME.getText():null), parameterList, ((MethodContext)_localctx).methodBody.n, new SymbolTable(SymbolTable.Level.Method);
+				        ((MethodContext)_localctx).n =  new MethodDefinition(_localctx, ((MethodContext)_localctx).type.n, (((MethodContext)_localctx).NAME!=null?((MethodContext)_localctx).NAME.getText():null), parameterList, ((MethodContext)_localctx).methodBody.n, new SymbolTable(SymbolTable.Level.Method));
 				        // DID NOT USE OPTIONALS
 				    
 				}
@@ -580,7 +580,7 @@ public class MiniJavaParser extends Parser {
 				        for (var p : ((MethodContext)_localctx).parameters)
 				            parameterList.add(p.n);
 
-				        ((MethodContext)_localctx).n =  new MethodDefinition(_localctx, VoidType.Instance, (((MethodContext)_localctx).NAME!=null?((MethodContext)_localctx).NAME.getText():null), parameterList, ((MethodContext)_localctx).methodBody.n, new SymbolTable(SymbolTable.Level.Method);
+				        ((MethodContext)_localctx).n =  new MethodDefinition(_localctx, new TypeNode(_localctx, VoidType.Instance), (((MethodContext)_localctx).NAME!=null?((MethodContext)_localctx).NAME.getText():null), parameterList, ((MethodContext)_localctx).methodBody.n, new SymbolTable(SymbolTable.Level.Method));
 				    
 				}
 				break;
@@ -629,7 +629,7 @@ public class MiniJavaParser extends Parser {
 			setState(135);
 			match(T__9);
 
-			        ((MainContext)_localctx).n =  new MainMethodDefinition(_localctx, ((MainContext)_localctx).methodBody.n, new SymbolTable(SymbolTable.Level.Method);
+			        ((MainContext)_localctx).n =  new MainMethod(_localctx, ((MainContext)_localctx).methodBody.n, new SymbolTable(SymbolTable.Level.Method));
 			    
 			}
 		}
@@ -1145,7 +1145,7 @@ public class MiniJavaParser extends Parser {
 				setState(220);
 				match(T__14);
 
-				        ((ExpressionContext)_localctx).n =  new This();
+				        ((ExpressionContext)_localctx).n =  new This(_localctx);
 				    
 				}
 				break;

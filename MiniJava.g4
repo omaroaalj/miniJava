@@ -29,13 +29,13 @@ imp
     : 'import' importNames+=NAME ('.' importNames+=NAME)* ';' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
-            importParts.add(importName.text);
+            importParts.add(String.valueOf(importName));
         $n = new ClassImport($ctx, importParts);
     }
     | 'import' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
-            importParts.add(importName.text);
+            importParts.add(String.valueOf(importName));
         $n = new PackageImport($ctx, importParts);
     }
     ;
@@ -57,7 +57,7 @@ method
         for (var p : $parameters)
             parameterList.add(p.n);
 
-        $n = new MethodDefinition($ctx, $type.n, $NAME.text, parameterList, $methodBody.n, new SymbolTable(SymbolTable.Level.Method);
+        $n = new MethodDefinition($ctx, $type.n, $NAME.text, parameterList, $methodBody.n, new SymbolTable(SymbolTable.Level.Method));
         // DID NOT USE OPTIONALS
     }
     | 'void' NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' methodBody '}' {
@@ -65,14 +65,14 @@ method
         for (var p : $parameters)
             parameterList.add(p.n);
 
-        $n = new MethodDefinition($ctx, VoidType.Instance, $NAME.text, parameterList, $methodBody.n, new SymbolTable(SymbolTable.Level.Method);
+        $n = new MethodDefinition($ctx, new TypeNode($ctx, VoidType.Instance), $NAME.text, parameterList, $methodBody.n, new SymbolTable(SymbolTable.Level.Method));
     }
     ;
 
 main
     returns [MainMethod n]
     : 'void' 'main()' '{' methodBody '}' {
-        $n = new MainMethodDefinition($ctx, $methodBody.n, new SymbolTable(SymbolTable.Level.Method);
+        $n = new MainMethod($ctx, $methodBody.n, new SymbolTable(SymbolTable.Level.Method));
     }
     ;
 
@@ -165,7 +165,7 @@ expression
         $n = new BooleanLiteral($ctx, $BOOLEAN.text);
     }
     | 'this' {
-        $n = new This();
+        $n = new This($ctx);
     }
     | STRING {
         $n = new StringLiteral($ctx, $STRING.text);
