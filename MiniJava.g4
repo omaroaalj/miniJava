@@ -23,6 +23,14 @@ methodBody
 
         $n = new Block($ctx, statements);
     }
+    | mainMethod {
+
+    }
+    ;
+
+mainMethod
+    returns[MainMethod n]
+    : 'void main()' '{' statement*? '}'
     ;
 
 statement

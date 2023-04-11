@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.List;
 
 public sealed interface Node
-        permits Declaration, Expression, Statement, TypeNode {
+        permits Declaration, Expression, MainMethod, Parameter, Statement, TypeNode {
 
     default String getNodeDescription() {
         String fullName = getClass().getSimpleName();
