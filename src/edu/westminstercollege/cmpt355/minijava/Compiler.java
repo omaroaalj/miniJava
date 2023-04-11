@@ -16,13 +16,13 @@ public class Compiler {
     // Commented out until we have our AST nodes defined...
     private SymbolTable symbols = new SymbolTable(SymbolTable.Level.Class);
     private PrintWriter out;
-    private final Block block;
+    private final Node node;
     private final String className;
     private final Typechecker tc = new Typechecker();
 
-    public Compiler(Block block, String className) {
+    public Compiler(Node node, String className) {
 
-        this.block = block;
+        this.node = node;
         this.className = className;
     }
 
@@ -31,9 +31,9 @@ public class Compiler {
         symbols.setCompilingClassName(className);
         try (var out = new PrintWriter(Files.newBufferedWriter(asmFilePath))) {
             this.out = out;
-            resolveSymbols(block, symbols);
+            resolveSymbols(node, symbols);
             Typechecker tc = new Typechecker();
-            tc.typecheck(symbols, block);
+            tc.typecheck(symbols, node);
 
             out.printf(".class public %s\n", className);
             out.printf(".super java/lang/Object\n");
@@ -60,7 +60,7 @@ public class Compiler {
             out.println();
 
             // Generate code for program here 🙂
-            generateCode(out, symbols, block);
+            generateCode(out, symbols, node);
 
 
 
