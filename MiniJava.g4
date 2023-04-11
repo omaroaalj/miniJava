@@ -9,7 +9,7 @@ import java.util.ArrayList;
 }
 
 goal
-    returns [Block n]
+    returns [Node n]
     : classNode {
         $n = $classNode.n;
     }
