@@ -1,9 +1,7 @@
 
 package edu.westminstercollege.cmpt355.minijava;
-
 import edu.westminstercollege.cmpt355.minijava.node.*;
 import org.antlr.v4.runtime.ParserRuleContext;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -16,7 +14,7 @@ public class Compiler {
 
 
     // Commented out until we have our AST nodes defined...
-    private SymbolTable symbols = new SymbolTable();
+    private SymbolTable symbols = new SymbolTable(SymbolTable.Level.Class);
     private PrintWriter out;
     private final Block block;
     private final String className;
@@ -56,7 +54,7 @@ public class Compiler {
                     """, className);
             out.printf(".method public static main([Ljava/lang/String;)V\n");
             out.printf(".limit stack 100\n");
-            symbols.allocateLocalVariable(1); // allocate space for args[]
+            symbols.allocateVariable(1); // allocate space for args[]
             out.printf(".limit locals %d\n", symbols.getVariableCount());
             out.println();
 
