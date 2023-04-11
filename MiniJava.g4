@@ -44,7 +44,35 @@ classStatement
     | type NAME '=' e=expression ';' {
         $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.of($e.n));
     }
-    | type NAME '(' (parameter (',' parameter)*)? ')' '{' methodBody '}'
+    | type NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' (stmts+=statement)* '}' {
+        var parameterList = new ArrayList<Parameter>();
+        for (var p : $parameters)
+            parameterList.add(p.n);
+
+        var statementList = new ArrayList<Statement>();
+        for (var s : $stmts)
+            statementList.add(s.n);
+
+        $n = new MethodDefinition($ctx, $type.n, $NAME,text, parameterList, statementList);
+        // DID NOT USE OPTIONALS
+    }
+    | 'void main()' '{' (stmts+=statement)* '}' {
+        var statementList = new ArrayList<Statement>();
+        for (var s : $stmts)
+            statementList.add(s.n);
+
+        $n = new MainMethodDefinition($ctx, statementList);
+    }
+    ;
+
+methodBody
+    returns [Block n]
+    : (stmts+=statement)* {
+        var statements = new ArrayList<Statement>();
+        for(var stmt : $stmts)
+            statements.add(stmt.n);
+        $n = new Block($ctx, statements);
+    }
     ;
 
 parameter
