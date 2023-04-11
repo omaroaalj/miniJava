@@ -44,6 +44,14 @@ classStatement
     | type NAME '=' e=expression ';' {
         $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.of($e.n));
     }
+    | type NAME '(' (parameter (',' parameter)*)? ')' '{' methodBody '}'
+    ;
+
+parameter
+    returns [Parameter n]
+    : type NAME {
+        $n = new Parameter($ctx, $type.n, $NAME.text);
+    }
     ;
 
 statement
