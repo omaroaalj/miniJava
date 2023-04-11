@@ -5,14 +5,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 
-public record Block(ParserRuleContext ctx, List<Statement> statements) implements Statement {
+public record Block(ParserRuleContext ctx, List<Statement> statements, SymbolTable symbols) implements Statement {
     @Override
     public List<? extends Node> children() {
         return statements;
-    }
-    public Block(ParserRuleContext ctx, List<Statement> statements){
-        this.ctx = ctx;
-        this.statements = statements;
-        SymbolTable symbols = new SymbolTable(SymbolTable.Level.Block);
     }
 }

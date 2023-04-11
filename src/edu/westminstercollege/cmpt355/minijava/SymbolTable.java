@@ -48,7 +48,7 @@ public class SymbolTable {
     public Optional<SymbolTable> getParent() {
         return Optional.ofNullable(parent);
     }
-    public Variable registerField(String name, Type type){
+    public Variable registerField(String name, Type ignored){
         Variable v = variables.get(name);
         if (v == null) {
             v = new Variable(name);

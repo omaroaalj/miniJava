@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public record MethodDefinition(ParserRuleContext ctx, TypeNode returnType, String name, List<Parameter> parameters, Block block) implements Node {
+public record MethodDefinition(ParserRuleContext ctx, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbols) implements Node {
     @Override
     public String getNodeDescription() {
         return "name";
@@ -16,14 +16,6 @@ public record MethodDefinition(ParserRuleContext ctx, TypeNode returnType, Strin
         list.addAll(parameters);
         list.add(block);
         return list;
-    }
-    public MethodDefinition(ParserRuleContext ctx, TypeNode returnType, String name, List<Parameter> parameters, Block block){
-        this.ctx = ctx;
-        this.returnType = returnType;
-        this.name = name;
-        this.parameters = parameters;
-        this.block = block;
-        SymbolTable symbols = new SymbolTable(SymbolTable.Level.Method);
     }
 
 }

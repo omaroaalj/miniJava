@@ -28,9 +28,10 @@ public class Compiler {
 
     public void compile(Path outputDir) throws IOException, SyntaxException {
         Path asmFilePath = outputDir.resolve(className + ".minijava");
+        symbols.setCompilingClassName(className);
         try (var out = new PrintWriter(Files.newBufferedWriter(asmFilePath))) {
             this.out = out;
-            resolveSymbols(block);
+            resolveSymbols(block, symbols);
             Typechecker tc = new Typechecker();
             tc.typecheck(symbols, block);
 
@@ -74,6 +75,98 @@ public class Compiler {
     // Make sure that all symbols (in this case, names of variables) make sense,
     // i.e. we should not be using the value of a variable before we have assigned
     // to it (Eval does not have declarations).
+    private void resolveSymbols(Node node, SymbolTable symbols) throws SyntaxException {
+        switch(node){
+            case FieldDefinition(ParserRuleContext ignored, TypeNode type, String name, Optional<Expression> expr) -> {
+                if(expr.isPresent()){
+                    resolveSymbols(expr.get(), symbols);
+                }
+                if(symbols.findVariable(name).isPresent()){
+                    if(symbols.findVariable(name).get().isField()){
+                        throw new SyntaxException(node, String.format("Field with name: %s already exists.", name));
+                    }
+                } else {
+                    symbols.registerField(name, type.type());
+                }
+            }
+            case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block1, SymbolTable symbolses) -> {
+                List<Type> parameterTypes = new ArrayList<>();
+                for(var param : parameters){
+                    resolveSymbols(param, symbolses);
+                    parameterTypes.add(param.type().type());
+                }
+                ClassType classType = new ClassType(symbolses.getCompilingClassName());
+                if(symbols.findMethod(classType, name, parameterTypes).isPresent()){
+                    throw new SyntaxException(node, String.format("Method %s already exists", name));
+                } else {
+                    symbols.registerMethod(name, parameterTypes, returnType.type());
+                    symbolses.setParent(symbols);
+                    resolveSymbols(block1, symbolses);
+                }
+            }
+            case MainMethod(ParserRuleContext ignored, Block block1, SymbolTable symbolses) -> {
+                List<Type> parameterTypes = new ArrayList<>();
+                ClassType classType = new ClassType(symbolses.getCompilingClassName());
+                if(symbols.findMethod(classType, "main", parameterTypes).isPresent()){
+                    throw new SyntaxException(node, "Main method already exists");
+                } else {
+                    symbols.registerMethod("main", parameterTypes, VoidType.Instance);
+                    symbolses.setParent(symbols);
+                    resolveSymbols(block1, symbolses);
+                }
+            }
+            case Parameter(ParserRuleContext ignored, TypeNode ignored1, String name) -> {
+                if(symbols.findVariable(name).isPresent()){
+                    throw new SyntaxException(node, String.format("Parameter %s already exists", name));
+                } else {
+                    symbols.registerVariable(name);
+                }
+            }
+            case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
+                symbolses.setParent(symbols);
+                for(var stmt : statements){
+                    resolveSymbols(stmt, symbolses);
+                }
+            }
+            case Declaration(ParserRuleContext ignored, String name, Optional<Expression> ignored1) -> {
+                if(symbols.findVariable(name).isPresent()){
+                    if(!symbols.findVariable(name).get().isField()){
+                        throw new SyntaxException(node, String.format("Variable '%s' already declared", name));
+                    }
+                }
+                else {
+                    symbols.registerVariable(name);
+                }
+            }
+            case VariableAccess(ParserRuleContext ignored, String name) -> {
+                var nameVar = symbols.findVariable(name);
+                if (nameVar.isEmpty()) {
+                    // no variable found
+                    var nameClass = symbols.findJavaClass(name);
+                    if(nameClass.isEmpty()){
+                        // no classes found
+                        throw new SyntaxException(node, String.format("Variable '%s' used before declaration", name));
+                    }
+                }
+            }
+            case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored1) -> {
+                if (exprName instanceof VariableAccess expr) {
+                    if (symbols.findVariable(expr.getVariableName()).isEmpty()) {
+                        throw new SyntaxException(node, String.format("Variable '%s' used before assignment", expr.getVariableName()));
+                    }
+                }
+                else {
+                    throw new SyntaxException(node, "Character(s) before '=' not a valid variable");
+                }
+            }
+            default -> {
+                for(var child : node.children()) {
+                    resolveSymbols(child, symbols);
+                }
+            }
+        }
+    }
+    /*
     private void resolveSymbols(Block block) throws SyntaxException {
         AST.postOrder(block, node -> {
             switch (node) {
@@ -110,18 +203,19 @@ public class Compiler {
             }
         });
     }
+     */
     private void generateCode(PrintWriter out, SymbolTable symbols, Node node) throws SyntaxException {
         switch (node) {
             case EmptyStatement(ParserRuleContext ignored) -> {} // do nothing
 
-            case Block(ParserRuleContext ignored, List<Statement> statements) -> {
+            case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
                 //System.out.println("This was called");
                 for (var statement : statements) {
                     out.printf("\n.line %d\n", statement.ctx().getStart().getLine());
                     generateCode(out, symbols, statement);
                 }
             }
-            case MainMethod(ParserRuleContext ignored, Block block) -> {
+            case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
                 generateCode(out, symbols, block);
             }
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {

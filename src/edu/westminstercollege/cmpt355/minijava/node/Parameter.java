@@ -11,6 +11,6 @@ public record Parameter(ParserRuleContext ctx, TypeNode type, String name) imple
 
     @Override
     public List<? extends Node> children() {
-        return List.of(type);
+        return List.of();
     }
 }
