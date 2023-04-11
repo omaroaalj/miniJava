@@ -9,26 +9,26 @@ import java.util.ArrayList;
 
 goal
     returns [Block n]
-    : mainMethod {
+    : mainMethod EOF {
         $n = $mainMethod.n;
-    }
-    ;
-
-methodBody
-    returns [Block n]
-    : (stmts+=statement)* EOF {
-        var statements = new ArrayList<Statement>();
-        for(var stmt : $stmts)
-            statements.add(stmt.n);
-
-        $n = new Block($ctx, statements);
     }
     ;
 
 mainMethod
     returns[MainMethod n]
     : 'void main()' '{' methodBody '}' {
+        $n = new MainMethod($ctx, $methodBody.n);
+    }
+    ;
 
+methodBody
+    returns [Block n]
+    : (stmts+=statement)* {
+        var statements = new ArrayList<Statement>();
+        for(var stmt : $stmts)
+            statements.add(stmt.n);
+
+        $n = new Block($ctx, statements);
     }
     ;
 
