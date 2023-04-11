@@ -9,26 +9,40 @@ import java.util.ArrayList;
 
 goal
     returns [Block n]
-    : mainMethod EOF {
-        $n = $mainMethod.n;
+    : classNode {
+        $n = $classNode.n;
     }
     ;
 
-mainMethod
-    returns[MainMethod n]
-    : 'void main()' '{' methodBody '}' {
-        $n = new MainMethod($ctx, $methodBody.n);
-    }
-    ;
-
-methodBody
-    returns [Block n]
-    : (stmts+=statement)* {
+classNode
+    returns [ClassNode n]
+    : (classStmts+=classStatement)* EOF {
         var statements = new ArrayList<Statement>();
-        for(var stmt : $stmts)
+        for(var stmt : $classStmts)
             statements.add(stmt.n);
+        $n = new ClassNode($ctx, statements);
+    }
+    ;
 
-        $n = new Block($ctx, statements);
+classStatement
+    returns [Statement n]
+    : 'import' importNames+=NAME ('.' importNames+=NAME)* ';' {
+        var importParts = new ArrayList<String>();
+        for (var importName : $importNames)
+            importParts.add(importName.text);
+        $n = new ClassImport($ctx, importParts);
+    }
+    | 'import' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
+        var importParts = new ArrayList<String>();
+        for (var importName : $importNames)
+            importParts.add(importName.text);
+        $n = new PackageImport($ctx, importParts);
+    }
+    | type NAME ';' {
+        $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.empty());
+    }
+    | type NAME '=' e=expression ';' {
+        $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.of($e.n));
     }
     ;
 
