@@ -121,6 +121,9 @@ public class Compiler {
                     generateCode(out, symbols, statement);
                 }
             }
+            case MainMethod(ParserRuleContext ignored, Block block) -> {
+                generateCode(out, symbols, block);
+            }
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 generateCode(out, symbols, expr);
                 Type exprType = tc.getType(symbols, expr);

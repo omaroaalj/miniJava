@@ -9,19 +9,76 @@ import java.util.ArrayList;
 
 goal
     returns [Block n]
-    : methodBody {
-        $n = $methodBody.n;
+    : classNode {
+        $n = $classNode.n;
+    }
+    ;
+
+classNode
+    returns [ClassNode n]
+    : (classStmts+=classStatement)* EOF {
+        var statements = new ArrayList<Statement>();
+        for(var stmt : $classStmts)
+            statements.add(stmt.n);
+        $n = new ClassNode($ctx, statements);
+    }
+    ;
+
+classStatement
+    returns [Statement n]
+    : 'import' importNames+=NAME ('.' importNames+=NAME)* ';' {
+        var importParts = new ArrayList<String>();
+        for (var importName : $importNames)
+            importParts.add(importName.text);
+        $n = new ClassImport($ctx, importParts);
+    }
+    | 'import' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
+        var importParts = new ArrayList<String>();
+        for (var importName : $importNames)
+            importParts.add(importName.text);
+        $n = new PackageImport($ctx, importParts);
+    }
+    | type NAME ';' {
+        $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.empty());
+    }
+    | type NAME '=' e=expression ';' {
+        $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.of($e.n));
+    }
+    | type NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' (stmts+=statement)* '}' {
+        var parameterList = new ArrayList<Parameter>();
+        for (var p : $parameters)
+            parameterList.add(p.n);
+
+        var statementList = new ArrayList<Statement>();
+        for (var s : $stmts)
+            statementList.add(s.n);
+
+        $n = new MethodDefinition($ctx, $type.n, $NAME,text, parameterList, statementList);
+        // DID NOT USE OPTIONALS
+    }
+    | 'void main()' '{' (stmts+=statement)* '}' {
+        var statementList = new ArrayList<Statement>();
+        for (var s : $stmts)
+            statementList.add(s.n);
+
+        $n = new MainMethodDefinition($ctx, statementList);
     }
     ;
 
 methodBody
     returns [Block n]
-    : (stmts+=statement)* EOF {
+    : (stmts+=statement)* {
         var statements = new ArrayList<Statement>();
         for(var stmt : $stmts)
             statements.add(stmt.n);
-
         $n = new Block($ctx, statements);
+    }
+    ;
+
+parameter
+    returns [Parameter n]
+    : type NAME {
+        $n = new Parameter($ctx, $type.n, $NAME.text);
     }
     ;
 

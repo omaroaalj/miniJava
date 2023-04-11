@@ -185,7 +185,13 @@ public class Typechecker {
                     }
                 }
             }
-            default -> {}
+            case MainMethod(ParserRuleContext ignored, Block block) -> typecheck(symbols, block);
+            case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
+                // Need to use Reflect to make sure parameter is real?
+            }
+            default -> {
+                throw new SyntaxException(node, "Typecheck case unimplemented");
+            }
         }
     }
 
