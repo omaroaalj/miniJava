@@ -3,6 +3,7 @@ grammar MiniJava;
 
 @parser::header {
 import edu.westminstercollege.cmpt355.minijava.node.*;
+import edu.westminstercollege.cmpt355.minijava.*;
 import java.util.Optional;
 import java.util.ArrayList;
 }
@@ -16,62 +17,72 @@ goal
 
 classNode
     returns [ClassNode n]
-    : (classStmts+=classStatement)* EOF {
-        var statements = new ArrayList<Statement>();
-        for(var stmt : $classStmts)
-            statements.add(stmt.n);
-        $n = new ClassNode($ctx, statements);
-    }
+    : (imports=imp)*
+    (fields=field)*
+    (methods=method)*
+    main?
+    EOF
     ;
 
-classStatement
-    returns [Statement n]
-    : 'import ' importNames+=NAME ('.' importNames+=NAME)* ';' {
+imp
+    returns [Import n]
+    : 'import' importNames+=NAME ('.' importNames+=NAME)* ';' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
             importParts.add(importName.text);
         $n = new ClassImport($ctx, importParts);
     }
-    | 'import ' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
+    | 'import' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
             importParts.add(importName.text);
         $n = new PackageImport($ctx, importParts);
     }
-    | type NAME ';' {
+    ;
+
+field
+    returns [FieldDefinition n]
+    : type NAME ';' {
         $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.empty());
     }
     | type NAME '=' e=expression ';' {
         $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.of($e.n));
     }
-    | type NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' methodBody returnStmt? '}' {
+    ;
+
+method
+    returns [MethodDefinition n]
+    : type NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' methodBody '}' {
         var parameterList = new ArrayList<Parameter>();
         for (var p : $parameters)
             parameterList.add(p.n);
 
-        var statementList = new ArrayList<Statement>();
-        for (var s : $stmts)
-            statementList.add(s.n);
-
-        $n = new MethodDefinition($ctx, $type.n, $NAME,text, parameterList, statementList);
+        $n = new MethodDefinition($ctx, $type.n, $NAME.text, parameterList, $methodBody.n, new SymbolTable(SymbolTable.Level.Method);
         // DID NOT USE OPTIONALS
     }
-    | 'void main()' '{' methodBody '}' {
-        var statementList = new ArrayList<Statement>();
-        for (var s : $stmts)
-            statementList.add(s.n);
+    | 'void' NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' methodBody '}' {
+        var parameterList = new ArrayList<Parameter>();
+        for (var p : $parameters)
+            parameterList.add(p.n);
 
-        $n = new MainMethodDefinition($ctx, statementList);
+        $n = new MethodDefinition($ctx, VoidType.Instance, $NAME.text, parameterList, $methodBody.n, new SymbolTable(SymbolTable.Level.Method);
+    }
+    ;
+
+main
+    returns [MainMethod n]
+    : 'void' 'main()' '{' methodBody '}' {
+        $n = new MainMethodDefinition($ctx, $methodBody.n, new SymbolTable(SymbolTable.Level.Method);
     }
     ;
 
 methodBody
     returns [Block n]
-    : (stmt+=statement)* {
+    : (stmts+=statement)* {
         var statements = new ArrayList<Statement>();
-        for(var stmt : $classStmts)
+        for(var stmt : $stmts)
             statements.add(stmt.n);
-        $n = new Block($ctx, statements);
+        $n = new Block($ctx, statements, new SymbolTable(SymbolTable.Level.Block));
     }
     ;
 
@@ -79,16 +90,6 @@ parameter
     returns [Parameter n]
     : type NAME {
         $n = new Parameter($ctx, $type.n, $NAME.text);
-    }
-    ;
-
-returnStmt
-    returns [Return n]
-    : 'return ' e=expression ';' {
-        $n = new Return($ctx, Optional.of($e.n));
-    }
-    | 'return;' {
-        $n = new Return($ctx, Optional.empty());
     }
     ;
 
@@ -103,7 +104,7 @@ statement
             for(var stmt : $stmts){
                 stmtList.add(stmt.n);
             }
-            $n = new Block($ctx, stmtList);
+            $n = new Block($ctx, stmtList, new SymbolTable(SymbolTable.Level.Block));
     }
     // would include one or more variable declarations, possibly with initializations
     | declaration  {
@@ -111,6 +112,12 @@ statement
     }
     | expression ';' {
         $n = new ExpressionStatement($ctx, $expression.n);
+    }
+    | 'return' e=expression ';' {
+        $n = new Return($ctx, Optional.of($e.n));
+    }
+    | 'return' ';' {
+        $n = new Return($ctx, Optional.empty());
     }
     ;
 
