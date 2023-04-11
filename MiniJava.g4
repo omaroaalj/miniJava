@@ -26,13 +26,13 @@ classNode
 
 classStatement
     returns [Statement n]
-    : 'import' importNames+=NAME ('.' importNames+=NAME)* ';' {
+    : 'import ' importNames+=NAME ('.' importNames+=NAME)* ';' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
             importParts.add(importName.text);
         $n = new ClassImport($ctx, importParts);
     }
-    | 'import' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
+    | 'import ' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
             importParts.add(importName.text);
@@ -44,7 +44,7 @@ classStatement
     | type NAME '=' e=expression ';' {
         $n = new FieldDefinition($ctx, $type.n, $NAME.text, Optional.of($e.n));
     }
-    | type NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' (stmts+=statement)* '}' {
+    | type NAME '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' '{' (stmts+=statement)* returnStmt? '}' {
         var parameterList = new ArrayList<Parameter>();
         for (var p : $parameters)
             parameterList.add(p.n);
@@ -65,20 +65,20 @@ classStatement
     }
     ;
 
-methodBody
-    returns [Block n]
-    : (stmts+=statement)* {
-        var statements = new ArrayList<Statement>();
-        for(var stmt : $stmts)
-            statements.add(stmt.n);
-        $n = new Block($ctx, statements);
-    }
-    ;
-
 parameter
     returns [Parameter n]
     : type NAME {
         $n = new Parameter($ctx, $type.n, $NAME.text);
+    }
+    ;
+
+returnStmt
+    returns [Return n]
+    : 'return ' e=expression ';' {
+        $n = new Return($ctx, Optional.of($e.n));
+    }
+    | 'return;' {
+        $n = new Return($ctx, Optional.empty());
     }
     ;
 
@@ -146,6 +146,9 @@ expression
     }
     | BOOLEAN {
         $n = new BooleanLiteral($ctx, $BOOLEAN.text);
+    }
+    | 'this' {
+        $n = new This();
     }
     | STRING {
         $n = new StringLiteral($ctx, $STRING.text);
