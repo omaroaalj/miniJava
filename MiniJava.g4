@@ -29,13 +29,13 @@ imp
     : 'import' importNames+=NAME ('.' importNames+=NAME)* ';' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
-            importParts.add(String.valueOf(importName));
+            importParts.add(importName.getText());
         $n = new ClassImport($ctx, importParts);
     }
-    | 'import' importNames+=NAME '.' (importNames+=NAME '.')* '*;' {
+    | 'import' importNames+=NAME '.' (importNames+=NAME '.')* '*' ';' {
         var importParts = new ArrayList<String>();
         for (var importName : $importNames)
-            importParts.add(String.valueOf(importName));
+            importParts.add(importName.getText());
         $n = new PackageImport($ctx, importParts);
     }
     ;

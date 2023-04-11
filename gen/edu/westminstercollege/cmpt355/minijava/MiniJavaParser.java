@@ -311,7 +311,7 @@ public class MiniJavaParser extends Parser {
 
 				        var importParts = new ArrayList<String>();
 				        for (var importName : ((ImpContext)_localctx).importNames)
-				            importParts.add(String.valueOf(importName));
+				            importParts.add(importName.getText());
 				        ((ImpContext)_localctx).n =  new ClassImport(_localctx, importParts);
 				    
 				}
@@ -348,7 +348,7 @@ public class MiniJavaParser extends Parser {
 
 				        var importParts = new ArrayList<String>();
 				        for (var importName : ((ImpContext)_localctx).importNames)
-				            importParts.add(String.valueOf(importName));
+				            importParts.add(importName.getText());
 				        ((ImpContext)_localctx).n =  new PackageImport(_localctx, importParts);
 				    
 				}
