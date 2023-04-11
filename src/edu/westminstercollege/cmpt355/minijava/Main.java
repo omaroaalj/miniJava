@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.List;
@@ -25,7 +26,9 @@ public class Main {
         var block = parser.goal().n;
         AST.print(block);
 
-
+        // added lines from Step 01 of project 7:
+        var compiledClassPath = Path.of(String.format("out/test_compiled/%s.class", CLASS_NAME));
+        Files.deleteIfExists(compiledClassPath);
         try {
             var compiler = new Compiler(block, CLASS_NAME);
             compiler.compile(Path.of("test_output"));
