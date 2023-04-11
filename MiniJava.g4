@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 goal
     returns [Block n]
-    : methodBody {
-        $n = $methodBody.n;
+    : mainMethod {
+        $n = $mainMethod.n;
     }
     ;
 
@@ -23,14 +23,13 @@ methodBody
 
         $n = new Block($ctx, statements);
     }
-    | mainMethod {
-
-    }
     ;
 
 mainMethod
     returns[MainMethod n]
-    : 'void main()' '{' statement*? '}'
+    : 'void main()' '{' methodBody '}' {
+
+    }
     ;
 
 statement
