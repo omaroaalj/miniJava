@@ -336,6 +336,9 @@ public class Typechecker {
             case Print(ParserRuleContext ignored, List<Expression> ignored2) -> {
                 return VoidType.Instance;
             }
+            case This(ParserRuleContext ignored) -> {
+                return new ClassType(symbols.getCompilingClassName());
+            }
             default -> {
                 System.out.println("GetType() Unimplemented");
             }
