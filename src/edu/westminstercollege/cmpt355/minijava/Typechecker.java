@@ -18,21 +18,29 @@ public class Typechecker {
             }
             case ClassImport(ParserRuleContext ignored, List<String> importParts) -> {
                 String path = "";
-                for(var importPart : importParts){
-                    path = path.concat(importPart);
+                for (int i = 0; i < importParts.size(); i++) {
+                    path = path.concat(importParts.get(i));
+                    if (i < importParts.size() - 1) {
+                        path = path.concat(".");
+                    }
                 }
                 var clazz = symbols.findJavaClass(path);
                 if(clazz.isPresent()) {
                     symbols.importClass(clazz.get());
                 } else {
-                    throw new SyntaxException(String.format("Class %s does not exist.", path));
+                    throw new SyntaxException(String.format("Class Import %s does not exist.", path));
                 }
             }
             case PackageImport(ParserRuleContext ignored, List<String> importParts) -> {
                 String path = "";
-                for(var importPart : importParts){
-                    path = path.concat(importPart);
+                for (int i = 0; i < importParts.size(); i++) {
+                    path = path.concat(importParts.get(i));
+                    if (i < importParts.size() - 1) {
+                        path = path.concat(".");
+                    }
                 }
+                path = path.concat("*");
+                // make sure it is a valid package?
                 symbols.importPackage(path);
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
@@ -52,6 +60,21 @@ public class Typechecker {
                     else {
                         realVar.setIndex(symbols.getVariableCount()+1);
                         symbols.allocateVariable(1);
+                    }
+                }
+                if(expr.isPresent()){
+                    if(type.type().equals(PrimitiveType.Double)){
+                        if(!getType(symbols, expr.get()).equals(PrimitiveType.Double)
+                                && !getType(symbols, expr.get()).equals(PrimitiveType.Int)){
+                            throw new SyntaxException(node, String.format("Field definition must match field's declared type: field %s does not conform to type %s", name, getType(symbols, expr.get()).toString()));
+                        }
+                    }
+                    else if(!getType(symbols, expr.get()).equals(type.type())) {
+                        if(getType(symbols, expr.get()) instanceof ClassType && type.type() instanceof ClassType){
+                        }
+                        else {
+                            throw new SyntaxException(node, String.format("Field definition must match field's declared type: field %s does not conform to type %s", name, getType(symbols, expr.get()).toString()));
+                        }
                     }
                 }
             }
