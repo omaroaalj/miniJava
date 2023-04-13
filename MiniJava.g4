@@ -17,11 +17,23 @@ goal
 
 classNode
     returns [ClassNode n]
-    : (imports=imp)*
-    (fields=field)*
-    (methods=method)*
+    : (imports+=imp)*
+    (fields+=field)*
+    (methods+=method)*
     main?
-    EOF
+    EOF {
+        var classElements = new ArrayList<Node>();
+        for (var classImport : $imports)
+            classElements.add(classImport.n);
+
+        for (var classField : $fields)
+            classElements.add(classField.n);
+
+        for (var classMethod : $methods)
+            classElements.add(classMethod.n);
+
+        $n = new ClassNode($ctx, classElements);
+    }
     ;
 
 imp

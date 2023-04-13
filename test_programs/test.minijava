@@ -1,1 +1,1 @@
-rutabaga = 99;
+main() { int x = 25; _print(x); /* 25 */ }
