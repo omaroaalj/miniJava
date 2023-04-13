@@ -31,7 +31,7 @@ classNode
 
         for (var classMethod : $methods)
             classElements.add(classMethod.n);
-
+            classElements.add($main.n);
         $n = new ClassNode($ctx, classElements);
     }
     ;

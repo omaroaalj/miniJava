@@ -11,9 +11,27 @@ public class Typechecker {
 
     public void typecheck(SymbolTable symbols, Node node) throws SyntaxException {
         switch(node) {
+            case ClassNode(ParserRuleContext ignored, List<Node> elements) -> {
+                for(var element : elements){
+                    typecheck(symbols, element);
+                }
+            }
+            case ClassImport(ParserRuleContext ignored, List<String> importParts) -> {
+                String path = "";
+                for(var importPart : importParts){
+                    path = path.concat(importPart);
+                }
+                var clazz = symbols.findJavaClass(path);
+                if(clazz.isPresent()) {
+                    symbols.importClass(clazz.get());
+                } else {
+                    throw new SyntaxException(String.format("Class %s does not exist.", path));
+                }
+            }
+
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
                 for (var statement : statements) {
-                    typecheck(symbols, statement);
+                    typecheck(symbolses, statement);
                 }
             }
             case Declarations(ParserRuleContext ignored, TypeNode type, List<Declaration> decItems) -> {
@@ -187,8 +205,7 @@ public class Typechecker {
                 }
             }
             case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
-
-                typecheck(symbols, block);
+                typecheck(symbolses, block);
             }
             case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
 

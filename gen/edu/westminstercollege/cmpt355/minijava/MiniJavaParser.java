@@ -153,6 +153,7 @@ public class MiniJavaParser extends Parser {
 		public List<FieldContext> fields = new ArrayList<FieldContext>();
 		public MethodContext method;
 		public List<MethodContext> methods = new ArrayList<MethodContext>();
+		public MainContext main;
 		public TerminalNode EOF() { return getToken(MiniJavaParser.EOF, 0); }
 		public MainContext main() {
 			return getRuleContext(MainContext.class,0);
@@ -242,7 +243,7 @@ public class MiniJavaParser extends Parser {
 			if (_la==T__11) {
 				{
 				setState(47);
-				main();
+				((ClassNodeContext)_localctx).main = main();
 				}
 			}
 
@@ -258,7 +259,7 @@ public class MiniJavaParser extends Parser {
 
 			        for (var classMethod : ((ClassNodeContext)_localctx).methods)
 			            classElements.add(classMethod.n);
-
+			            classElements.add(((ClassNodeContext)_localctx).main.n);
 			        ((ClassNodeContext)_localctx).n =  new ClassNode(_localctx, classElements);
 			    
 			}

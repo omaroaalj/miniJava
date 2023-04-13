@@ -55,7 +55,7 @@ public class Compiler {
                     """, className);
             out.printf(".method public static main([Ljava/lang/String;)V\n");
             out.printf(".limit stack 100\n");
-            symbols.allocateVariable(1); // allocate space for args[]
+            //symbols.allocateVariable(1); // allocate space for args[]
             out.printf(".limit locals %d\n", symbols.getVariableCount());
             out.println();
 
@@ -107,13 +107,16 @@ public class Compiler {
             case MainMethod(ParserRuleContext ignored, Block block1, SymbolTable symbolses) -> {
                 List<Type> parameterTypes = new ArrayList<>();
                 ClassType classType = new ClassType(symbolses.getCompilingClassName());
+                /*
                 if(symbols.findMethod(classType, "main", parameterTypes).isPresent()){
                     throw new SyntaxException(node, "Main method already exists");
                 } else {
+
+                 */
                     symbols.registerMethod("main", parameterTypes, VoidType.Instance);
                     symbolses.setParent(symbols);
                     resolveSymbols(block1, symbolses);
-                }
+                //}
             }
             case Parameter(ParserRuleContext ignored, TypeNode ignored1, String name) -> {
                 if(symbols.findVariable(name).isPresent()){
@@ -207,16 +210,23 @@ public class Compiler {
     private void generateCode(PrintWriter out, SymbolTable symbols, Node node) throws SyntaxException {
         switch (node) {
             case EmptyStatement(ParserRuleContext ignored) -> {} // do nothing
-
+            case ClassNode(ParserRuleContext ignore, List<Node> elements) -> {
+                for(var element : elements){
+                    generateCode(out, symbols, element);
+                }
+            }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
                 //System.out.println("This was called");
                 for (var statement : statements) {
                     out.printf("\n.line %d\n", statement.ctx().getStart().getLine());
-                    generateCode(out, symbols, statement);
+                    generateCode(out, symbolses, statement);
                 }
             }
             case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
-                generateCode(out, symbols, block);
+                generateCode(out, symbolses, block);
+            }
+            case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
+                generateCode(out, symbolses, block);
             }
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 generateCode(out, symbols, expr);
@@ -645,7 +655,7 @@ public class Compiler {
                 out.println(")V");
             }
             default -> {
-                throw new SyntaxException("Unimplemented");
+                throw new SyntaxException(String.format("GenerateCode() unimplemented for node %s", node.getNodeDescription()));
             }
         }
     }
