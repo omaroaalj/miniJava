@@ -5,12 +5,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Typechecker {
 
     public void typecheck(SymbolTable symbols, Node node) throws SyntaxException {
         switch(node) {
-            case Block(ParserRuleContext ignored, List<Statement> statements) -> {
+            case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
                 for (var statement : statements) {
                     typecheck(symbols, statement);
                 }
@@ -24,11 +25,11 @@ public class Typechecker {
                         realVar.setType(type.type());
                         if(type.type().equals(PrimitiveType.Double)){
                             realVar.setIndex(symbols.getVariableCount()+1);
-                            symbols.allocateLocalVariable(2);
+                            symbols.allocateVariable(2);
                         }
                         else {
                             realVar.setIndex(symbols.getVariableCount()+1);
-                            symbols.allocateLocalVariable(1);
+                            symbols.allocateVariable(1);
                         }
                     }
                     // check if declaration has children, then check if declared double, can have double or int values
@@ -185,9 +186,15 @@ public class Typechecker {
                     }
                 }
             }
-            case MainMethod(ParserRuleContext ignored, Block block) -> typecheck(symbols, block);
+            case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
+
+                typecheck(symbols, block);
+            }
             case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
-                // Need to use Reflect to make sure parameter is real?
+
+            }
+            case Return(ParserRuleContext ignored, Optional<Expression> value) -> {
+
             }
             default -> {
                 throw new SyntaxException(node, "Typecheck case unimplemented");
