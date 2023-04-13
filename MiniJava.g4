@@ -71,7 +71,7 @@ method
 
 main
     returns [MainMethod n]
-    : 'void' 'main()' '{' methodBody '}' {
+    : 'main' '(' ')' '{' methodBody '}' {
         $n = new MainMethod($ctx, $methodBody.n, new SymbolTable(SymbolTable.Level.Method));
     }
     ;
