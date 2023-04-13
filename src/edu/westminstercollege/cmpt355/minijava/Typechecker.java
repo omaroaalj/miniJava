@@ -28,10 +28,31 @@ public class Typechecker {
                     throw new SyntaxException(String.format("Class %s does not exist.", path));
                 }
             }
-
+            case PackageImport(ParserRuleContext ignored, List<String> importParts) -> {
+                String path = "";
+                for(var importPart : importParts){
+                    path = path.concat(importPart);
+                }
+                symbols.importPackage(path);
+            }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
                 for (var statement : statements) {
                     typecheck(symbolses, statement);
+                }
+            }
+            case FieldDefinition(ParserRuleContext ignored, TypeNode type, String name, Optional<Expression> expr) -> {
+                var variable = symbols.findVariable(name);
+                if(variable.isPresent()){
+                    var realVar = variable.get();
+                    realVar.setType(type.type());
+                    if(type.type().equals(PrimitiveType.Double)){
+                        realVar.setIndex(symbols.getVariableCount()+1);
+                        symbols.allocateVariable(2);
+                    }
+                    else {
+                        realVar.setIndex(symbols.getVariableCount()+1);
+                        symbols.allocateVariable(1);
+                    }
                 }
             }
             case Declarations(ParserRuleContext ignored, TypeNode type, List<Declaration> decItems) -> {
@@ -205,6 +226,11 @@ public class Typechecker {
                 }
             }
             case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
+                symbolses.allocateVariable(1); // allocate space for this
+                typecheck(symbolses, block);
+            }
+            case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
+                symbolses.allocateVariable(1); // allocate space for this
                 typecheck(symbolses, block);
             }
             case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
