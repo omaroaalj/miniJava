@@ -211,8 +211,22 @@ public class Compiler {
             case ClassNode(ParserRuleContext ignore, List<Node> elements) -> {
                 out.printf(".class public %s\n", className);
                 out.printf(".super java/lang/Object\n");
-                for(var element : elements){
+                boolean fieldConstructorMade = false;
+                for(var element : elements) {
+                    if (element instanceof FieldDefinition field) {
+                        out.printf(String.format(".field public %s %s\n", field.name(), symbols.getCompilingClassName()));
+                        if (!fieldConstructorMade) {
+                            out.printf("invokenonvirtual java/lang/Object/<init>()V\n");
+                            fieldConstructorMade = true;
+                        }
+                    }
                     generateCode(out, symbols, element);
+                }
+            }
+            case FieldDefinition(ParserRuleContext ignore, TypeNode type, String name, Optional<Expression> expr) -> {
+                if (expr.isPresent()) { // if there is initialization
+                    generateCode(out, symbols, expr.get());
+                    // out.printf(String.format("putfield %s/%s %s", )); how to handle different types?
                 }
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
@@ -227,7 +241,17 @@ public class Compiler {
                 generateCode(out, symbolses, block);
             }
             case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
+                out.printf(String.format(".method public %s(", name));
+                for (var parameter : parameters) {
+                    out.printf(String.format("L%s;", parameter.type().toString())); // I don't know if this works
+                }
+                out.printf(String.format(")%s\n", returnType.toString())); // I don't know if this works
+                out.print("limit stack 3\nlimit locals 0\n");
                 generateCode(out, symbolses, block);
+                if (returnType.type() instanceof VoidType) {
+                    out.println("return");
+                }
+                out.println(".end method");
             }
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 generateCode(out, symbols, expr);
@@ -350,7 +374,7 @@ public class Compiler {
                 }
                 else {
                     out.printf("dup2\n");
-                    // ???
+                    // ??? how to handle class types
                     out.printf("dstore %d\n", var.getIndex());
                 }
             }
