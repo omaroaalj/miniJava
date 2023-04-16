@@ -1,9 +1,5 @@
-.class public test
-.super java/lang/Object
 
-.field private static in Ljava/util/Scanner;
 
-.method static <clinit>()V
 .limit stack 3
 .limit locals 0
 new java/util/Scanner
@@ -14,13 +10,8 @@ putstatic test/in Ljava/util/Scanner;
 return
 .end method
 
-.method public static main([Ljava/lang/String;)V
 .limit stack 100
 .limit locals 0
 
-
-.line 1
-ldc 25
-istore -98
-return
-.end method
+.class public test
+.super java/lang/Object

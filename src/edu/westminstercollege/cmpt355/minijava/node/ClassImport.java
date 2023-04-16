@@ -10,6 +10,6 @@ public record ClassImport(ParserRuleContext ctx, List<String> importParts) imple
 
     @Override
     public List<? extends Node> children() {
-        return null;
+        return List.of();
     }
 }

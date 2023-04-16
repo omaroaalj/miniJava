@@ -9,6 +9,6 @@ public record PackageImport(ParserRuleContext ctx, List<String> importParts) imp
     }
     @Override
     public List<? extends Node> children() {
-        return null;
+        return List.of();
     }
 }

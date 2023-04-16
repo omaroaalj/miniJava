@@ -9,6 +9,6 @@ public record FieldDefinition(ParserRuleContext ctx, TypeNode type, String name,
         if(expr.isPresent())
             return List.of(expr.get());
         else
-            return null;
+            return List.of();
     }
 }
