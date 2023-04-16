@@ -7,6 +7,12 @@ public record PackageImport(ParserRuleContext ctx, List<String> importParts) imp
     public ParserRuleContext ctx() {
         return ctx;
     }
+
+    public String getNodeDescription() {
+        String importString = importParts.toString();
+        return String.format("PackageImport %s", importString);
+    }
+
     @Override
     public List<? extends Node> children() {
         return List.of();

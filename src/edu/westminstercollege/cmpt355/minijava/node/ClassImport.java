@@ -8,6 +8,11 @@ public record ClassImport(ParserRuleContext ctx, List<String> importParts) imple
         return ctx;
     }
 
+    public String getNodeDescription() {
+        String importString = importParts.toString();
+        return String.format("ClassImport %s", importString);
+    }
+
     @Override
     public List<? extends Node> children() {
         return List.of();
