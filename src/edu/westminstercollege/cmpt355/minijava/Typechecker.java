@@ -187,14 +187,17 @@ public class Typechecker {
                 }
             }
             case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
-
-                typecheck(symbols, block);
+                typecheck(symbolses, block);
             }
             case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
-
-            }
-            case Return(ParserRuleContext ignored, Optional<Expression> value) -> {
-
+                var parameterVar = new Variable(name);
+                parameterVar.setType(type.type());
+                parameterVar.setIndex(symbols.getVariableCount()+1);
+                if (type.type().equals(PrimitiveType.Double)) {
+                    symbols.allocateVariable(2);
+                } else {
+                    symbols.allocateVariable(1);
+                }
             }
             default -> {
                 throw new SyntaxException(node, "Typecheck case unimplemented");
