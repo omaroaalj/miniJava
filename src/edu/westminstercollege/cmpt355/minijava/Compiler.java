@@ -326,18 +326,31 @@ public class Compiler {
                 if (exprType.equals(PrimitiveType.Double) && assigType.equals(PrimitiveType.Int)) {
                     out.printf("i2d\n");
                     out.printf("dup2\n");
-                    out.printf("dstore_%d\n", var.getIndex());
+                    if (var.isField()) {
+                        out.printf(String.format("putfield %s/%s D\n", symbols.getCompilingClassName(), name));
+                    } else {
+                        out.printf("dstore_%d\n", var.getIndex());
+                    }
                 }
                 else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)){
                     out.printf("dup\n");
-                    out.printf("istore %d\n", var.getIndex());
+                    if (var.isField()) {
+                        out.printf(String.format("putfield %s/%s I\n", symbols.getCompilingClassName(), name));
+                    } else {
+                        out.printf("istore %d\n", var.getIndex());
+                    }
                 }
                 else if (exprType.equals(stringType)){
                     out.printf("dup\n");
-                    out.printf("astore %d\n", var.getIndex());
+                    if (var.isField()) {
+                        out.printf(String.format("putfield %s/%s Ljava/lang/String;\n", symbols.getCompilingClassName(), name));
+                    } else {
+                        out.printf("astore %d\n", var.getIndex());
+                    }
                 }
-                else{
+                else {
                     out.printf("dup2\n");
+                    // ???
                     out.printf("dstore %d\n", var.getIndex());
                 }
             }
