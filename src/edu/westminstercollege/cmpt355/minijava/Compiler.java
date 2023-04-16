@@ -226,7 +226,7 @@ public class Compiler {
             case FieldDefinition(ParserRuleContext ignore, TypeNode type, String name, Optional<Expression> expr) -> {
                 if (expr.isPresent()) { // if there is initialization
                     generateCode(out, symbols, expr.get());
-                    // out.printf(String.format("putfield %s/%s %s", )); how to handle different types?
+                    // out.printf(String.format("putfield %s/%s %s", )); [???] how to handle different types?
                 }
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
@@ -243,9 +243,9 @@ public class Compiler {
             case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
                 out.printf(String.format(".method public %s(", name));
                 for (var parameter : parameters) {
-                    out.printf(String.format("L%s;", parameter.type().toString())); // I don't know if this works
+                    out.printf(String.format("L%s;", parameter.type().toString())); // [???] I don't know if this works
                 }
-                out.printf(String.format(")%s\n", returnType.toString())); // I don't know if this works
+                out.printf(String.format(")%s\n", returnType.toString())); // [???] I don't know if this works
                 out.print("limit stack 3\nlimit locals 0\n");
                 generateCode(out, symbolses, block);
                 if (returnType.type() instanceof VoidType) {
@@ -374,7 +374,7 @@ public class Compiler {
                 }
                 else {
                     out.printf("dup2\n");
-                    // ??? how to handle class types
+                    // [???] how to handle class types
                     out.printf("dstore %d\n", var.getIndex());
                 }
             }
