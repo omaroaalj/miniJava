@@ -259,11 +259,9 @@ public class MiniJavaParser extends Parser {
 
 			        for (var classMethod : ((ClassNodeContext)_localctx).methods)
 			            classElements.add(classMethod.n);
-			        try {
+			        
+			        if (((ClassNodeContext)_localctx).main != null)
 			            classElements.add(((ClassNodeContext)_localctx).main.n);
-			        } catch (NullPointerException e) {
-			            System.out.println("No main method found");
-			        }
 
 			        ((ClassNodeContext)_localctx).n =  new ClassNode(_localctx, classElements);
 			    

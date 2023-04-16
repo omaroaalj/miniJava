@@ -31,11 +31,9 @@ classNode
 
         for (var classMethod : $methods)
             classElements.add(classMethod.n);
-        try {
+
+        if ($main.ctx != null)
             classElements.add($main.n);
-        } catch (NullPointerException e) {
-            System.out.println("No main method found");
-        }
 
         $n = new ClassNode($ctx, classElements);
     }
