@@ -146,7 +146,7 @@ public class Typechecker {
                 if (method.isEmpty())
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
             }
-            case ConstructorCall(ParserRuleContext ctx, String className, List<Expression> arguments) -> {
+            case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
                 List<Type> argumentTypes = new ArrayList<>();
                 for(var arg : arguments){
                     typecheck(symbols, arg);
@@ -252,7 +252,7 @@ public class Typechecker {
                 symbolses.allocateVariable(1); // allocate space for this
                 typecheck(symbolses, block);
             }
-            case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
+            case MethodDefinition(ParserRuleContext ignored, TypeNode ignored1, String ignored2, List<Parameter> ignored3, Block block, SymbolTable symbolses) -> {
                 symbolses.allocateVariable(1); // allocate space for this
                 typecheck(symbolses, block);
             }

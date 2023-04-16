@@ -35,13 +35,13 @@ public class Compiler {
             Typechecker tc = new Typechecker();
             tc.typecheck(symbols, node);
 
-            out.printf(".class public %s\n", className);
-            out.printf(".super java/lang/Object\n");
+            // out.printf(".class public %s\n", className);
+            // out.printf(".super java/lang/Object\n");
             out.println();
-            out.println(".field private static in Ljava/util/Scanner;");
+            // out.println(".field private static in Ljava/util/Scanner;");
             out.println();
+            // .method static <clinit>()V
             out.printf("""
-                    .method static <clinit>()V
                     .limit stack 3
                     .limit locals 0
                     new java/util/Scanner
@@ -53,7 +53,7 @@ public class Compiler {
                     .end method
                     
                     """, className);
-            out.printf(".method public static main([Ljava/lang/String;)V\n");
+            // out.printf(".method public static main([Ljava/lang/String;)V\n");
             out.printf(".limit stack 100\n");
             //symbols.allocateVariable(1); // allocate space for args[]
             out.printf(".limit locals %d\n", symbols.getVariableCount());
@@ -107,16 +107,14 @@ public class Compiler {
             case MainMethod(ParserRuleContext ignored, Block block1, SymbolTable symbolses) -> {
                 List<Type> parameterTypes = new ArrayList<>();
                 ClassType classType = new ClassType(symbolses.getCompilingClassName());
-                /*
                 if(symbols.findMethod(classType, "main", parameterTypes).isPresent()){
                     throw new SyntaxException(node, "Main method already exists");
                 } else {
 
-                 */
                     symbols.registerMethod("main", parameterTypes, VoidType.Instance);
                     symbolses.setParent(symbols);
                     resolveSymbols(block1, symbolses);
-                //}
+                }
             }
             case Parameter(ParserRuleContext ignored, TypeNode ignored1, String name) -> {
                 if(symbols.findVariable(name).isPresent()){
@@ -211,6 +209,8 @@ public class Compiler {
         switch (node) {
             case EmptyStatement(ParserRuleContext ignored) -> {} // do nothing
             case ClassNode(ParserRuleContext ignore, List<Node> elements) -> {
+                out.printf(".class public %s\n", className);
+                out.printf(".super java/lang/Object\n");
                 for(var element : elements){
                     generateCode(out, symbols, element);
                 }
@@ -223,6 +223,7 @@ public class Compiler {
                 }
             }
             case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
+                out.printf(".method public static main([Ljava/lang/String;)V\n");
                 generateCode(out, symbolses, block);
             }
             case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
