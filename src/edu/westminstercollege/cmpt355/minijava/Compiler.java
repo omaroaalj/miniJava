@@ -67,8 +67,8 @@ public class Compiler {
             // another way
             //block.statements().forEach(this::generateCode);
 
-            out.printf("return\n");
-            out.printf(".end method\n");
+            //out.printf("return\n");
+            //out.printf(".end method\n");
         }
     }
 
@@ -193,11 +193,21 @@ public class Compiler {
                     }
                 }
                 out.println(".method public <init>()V");
-                out.printf(".limit stack 3\n.limit locals 1\n");
+                out.printf(".limit stack 3\n.limit locals 1\n\n");
                 out.println("aload_0");
                 out.print("invokenonvirtual java/lang/Object/<init>()V\n");
                 for(var element : elements) {
-                    generateCode(out, symbols, element);
+                    if (element instanceof FieldDefinition field)
+                        generateCode(out, symbols, element);
+                }
+                out.printf("return\n");
+                out.printf(".end method\n\n");
+                for(var element : elements) {
+                    if (!(element instanceof FieldDefinition field)) {
+                        generateCode(out, symbols, element);
+                        out.printf("return\n");
+                        out.printf(".end method\n\n");
+                    }
                 }
             }
             case FieldDefinition(ParserRuleContext ignore, TypeNode type, String name, Optional<Expression> expr) -> {

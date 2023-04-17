@@ -8,6 +8,7 @@
 .method public <init>()V
 .limit stack 3
 .limit locals 1
+
 aload_0
 invokenonvirtual java/lang/Object/<init>()V
 aload_0
@@ -18,3 +19,8 @@ ldc2_w 5.000000
 putfield test/f D
 return
 .end method
+
+.method public static main([Ljava/lang/String;)V
+return
+.end method
+
