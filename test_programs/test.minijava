@@ -1,3 +1,1 @@
-main() {
-    Badger b = new Badger();
-}
+double f = 0.0;

@@ -77,7 +77,7 @@ public class SymbolTable {
     }
 
     public int allocateVariable(int size) {
-        if (level == Level.Method) {
+        if (level == Level.Method || level == Level.Class) {
             // the same code as before...
             return index += size;
         } else if (parent != null) {

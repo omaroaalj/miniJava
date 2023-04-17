@@ -34,12 +34,12 @@ public class Compiler {
             resolveSymbols(node, symbols);
             Typechecker tc = new Typechecker();
             tc.typecheck(symbols, node);
-
+            /*
             // out.printf(".class public %s\n", className);
             // out.printf(".super java/lang/Object\n");
-            out.println();
+            // out.println();
             // out.println(".field private static in Ljava/util/Scanner;");
-            out.println();
+            // out.println();
             // .method static <clinit>()V
             out.printf("""
                     .limit stack 3
@@ -58,7 +58,7 @@ public class Compiler {
             //symbols.allocateVariable(1); // allocate space for args[]
             out.printf(".limit locals %d\n", symbols.getVariableCount());
             out.println();
-
+            */
             // Generate code for program here 🙂
             generateCode(out, symbols, node);
 
@@ -106,15 +106,9 @@ public class Compiler {
             }
             case MainMethod(ParserRuleContext ignored, Block block1, SymbolTable symbolses) -> {
                 List<Type> parameterTypes = new ArrayList<>();
-                ClassType classType = new ClassType(symbolses.getCompilingClassName());
-                if(symbols.findMethod(classType, "main", parameterTypes).isPresent()){
-                    throw new SyntaxException(node, "Main method already exists");
-                } else {
-
-                    symbols.registerMethod("main", parameterTypes, VoidType.Instance);
-                    symbolses.setParent(symbols);
-                    resolveSymbols(block1, symbolses);
-                }
+                symbols.registerMethod("main", parameterTypes, VoidType.Instance);
+                symbolses.setParent(symbols);
+                resolveSymbols(block1, symbolses);
             }
             case Parameter(ParserRuleContext ignored, TypeNode ignored1, String name) -> {
                 if(symbols.findVariable(name).isPresent()){
@@ -167,55 +161,39 @@ public class Compiler {
             }
         }
     }
-    /*
-    private void resolveSymbols(Block block) throws SyntaxException {
-        AST.postOrder(block, node -> {
-            switch (node) {
-                case VariableAccess(ParserRuleContext ignored, String name) -> {
-                    var nameVar = symbols.findVariable(name);
-                    if (nameVar.isEmpty()) {
-                        // no variable found
-                        var nameClass = symbols.findJavaClass(name);
-                        if(nameClass.isEmpty()){
-                            // no classes found
-                            throw new SyntaxException(node, String.format("Variable '%s' used before declaration", name));
-                        }
-                    }
-                }
-                case Declaration(ParserRuleContext ignored, String name, Optional<Expression> ignored1) -> {
-                    if(symbols.findVariable(name).isPresent()){
-                        throw new SyntaxException(node, String.format("Variable '%s' already declared", name));
-                    }
-                    else {
-                        symbols.registerVariable(name);
-                    }
-                }
-                case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored1) -> {
-                    if (exprName instanceof VariableAccess expr) {
-                        if (symbols.findVariable(expr.getVariableName()).isEmpty()) {
-                            throw new SyntaxException(node, String.format("Variable '%s' used before assignment", expr.getVariableName()));
-                        }
-                    }
-                    else {
-                        throw new SyntaxException(node, "Character(s) before '=' not a valid variable");
-                    }
-                }
-                default -> {}
-            }
-        });
+    private String getAssemblyType(Type type){
+        var stringType = new ClassType("String");
+        if(type.equals(PrimitiveType.Int))
+            return "I";
+        else if(type.equals(PrimitiveType.Double))
+            return "D";
+        else if(type.equals(PrimitiveType.Boolean))
+            return "Z";
+        else if(type.equals(VoidType.Instance))
+            return "V";
+        else if(type.equals(stringType))
+            return "Ljava/lang/String";
+        else {
+            String s = type.toString();
+            String s1 = " L" + s.substring(10, s.length()-1) + ";";
+            s1 = s1.replace('.','/');
+            return s1;
+        }
     }
-     */
     private void generateCode(PrintWriter out, SymbolTable symbols, Node node) throws SyntaxException {
         switch (node) {
             case EmptyStatement(ParserRuleContext ignored) -> {} // do nothing
             case ClassNode(ParserRuleContext ignore, List<Node> elements) -> {
                 out.printf(".class public %s\n", className);
-                out.printf(".super java/lang/Object\n");
+                out.printf(".super java/lang/Object\n\n");
                 boolean fieldConstructorMade = false;
                 for(var element : elements) {
                     if (element instanceof FieldDefinition field) {
-                        out.printf(".field public %s %s\n", field.name(), symbols.getCompilingClassName());
+                        out.printf(".field public %s %s\n\n", field.name(), getAssemblyType(field.type().type()));
                         if (!fieldConstructorMade) {
+                            out.println(".method static <clinit>()V");
+                            out.printf(".limit stack 3\n.limit locals 1\n");
+                            out.println("aload_0");
                             out.print("invokenonvirtual java/lang/Object/<init>()V\n");
                             fieldConstructorMade = true;
                         }
@@ -225,8 +203,9 @@ public class Compiler {
             }
             case FieldDefinition(ParserRuleContext ignore, TypeNode type, String name, Optional<Expression> expr) -> {
                 if (expr.isPresent()) { // if there is initialization
+                    out.println("aload_0");
                     generateCode(out, symbols, expr.get());
-                    var typeDescriptor = symbols.findJavaClass(type.getClass().getName()).get().descriptorString();
+                    String typeDescriptor = getAssemblyType(type.type());
                     out.printf("putfield %s/%s %s\n", symbols.getCompilingClassName(), name, typeDescriptor); // [???] I don't know if this works
                 }
             }
@@ -256,6 +235,21 @@ public class Compiler {
                 }
                 out.println(".end method");
             }
+            case Return(ParserRuleContext ignored, Optional<Expression> value) -> {
+                if(value.isPresent()){
+                    var expr = value.get();
+                    var type = tc.getType(symbols, expr);
+                    if (type.equals(PrimitiveType.Double))
+                        out.println("dreturn");
+                    else if (type.equals(PrimitiveType.Int))
+                        out.println("ireturn");
+                    else if (type.equals(VoidType.Instance))
+                        out.println("return");
+                    else
+                        out.println("areturn");
+                }
+            }
+            case This(ParserRuleContext ignored) -> out.println("aload_0");
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 generateCode(out, symbols, expr);
                 Type exprType = tc.getType(symbols, expr);

@@ -314,7 +314,7 @@ public class Typechecker {
                 if (method.isPresent())
                     return method.get().returnType();
             }
-            case ConstructorCall(ParserRuleContext ctx, String className, List<Expression> arguments) -> {
+            case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
                 List<Type> argumentTypes = new ArrayList<>();
                 for(var arg : arguments){
                     argumentTypes.add(getType(symbols, arg));
