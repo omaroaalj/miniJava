@@ -208,12 +208,15 @@ public class Compiler {
                 out.printf("return\n");
                 out.printf(".end method\n\n");
                 for(var element : elements) {
-                    if (!(element instanceof FieldDefinition field)) {
+                    if (!(element instanceof FieldDefinition field) && !(element instanceof ClassImport ci) && !(element instanceof PackageImport pi)) {
                         generateCode(out, symbols, element);
                         out.printf("return\n");
                         out.printf(".end method\n\n");
                     }
                 }
+            }
+            case ClassImport(ParserRuleContext ctx, List<String> importParts) -> {
+
             }
             case FieldDefinition(ParserRuleContext ignore, TypeNode type, String name, Optional<Expression> expr) -> {
                 if (expr.isPresent()) { // if there is initialization
