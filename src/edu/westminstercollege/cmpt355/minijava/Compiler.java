@@ -110,11 +110,11 @@ public class Compiler {
                 symbolses.setParent(symbols);
                 resolveSymbols(block1, symbolses);
             }
-            case Parameter(ParserRuleContext ignored, TypeNode ignored1, String name) -> {
+            case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
                 if(symbols.findVariable(name).isPresent()){
                     throw new SyntaxException(node, String.format("Parameter %s already exists", name));
                 } else {
-                    symbols.registerVariable(name);
+                    symbols.registerVariable(name, type.type());
                 }
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
@@ -123,14 +123,19 @@ public class Compiler {
                     resolveSymbols(stmt, symbolses);
                 }
             }
-            case Declaration(ParserRuleContext ignored, String name, Optional<Expression> ignored1) -> {
+            case Declaration(ParserRuleContext ignored, String name, Optional<Expression> expr) -> {
                 if(symbols.findVariable(name).isPresent()){
                     if(!symbols.findVariable(name).get().isField()){
                         throw new SyntaxException(node, String.format("Variable '%s' already declared", name));
                     }
                 }
                 else {
-                    symbols.registerVariable(name);
+                    if(expr.isPresent()){
+                        var type = tc.getType(symbols, expr.get());
+                        symbols.registerVariable(name, type);
+                    } else {
+                        symbols.registerVariable(name, VoidType.Instance);
+                    }
                 }
             }
             case VariableAccess(ParserRuleContext ignored, String name) -> {
@@ -193,7 +198,7 @@ public class Compiler {
                     }
                 }
                 out.println(".method public <init>()V");
-                out.printf(".limit stack 3\n.limit locals 1\n\n");
+                out.printf(".limit stack 10\n.limit locals %s\n\n", symbols.getVariableCount());
                 out.println("aload_0");
                 out.print("invokenonvirtual java/lang/Object/<init>()V\n");
                 for(var element : elements) {
@@ -226,8 +231,15 @@ public class Compiler {
                 }
             }
             case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
-                out.printf(".method public static main([Ljava/lang/String;)V\n");
+                out.println(".method public main()V");
+                out.printf(".limit stack 100\n.limit locals %d\n", symbolses.getVariableCount());
                 generateCode(out, symbolses, block);
+                out.println("return\n.end method\n");
+                out.println(".method public static main([Ljava/lang/String;)V");
+                out.printf(".limit stack 100\n.limit locals %d\n", symbolses.getVariableCount());
+                out.printf("new %s\ndup\n", symbols.getCompilingClassName());
+                out.printf("invokenonvirtual %s/<init>()V\n", symbols.getCompilingClassName());
+                out.printf("invokevirtual %s/main()V\n", symbols.getCompilingClassName());
             }
             case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
                 out.printf(".method public %s(", name);
@@ -237,7 +249,7 @@ public class Compiler {
                 }
                 var returnTypeDescriptor = symbolses.findJavaClass(returnType.getClass().getName()).get().descriptorString();
                 out.printf(")%s\n", returnTypeDescriptor); // [???] I don't know if this works
-                out.print("limit stack 3\nlimit locals 0\n");
+                out.printf(".limit stack 100\n.limit locals %d\n", symbolses.getVariableCount());
                 generateCode(out, symbolses, block);
                 if (returnType.type() instanceof VoidType) {
                     out.println("return");

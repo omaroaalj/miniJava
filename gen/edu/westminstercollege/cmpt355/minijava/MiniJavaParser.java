@@ -259,7 +259,7 @@ public class MiniJavaParser extends Parser {
 
 			        for (var classMethod : ((ClassNodeContext)_localctx).methods)
 			            classElements.add(classMethod.n);
-			        
+
 			        if (((ClassNodeContext)_localctx).main != null)
 			            classElements.add(((ClassNodeContext)_localctx).main.n);
 
