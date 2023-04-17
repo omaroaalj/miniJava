@@ -1,1 +1,3 @@
-import java.util.*;
+main() {
+    Badger b = new Badger();
+}

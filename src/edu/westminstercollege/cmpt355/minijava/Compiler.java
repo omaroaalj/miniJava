@@ -214,9 +214,9 @@ public class Compiler {
                 boolean fieldConstructorMade = false;
                 for(var element : elements) {
                     if (element instanceof FieldDefinition field) {
-                        out.printf(String.format(".field public %s %s\n", field.name(), symbols.getCompilingClassName()));
+                        out.printf(".field public %s %s\n", field.name(), symbols.getCompilingClassName());
                         if (!fieldConstructorMade) {
-                            out.printf("invokenonvirtual java/lang/Object/<init>()V\n");
+                            out.print("invokenonvirtual java/lang/Object/<init>()V\n");
                             fieldConstructorMade = true;
                         }
                     }
@@ -226,7 +226,8 @@ public class Compiler {
             case FieldDefinition(ParserRuleContext ignore, TypeNode type, String name, Optional<Expression> expr) -> {
                 if (expr.isPresent()) { // if there is initialization
                     generateCode(out, symbols, expr.get());
-                    // out.printf(String.format("putfield %s/%s %s", )); [???] how to handle different types?
+                    var typeDescriptor = symbols.findJavaClass(type.getClass().getName()).get().descriptorString();
+                    out.printf("putfield %s/%s %s\n", symbols.getCompilingClassName(), name, typeDescriptor); // [???] I don't know if this works
                 }
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
@@ -241,11 +242,13 @@ public class Compiler {
                 generateCode(out, symbolses, block);
             }
             case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
-                out.printf(String.format(".method public %s(", name));
+                out.printf(".method public %s(", name);
                 for (var parameter : parameters) {
-                    out.printf(String.format("L%s;", parameter.type().toString())); // [???] I don't know if this works
+                    var parameterTypeDescriptor = symbolses.findJavaClass(parameter.getClass().getName()).get().descriptorString();
+                    out.printf("%s;", parameterTypeDescriptor); // [???] I don't know if this works
                 }
-                out.printf(String.format(")%s\n", returnType.toString())); // [???] I don't know if this works
+                var returnTypeDescriptor = symbolses.findJavaClass(returnType.getClass().getName()).get().descriptorString();
+                out.printf(")%s\n", returnTypeDescriptor); // [???] I don't know if this works
                 out.print("limit stack 3\nlimit locals 0\n");
                 generateCode(out, symbolses, block);
                 if (returnType.type() instanceof VoidType) {
@@ -260,9 +263,9 @@ public class Compiler {
                     //do nothing
                 }
                 else if (exprType.equals(PrimitiveType.Double))
-                    out.printf("pop2\n");
+                    out.print("pop2\n");
                 else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean))
-                    out.printf("pop\n");
+                    out.print("pop\n");
             }
             case DoubleLiteral(ParserRuleContext ignored, String text) -> {
                 out.printf("ldc2_w %f\n", Double.parseDouble(text));
@@ -318,7 +321,7 @@ public class Compiler {
                 var stringType = new ClassType("String");
                 Type exprType;
                 for (var expr : expressions) {
-                    out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
+                    out.print("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
                     generateCode(out, symbols, expr);
                     exprType = tc.getType(symbols, expr);
                     //System.out.println(exprType);
@@ -334,10 +337,10 @@ public class Compiler {
                         printlnArg = "Ljava/lang/String;";
                         out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
                     }
-                    out.printf(String.format("invokevirtual java/io/PrintStream/print(%s)V\n", printlnArg));
+                    out.printf("invokevirtual java/io/PrintStream/print(%s)V\n", printlnArg);
                 }
                 // new line after each print statement
-                out.printf("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
+                out.print("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
                 out.println("invokevirtual java/io/PrintStream/println()V");
             }
             case Assignment(ParserRuleContext ignored, Expression name, Expression expr) -> {
@@ -348,53 +351,66 @@ public class Compiler {
                 generateCode(out, symbols, expr);
                 var stringType = new ClassType("String");
                 if (exprType.equals(PrimitiveType.Double) && assigType.equals(PrimitiveType.Int)) {
-                    out.printf("i2d\n");
-                    out.printf("dup2\n");
+                    out.print("i2d\n");
+                    out.print("dup2\n");
                     if (var.isField()) {
-                        out.printf(String.format("putfield %s/%s D\n", symbols.getCompilingClassName(), name));
+                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), name);
                     } else {
                         out.printf("dstore_%d\n", var.getIndex());
                     }
                 }
                 else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)){
-                    out.printf("dup\n");
+                    out.print("dup\n");
                     if (var.isField()) {
-                        out.printf(String.format("putfield %s/%s I\n", symbols.getCompilingClassName(), name));
+                        out.printf("putfield %s/%s I\n", symbols.getCompilingClassName(), name);
                     } else {
                         out.printf("istore %d\n", var.getIndex());
                     }
                 }
                 else if (exprType.equals(stringType)){
-                    out.printf("dup\n");
+                    out.print("dup\n");
                     if (var.isField()) {
-                        out.printf(String.format("putfield %s/%s Ljava/lang/String;\n", symbols.getCompilingClassName(), name));
+                        out.printf("putfield %s/%s Ljava/lang/String;\n", symbols.getCompilingClassName(), name);
                     } else {
                         out.printf("astore %d\n", var.getIndex());
                     }
                 }
                 else {
                     out.printf("dup2\n");
-                    // [???] how to handle class types
-                    out.printf("dstore %d\n", var.getIndex());
+                    if (var.isField()) { // maybe this is going to work?
+                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), name);
+                    } else {
+                        out.printf("dstore %d\n", var.getIndex());
+                    }
                 }
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 Variable var = symbols.findVariable(variableName).get();
                 var stringType = new ClassType("String");
-                if(var.getType().equals(PrimitiveType.Double)){
-                    out.printf("dload %d\n", var.getIndex());
-                }
-                else if (var.getType().equals(stringType)){
-                    out.printf("aload %d\n", var.getIndex());
-                }
-                else if (var.getType().equals(PrimitiveType.Int) || var.getType().equals(PrimitiveType.Boolean)) {
-                    out.printf("iload %d\n", var.getIndex());
-                }
-                else if (var.getType() instanceof StaticType){
+                if (var.getType().equals(PrimitiveType.Double)) {
+                    if (var.isField())
+                        out.printf("getfield %s/%s D\n", symbols.getCompilingClassName(), variableName);
+                    else
+                        out.printf("dload %d\n", var.getIndex());
+                } else if (var.getType().equals(stringType)) {
+                    if (var.isField())
+                        out.printf("getfield %s/%s Ljava/lang/String;\n", symbols.getCompilingClassName(), variableName);
+                    else
+                        out.printf("aload %d\n", var.getIndex());
+                } else if (var.getType().equals(PrimitiveType.Int) || var.getType().equals(PrimitiveType.Boolean)) {
+                    if (var.isField())
+                        out.printf("getfield %s/%s I\n", symbols.getCompilingClassName(), variableName);
+                    else
+                        out.printf("iload %d\n", var.getIndex());
+                } else if (var.getType() instanceof StaticType) {
                     // do nothing
-                }
-                else {
-                    out.printf("aload %d\n", var.getIndex());
+                } else {
+                    if (var.isField()) {
+                        var typeDescriptor = symbols.findJavaClass(var.getType().toString()).get().descriptorString();
+                        out.printf("getfield %s/%s %s\n", symbols.getCompilingClassName(), variableName, typeDescriptor);
+                    } else {
+                        out.printf("aload %d\n", var.getIndex());
+                    }
                     //out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
                 }
             }
@@ -472,15 +488,15 @@ public class Compiler {
                 generateCode(out, symbols, expression);
                 var stringType = new ClassType("String");
                 if (type.type().equals(PrimitiveType.Double) && exprType.equals(PrimitiveType.Int)) {
-                    out.printf("i2d\n");
+                    out.print("i2d\n");
                 } else if (type.type().equals(PrimitiveType.Int) && exprType.equals(PrimitiveType.Double)) {
-                    out.printf("d2i\n");
+                    out.print("d2i\n");
                 } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Int)) {
-                    out.printf("invokestatic java/lang/Integer.toString(I)Ljava/lang/String;\n");
+                    out.print("invokestatic java/lang/Integer.toString(I)Ljava/lang/String;\n");
                 } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Double)) {
-                    out.printf("invokestatic java/lang/Double.toString(D)Ljava/lang/String;\n");
+                    out.print("invokestatic java/lang/Double.toString(D)Ljava/lang/String;\n");
                 } else if (type.type().equals(stringType) && exprType.equals(PrimitiveType.Boolean)) {
-                    out.printf("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;\n");
+                    out.print("invokestatic java/lang/String.valueOf(Z)Ljava/lang/String;\n");
                 } else if (type.type().equals(stringType) && exprType.equals(stringType)) {
                     //do nothing
                 } else {
@@ -510,16 +526,28 @@ public class Compiler {
                         out.println(String.format("iinc %d 1", varIndex));
                     else
                         out.println(String.format("iinc %d -1", varIndex));
-                    out.println(String.format("iload %d", varIndex));
+                    if (varValue.isField()) {
+                        out.printf("getfield %s/%s I\n", symbols.getCompilingClassName(), varName);
+                    } else {
+                        out.println(String.format("iload %d", varIndex));
+                    }
                 } else if (exprType == PrimitiveType.Double) {
-                    out.println(String.format("dload %d", varIndex));
+                    if (varValue.isField()) {
+                        out.printf("getfield %s/%s I\n", symbols.getCompilingClassName(), varName);
+                    } else {
+                        out.println(String.format("dload %d", varIndex));
+                    }
                     out.println("dconst_1");
                     if (increment.equals("++"))
                         out.println("dadd");
                     else
                         out.println("dsub");
                     out.println("dup2");
-                    out.println(String.format("dstore %d", varIndex));
+                    if (varValue.isField()) {
+                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), varName);
+                    } else {
+                        out.println(String.format("dstore %d", varIndex));
+                    }
                 }
                 else
                     throw new RuntimeException(String.format(
@@ -531,20 +559,32 @@ public class Compiler {
                 var exprType = tc.getType(symbols, varName);
                 var varIndex = varValue.getIndex();
                 if (exprType == PrimitiveType.Int) {
-                    out.println(String.format("iload %d", varIndex));
+                    if (varValue.isField()) {
+                        out.printf("getfield %s/%s I\n", symbols.getCompilingClassName(), varName);
+                    } else {
+                        out.println(String.format("iload %d", varIndex));
+                    }
                     if (increment.equals("++"))
                         out.println(String.format("iinc %d 1", varIndex));
                     else
                         out.println(String.format("iinc %d -1", varIndex));
                 } else if (exprType == PrimitiveType.Double) {
-                    out.println(String.format("dload %d", varIndex));
+                    if (varValue.isField()) {
+                        out.printf("getfield %s/%s D\n", symbols.getCompilingClassName(), varName);
+                    } else {
+                        out.println(String.format("dload %d", varIndex));
+                    }
                     out.println("dup2");
                     out.println("dconst_1");
                     if (increment.equals("++"))
                         out.println("dadd");
                     else
                         out.println("dsub");
-                    out.println(String.format("dstore %d", varIndex));
+                    if (varValue.isField()) {
+                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), varName);
+                    } else {
+                        out.println(String.format("dstore %d", varIndex));
+                    }
                 }
                 else
                     throw new RuntimeException(String.format(
