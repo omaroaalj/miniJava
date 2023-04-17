@@ -190,14 +190,13 @@ public class Compiler {
                 for(var element : elements) {
                     if (element instanceof FieldDefinition field) {
                         out.printf(".field public %s %s\n\n", field.name(), getAssemblyType(field.type().type()));
-                        if (!fieldConstructorMade) {
-                            out.println(".method static <clinit>()V");
-                            out.printf(".limit stack 3\n.limit locals 1\n");
-                            out.println("aload_0");
-                            out.print("invokenonvirtual java/lang/Object/<init>()V\n");
-                            fieldConstructorMade = true;
-                        }
                     }
+                }
+                out.println(".method public <init>()V");
+                out.printf(".limit stack 3\n.limit locals 1\n");
+                out.println("aload_0");
+                out.print("invokenonvirtual java/lang/Object/<init>()V\n");
+                for(var element : elements) {
                     generateCode(out, symbols, element);
                 }
             }

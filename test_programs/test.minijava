@@ -1,1 +1,2 @@
-double f = 0.0;
+int x = 1;
+double f = 5.0;
