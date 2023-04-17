@@ -266,9 +266,12 @@ public class Typechecker {
                     symbols.allocateVariable(1);
                 }
             }
+            /*
             default -> {
-                throw new SyntaxException(node, "Typecheck case unimplemented");
+                throw new SyntaxException(node, String.format("Typecheck case unimplemented for node %s", node.getNodeDescription()));
             }
+             */
+            default -> {}
         }
     }
 

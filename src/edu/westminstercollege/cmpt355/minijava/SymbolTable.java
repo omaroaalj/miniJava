@@ -118,7 +118,8 @@ public class SymbolTable {
      * will pass the allocation request up to its parent unless the table is of Class level.)
      */
     public int allocateVariable(int size) {
-        if (level == Level.Method) {
+
+        if (level == Level.Method | level == Level.Class) {
             int index = variableIndex;
             variableIndex += size;
             return index;
