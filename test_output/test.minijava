@@ -10,14 +10,14 @@ invokenonvirtual java/lang/Object/<init>()V
 return
 .end method
 
-.method public f(I)V
+.method public f(Ljava/lang/String)V
 .limit stack 100
 .limit locals 2
 
 .line 1
 getstatic java/lang/System/out Ljava/io/PrintStream;
-iload 1
-invokevirtual java/io/PrintStream/print(I)V
+aload 1
+invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
 getstatic java/lang/System/out Ljava/io/PrintStream;
 invokevirtual java/io/PrintStream/println()V
 return
@@ -28,19 +28,6 @@ return
 .limit locals 1
 
 .line 2
-ldc 5
 aload_0
-invokevirtual test/f(I)V
-return
-.end method
-
-.method public static main([Ljava/lang/String;)V
-.limit stack 100
-.limit locals 1
-new test
-dup
-invokenonvirtual test/<init>()V
-invokevirtual test/main()V
-return
-.end method
-
+ldc "true"
+invokevirtual test/f( Ljava/lang/String;

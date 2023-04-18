@@ -708,10 +708,10 @@ public class Compiler {
                         var argument = Reflect.typeFromClass(symbols.classFromType(tc.getType(symbols, arg)).get()).get();
                         argumentTypes.add(argument);
                     }
+                    out.println("aload_0");
                     for (var arg : arguments) {
                         generateCode(out, symbols, arg);
                     }
-                    out.println("aload_0");
                     out.print("invokevirtual " + symbols.getCompilingClassName() + "/" + methodName + "(");
                     for (var type : argumentTypes) {
                         out.print(getAssemblyType(type));
