@@ -180,6 +180,7 @@ public class SymbolTable {
      * is automatically imported.)
      */
     public Optional<Class<?>> findJavaClass(String className) {
+
         if (importedClasses.containsKey(className))
             return Optional.of(importedClasses.get(className));
 

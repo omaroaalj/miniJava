@@ -39,7 +39,7 @@ public class Typechecker {
                         path = path.concat(".");
                     }
                 }
-                path = path.concat("*");
+                //path = path.concat("*");
                 // make sure it is a valid package?
                 symbols.importPackage(path);
             }
@@ -89,7 +89,6 @@ public class Typechecker {
                     }
                 }
                 for(var decItem : decItems){
-                    // ADD SOMETHING HERE ABOUT CHECKING FOR IMPORTS
                     var variable = symbols.findVariable(decItem.name());
                     if(variable.isPresent()){
                         var realVar = variable.get();
