@@ -99,7 +99,8 @@ public class Compiler {
                 if(symbols.findMethod(classType, name, parameterTypes).isPresent()){
                     throw new SyntaxException(node, String.format("Method %s already exists", name));
                 } else {
-                    symbolses.registerMethod(name, parameterTypes, returnType.type());
+                    System.out.println(name + parameterTypes + returnType.type());
+                    symbols.registerMethod(name, parameterTypes, returnType.type());
                     symbolses.setParent(symbols);
                     resolveSymbols(block1, symbolses);
                 }
