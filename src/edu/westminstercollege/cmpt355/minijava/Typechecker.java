@@ -255,11 +255,11 @@ public class Typechecker {
                 }
             }
             case MainMethod(ParserRuleContext ignored, Block block, SymbolTable symbolses) -> {
-                symbolses.allocateVariable(1); // allocate space for this
+                //symbolses.allocateVariable(1); // allocate space for this
                 typecheck(symbolses, block);
             }
             case MethodDefinition(ParserRuleContext ignored, TypeNode ignored1, String ignored2, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
-                symbolses.allocateVariable(1); // allocate space for this
+                //symbolses.allocateVariable(1); // allocate space for this
                 for(var parameter: parameters){
                     typecheck(symbolses, parameter);
                 }
@@ -268,7 +268,7 @@ public class Typechecker {
             case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
                 Variable parameterVar = symbols.findVariable(name).get();
                 parameterVar.setType(type.type());
-                parameterVar.setIndex(symbols.getVariableCount()+1);
+                parameterVar.setIndex(symbols.getVariableCount());
                 if (type.type().equals(PrimitiveType.Double)) {
                     symbols.allocateVariable(2);
                 } else {
