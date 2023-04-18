@@ -180,7 +180,7 @@ public class Compiler {
         else if(type.equals(VoidType.Instance))
             return "V";
         else if(type.equals(stringType))
-            return "Ljava/lang/String";
+            return "Ljava/lang/String;";
         else {
             String s = type.toString();
             String s1 = " L" + s.substring(10, s.length()-1) + ";";
@@ -248,7 +248,7 @@ public class Compiler {
                 out.printf(".method public %s(", name);
                 for (var parameter : parameters) {
                     var parameterTypeDescriptor = getAssemblyType(parameter.type().type());
-                    out.printf("%s", parameterTypeDescriptor); // [???] I don't know if this works
+                    out.printf(parameterTypeDescriptor); // [???] I don't know if this works
                 }
                 var returnTypeDescriptor = getAssemblyType(returnType.type());
                 out.printf(")%s\n", returnTypeDescriptor); // [???] I don't know if this works
@@ -705,7 +705,7 @@ public class Compiler {
                     List<Type> argumentTypes = new ArrayList<>();
                     for(var arg : arguments){
                         //generateCode(out, symbols, arg);
-                        var argument = Reflect.typeFromClass(symbols.classFromType(tc.getType(symbols, arg)).get()).get();
+                        var argument = tc.getType(symbols, arg);
                         argumentTypes.add(argument);
                     }
                     out.println("aload_0");

@@ -10,7 +10,7 @@ invokenonvirtual java/lang/Object/<init>()V
 return
 .end method
 
-.method public f(Ljava/lang/String)V
+.method public f(Ljava/lang/String;)V
 .limit stack 100
 .limit locals 2
 
@@ -30,4 +30,17 @@ return
 .line 2
 aload_0
 ldc "true"
-invokevirtual test/f( Ljava/lang/String;
+invokevirtual test/f(Ljava/lang/String;)V
+return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 100
+.limit locals 1
+new test
+dup
+invokenonvirtual test/<init>()V
+invokevirtual test/main()V
+return
+.end method
+
