@@ -290,11 +290,6 @@ public class SymbolTable {
     }
 
     private Optional<Method> findLocalMethod(String name, List<Type> parameterTypes) {
-        /*
-        for(var method : methods){
-            System.out.println(method);
-        }
-         */
         if (level != Level.Class)
             return parent.findLocalMethod(name, parameterTypes);
 

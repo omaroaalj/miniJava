@@ -1,5 +1,6 @@
-int x = 100;
+int x;
     main() {
-        String x = "Hello!";
-        _print(x); /* Hello! */
+        x = 100;
+        _print(x);
+        { String x = "Hello!"; _print(x); /* Hello! */ }
     }

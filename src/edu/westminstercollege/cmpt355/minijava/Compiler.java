@@ -8,11 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class Compiler {
-
 
     // Commented out until we have our AST nodes defined...
     private SymbolTable symbols = new SymbolTable(SymbolTable.Level.Class);
@@ -35,41 +33,7 @@ public class Compiler {
             resolveSymbols(node, symbols);
             Typechecker tc = new Typechecker();
             tc.typecheck(symbols, node);
-            /*
-            // out.printf(".class public %s\n", className);
-            // out.printf(".super java/lang/Object\n");
-            // out.println();
-            // out.println(".field private static in Ljava/util/Scanner;");
-            // out.println();
-            // .method static <clinit>()V
-            out.printf("""
-                    .limit stack 3
-                    .limit locals 0
-                    new java/util/Scanner
-                    dup
-                    getstatic java/lang/System/in Ljava/io/InputStream;
-                    invokenonvirtual java/util/Scanner/<init>(Ljava/io/InputStream;)V
-                    putstatic %s/in Ljava/util/Scanner;
-                    return
-                    .end method
-                    
-                    """, className);
-            // out.printf(".method public static main([Ljava/lang/String;)V\n");
-            out.printf(".limit stack 100\n");
-            //symbols.allocateVariable(1); // allocate space for args[]
-            out.printf(".limit locals %d\n", symbols.getVariableCount());
-            out.println();
-            */
-            // Generate code for program here 🙂
             generateCode(out, symbols, node);
-
-
-
-            // another way
-            //block.statements().forEach(this::generateCode);
-
-            //out.printf("return\n");
-            //out.printf(".end method\n");
         }
     }
 
@@ -87,6 +51,7 @@ public class Compiler {
                         throw new SyntaxException(node, String.format("Field with name: %s already exists.", name));
                     }
                 } else {
+                    //System.out.println(name + " " + type.type());
                     symbols.registerField(name, type.type());
                 }
             }
@@ -100,7 +65,6 @@ public class Compiler {
                 if(symbols.findMethod(classType, name, parameterTypes).isPresent()){
                     throw new SyntaxException(node, String.format("Method %s already exists", name));
                 } else {
-                    //System.out.println(name + " " + parameterTypes + " " + returnType.type());
                     symbols.registerMethod(name, parameterTypes, returnType.type());
                     symbolses.setParent(symbols);
                     resolveSymbols(block1, symbolses);
@@ -130,6 +94,14 @@ public class Compiler {
                 if(symbols.findVariable(name).isPresent()){
                     if(!symbols.findVariable(name).get().isField()){
                         throw new SyntaxException(node, String.format("Variable '%s' already declared", name));
+                    }
+                    else {
+                        if(expr.isPresent()){
+                            var type = tc.getType(symbols, expr.get());
+                            symbols.registerVariable(name, type);
+                        } else {
+                            symbols.registerVariable(name, VoidType.Instance);
+                        }
                     }
                 }
                 else {
@@ -205,14 +177,14 @@ public class Compiler {
                 out.println("aload_0");
                 out.print("invokenonvirtual java/lang/Object/<init>()V\n");
                 for(var element : elements) {
-                    if (element instanceof FieldDefinition field) {
+                    if (element instanceof FieldDefinition) {
                         generateCode(out, symbols, element);
                     }
                 }
                 out.printf("return\n");
                 out.printf(".end method\n\n");
                 for(var element : elements) {
-                    if (!(element instanceof FieldDefinition field) && !(element instanceof ClassImport ci) && !(element instanceof PackageImport pi)) {
+                    if (!(element instanceof FieldDefinition) && !(element instanceof ClassImport) && !(element instanceof PackageImport)) {
                         generateCode(out, symbols, element);
                     }
                 }
@@ -229,7 +201,7 @@ public class Compiler {
                 }
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
-                //System.out.println(symbolses.getVariableCount());
+                //System.out.println(symbols.findVariable("x").get().getName());
                 for (var statement : statements) {
                     out.printf("\n.line %d\n", statement.ctx().getStart().getLine());
                     generateCode(out, symbolses, statement);
@@ -355,8 +327,9 @@ public class Compiler {
                         printlnArg = "D";
                     else if (exprType.equals(PrimitiveType.Boolean))
                         printlnArg = "Z";
-                    else if (exprType.equals(stringType))
+                    else if (exprType.equals(stringType)) {
                         printlnArg = "Ljava/lang/String;";
+                    }
                     else {
                         printlnArg = "Ljava/lang/String;";
                         out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
@@ -417,6 +390,7 @@ public class Compiler {
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 Variable var = symbols.findVariable(variableName).get();
+                //System.out.println(var.isField());
                 var stringType = new ClassType("String");
                 if (var.getType().equals(PrimitiveType.Double)) {
                     if (var.isField()) {
@@ -433,7 +407,7 @@ public class Compiler {
                     else
                         out.printf("aload %d\n", var.getIndex());
                 } else if (var.getType().equals(PrimitiveType.Int) || var.getType().equals(PrimitiveType.Boolean)) {
-                    if (var.isField()) {
+                    if (var.isField() && var.getIndex() == -99) {
                         out.println("aload_0");
                         out.printf("getfield %s/%s I\n", symbols.getCompilingClassName(), variableName);
                     }

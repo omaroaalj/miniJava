@@ -9,9 +9,6 @@
 
 aload_0
 invokenonvirtual java/lang/Object/<init>()V
-aload_0
-ldc 100
-putfield test/x I
 return
 .end method
 
@@ -20,13 +17,29 @@ return
 .limit locals 2
 
 .line 3
-ldc "Hello!"
-astore 1
+aload_0
+ldc 100
+dup_x1
+putfield test/x I
+pop
 
 .line 4
 getstatic java/lang/System/out Ljava/io/PrintStream;
 aload_0
-getfield test/x Ljava/lang/String;
+getfield test/x I
+invokevirtual java/io/PrintStream/print(I)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
+
+.line 5
+
+.line 5
+ldc "Hello!"
+astore 1
+
+.line 5
+getstatic java/lang/System/out Ljava/io/PrintStream;
+aload 1
 invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
 getstatic java/lang/System/out Ljava/io/PrintStream;
 invokevirtual java/io/PrintStream/println()V

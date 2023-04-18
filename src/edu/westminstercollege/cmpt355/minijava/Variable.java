@@ -3,11 +3,10 @@ package edu.westminstercollege.cmpt355.minijava;
 public class Variable {
 
     private Type type;
-    private String name;
+    private final String name;
     private int index = -99;
-    private boolean isField;
+    private boolean isField = false;
     public Variable(String name) {
-        this.type = type;
         this.name = name;
     }
     public void setField(boolean isField){
