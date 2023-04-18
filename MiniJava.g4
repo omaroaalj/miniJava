@@ -134,6 +134,13 @@ statement
     | 'return' ';' {
         $n = new Return($ctx, Optional.empty());
     }
+    | 'while' '(' e=expression ')' statement
+    // what goes between the ( )?
+    // - expression -
+    // - conditions like "i < 5"
+    // - variable call
+    // - method call
+    // as long as expression is boolean
     ;
 
 // type followed by a comma-separated list of "items", each being just a name or a name = value.
