@@ -10,7 +10,7 @@ invokenonvirtual java/lang/Object/<init>()V
 return
 .end method
 
-.method public f(Ljava/lang/String)V
+.method public f(Ljava/lang/String;)V
 .limit stack 100
 .limit locals 2
 

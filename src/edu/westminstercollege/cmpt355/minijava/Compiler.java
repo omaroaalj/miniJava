@@ -249,6 +249,8 @@ public class Compiler {
                 for (var parameter : parameters) {
                     var parameterTypeDescriptor = getAssemblyType(parameter.type().type());
                     out.printf("%s", parameterTypeDescriptor); // [???] I don't know if this works
+                    if (!(parameter.type().type() instanceof PrimitiveType))
+                        out.print(";");
                 }
                 var returnTypeDescriptor = getAssemblyType(returnType.type());
                 out.printf(")%s\n", returnTypeDescriptor); // [???] I don't know if this works
