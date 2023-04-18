@@ -99,7 +99,6 @@ public class Compiler {
                 if(symbols.findMethod(classType, name, parameterTypes).isPresent()){
                     throw new SyntaxException(node, String.format("Method %s already exists", name));
                 } else {
-                    System.out.println(name + parameterTypes + returnType.type());
                     symbols.registerMethod(name, parameterTypes, returnType.type());
                     symbolses.setParent(symbols);
                     resolveSymbols(block1, symbolses);
@@ -643,7 +642,7 @@ public class Compiler {
             case MethodCall(ParserRuleContext ignored, Optional<Expression> expr, String methodName, List<Expression> arguments) -> {
                 // find classType and classPath based of expr
                 ClassType classType = new ClassType("");
-                if(expr.isPresent())
+                if(expr.isPresent()) {
                     classType =(ClassType) tc.getType(symbols, expr.get());
                 String classPath = symbols.findJavaClass(((ClassType) classType).getClassName()).get().descriptorString();
                 classPath = classPath.substring(1, classPath.length()-1);
@@ -698,13 +697,12 @@ public class Compiler {
                 }
                 // if the method is nonstatic
                 else {
-                    // start with generatingCode for expr
-                    if(expr.isPresent())
+                        // start with generatingCode for expr
                         generateCode(out, symbols, expr.get());
-                    for(var arg : arguments) {
-                        generateCode(out, symbols, arg);
-                    }
-                    out.print("invokevirtual " + classPath + "/" + methodName + "(");
+                        for (var arg : arguments) {
+                            generateCode(out, symbols, arg);
+                        }
+                        out.print("invokevirtual " + classPath + "/" + methodName + "(");
                         for (var type : argumentTypes) {
                             var type1 = symbols.classFromType(type).get().toString();
                             switch (type1) {
@@ -714,7 +712,7 @@ public class Compiler {
                                 case "void" -> out.print("V");
                                 default -> {
                                     type1 = type1.substring(6);
-                                    type1 = type1.replace('.','/');
+                                    type1 = type1.replace('.', '/');
                                     type1 = "L" + type1 + ";";
                                     out.print(type1);
                                 }
@@ -722,6 +720,7 @@ public class Compiler {
                         }
                         // finish invokevirtual line with returnType
                         out.println(")" + returnTypeChar);
+                    }
                 }
             }
             case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
