@@ -1277,7 +1277,7 @@ public class MiniJavaParser extends Parser {
 				        var methodArgs = new ArrayList<Expression>();
 				        for (var arg : ((ExpressionContext)_localctx).args)
 				            methodArgs.add(arg.n);
-				        ((ExpressionContext)_localctx).n =  new MethodCall(_localctx, new This(_localctx), (((ExpressionContext)_localctx).NAME!=null?((ExpressionContext)_localctx).NAME.getText():null), methodArgs);
+				        ((ExpressionContext)_localctx).n =  new MethodCall(_localctx, Optional.empty(), (((ExpressionContext)_localctx).NAME!=null?((ExpressionContext)_localctx).NAME.getText():null), methodArgs);
 				    
 				}
 				break;
@@ -1487,7 +1487,7 @@ public class MiniJavaParser extends Parser {
 						                  var methodArgs = new ArrayList<Expression>();
 						                  for (var arg : ((ExpressionContext)_localctx).args)
 						                      methodArgs.add(arg.n);
-						                      ((ExpressionContext)_localctx).n =  new MethodCall(_localctx, ((ExpressionContext)_localctx).e.n, (((ExpressionContext)_localctx).NAME!=null?((ExpressionContext)_localctx).NAME.getText():null), methodArgs);
+						                      ((ExpressionContext)_localctx).n =  new MethodCall(_localctx, Optional.of(((ExpressionContext)_localctx).e.n), (((ExpressionContext)_localctx).NAME!=null?((ExpressionContext)_localctx).NAME.getText():null), methodArgs);
 						              
 						}
 						break;

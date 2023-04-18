@@ -134,14 +134,18 @@ public class Typechecker {
                     throw new SyntaxException(node, String.format("Field %s does not exist", fieldName));
                 }
             }
-            case MethodCall(ParserRuleContext ignored, Expression expression, String methodName, List<Expression> arguments) -> {
-                typecheck(symbols, expression); // check what is before
+            case MethodCall(ParserRuleContext ignored, Optional<Expression> expression, String methodName, List<Expression> arguments) -> {
+                if(expression.isPresent())
+                    typecheck(symbols, expression.get()); // check what is before
+
                 List<Type> argumentTypes = new ArrayList<>();
                 for (var argument : arguments) {
                     typecheck(symbols, argument);
                     argumentTypes.add(getType(symbols, argument));
                 }
-                var classType = getType(symbols, expression);
+                var classType = new ClassType("");
+                if(expression.isPresent())
+                    classType = (ClassType) getType(symbols, expression.get());
                 var method = symbols.findMethod((ClassType) classType, methodName, argumentTypes);
                 if (method.isEmpty())
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
@@ -308,9 +312,12 @@ public class Typechecker {
                     return field.get().type();
                 }
             }
-            case MethodCall(ParserRuleContext ignored, Expression expression, String methodName, List<Expression> arguments) -> {
+            case MethodCall(ParserRuleContext ignored, Optional<Expression> expression, String methodName, List<Expression> arguments) -> {
                 List<Type> argumentTypes = new ArrayList<>();
-                var classType = getType(symbols, expression);
+                var classType = new ClassType("");
+                if(expression.isPresent()) {
+                    classType = (ClassType) getType(symbols, expression.get());
+                }
                 for (var argument : arguments)
                     argumentTypes.add(getType(symbols, argument));
                 var method = symbols.findMethod((ClassType) classType, methodName, argumentTypes);
@@ -409,12 +416,7 @@ public class Typechecker {
             case Print(ParserRuleContext ignored, List<Expression> ignored2) -> {
                 return VoidType.Instance;
             }
-            /*
-            default -> {
-                System.out.printf("GetType() Unimplemented for Expression: %s\n", expr.getNodeDescription());
-            }
-             */
-            default ->{}
+            default -> System.out.printf("GetType() Unimplemented for Expression: %s\n", expr.getNodeDescription());
         }
         return null;
     }

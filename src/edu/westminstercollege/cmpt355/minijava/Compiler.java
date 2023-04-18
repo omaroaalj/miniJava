@@ -639,9 +639,11 @@ public class Compiler {
                     out.println("getfield " + classPath + "/" + fieldName + printArg);
                 }
             }
-            case MethodCall(ParserRuleContext ignored, Expression expr, String methodName, List<Expression> arguments) -> {
+            case MethodCall(ParserRuleContext ignored, Optional<Expression> expr, String methodName, List<Expression> arguments) -> {
                 // find classType and classPath based of expr
-                var classType = tc.getType(symbols, expr);
+                ClassType classType = new ClassType("");
+                if(expr.isPresent())
+                    classType =(ClassType) tc.getType(symbols, expr.get());
                 String classPath = symbols.findJavaClass(((ClassType) classType).getClassName()).get().descriptorString();
                 classPath = classPath.substring(1, classPath.length()-1);
                     // find arguments Types in order to find the exact Method.
@@ -696,7 +698,8 @@ public class Compiler {
                 // if the method is nonstatic
                 else {
                     // start with generatingCode for expr
-                    generateCode(out, symbols, expr);
+                    if(expr.isPresent())
+                        generateCode(out, symbols, expr.get());
                     for(var arg : arguments) {
                         generateCode(out, symbols, arg);
                     }

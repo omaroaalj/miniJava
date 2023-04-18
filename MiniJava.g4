@@ -202,13 +202,13 @@ expression
         var methodArgs = new ArrayList<Expression>();
         for (var arg : $args)
             methodArgs.add(arg.n);
-            $n = new MethodCall($ctx, $e.n, $NAME.text, methodArgs);
+            $n = new MethodCall($ctx, Optional.of($e.n), $NAME.text, methodArgs);
     }
     | NAME '(' (args+=expression (',' args+=expression)*)? ')' {
         var methodArgs = new ArrayList<Expression>();
         for (var arg : $args)
             methodArgs.add(arg.n);
-        $n = new MethodCall($ctx, new This($ctx), $NAME.text, methodArgs);
+        $n = new MethodCall($ctx, Optional.empty(), $NAME.text, methodArgs);
     }
     | '(' e=expression ')' {
         $n = $e.n;
