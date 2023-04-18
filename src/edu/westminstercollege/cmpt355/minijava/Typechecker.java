@@ -49,6 +49,7 @@ public class Typechecker {
                 }
             }
             case FieldDefinition(ParserRuleContext ignored, TypeNode type, String name, Optional<Expression> expr) -> {
+                var typeName = type.getClass().getName();
                 var variable = symbols.findVariable(name);
                 if(variable.isPresent()){
                     var realVar = variable.get();
@@ -80,7 +81,15 @@ public class Typechecker {
             }
             case Declarations(ParserRuleContext ignored, TypeNode type, List<Declaration> decItems) -> {
                 // loop through each declaration, sets type if necessary
+                var decType = type.type();
+                if (decType instanceof ClassType clazzType) {
+                    var clazzTypeName = clazzType.getClassName();
+                    if (symbols.findJavaClass(clazzTypeName).isEmpty()) {
+                        throw new SyntaxException(node, String.format("%s class does not exist or has not been imported.", clazzTypeName));
+                    }
+                }
                 for(var decItem : decItems){
+                    // ADD SOMETHING HERE ABOUT CHECKING FOR IMPORTS
                     var variable = symbols.findVariable(decItem.name());
                     if(variable.isPresent()){
                         var realVar = variable.get();

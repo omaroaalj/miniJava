@@ -1,4 +1,4 @@
-int x = 25;
+import java.util.*;
 main() {
-    _print(x);
+Map map;
 }
