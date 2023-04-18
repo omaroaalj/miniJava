@@ -260,6 +260,7 @@ public class Compiler {
                 if(value.isPresent()){
                     var expr = value.get();
                     var type = tc.getType(symbols, expr);
+                    generateCode(out, symbols, expr);
                     if (type.equals(PrimitiveType.Double))
                         out.println("dreturn");
                     else if (type.equals(PrimitiveType.Int))

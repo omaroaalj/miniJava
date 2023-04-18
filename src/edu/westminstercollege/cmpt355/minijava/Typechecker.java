@@ -135,7 +135,7 @@ public class Typechecker {
                 }
             }
             case MethodCall(ParserRuleContext ignored, Expression expression, String methodName, List<Expression> arguments) -> {
-                typecheck(symbols, expression); // check what is before .
+                typecheck(symbols, expression); // check what is before
                 List<Type> argumentTypes = new ArrayList<>();
                 for (var argument : arguments) {
                     typecheck(symbols, argument);
@@ -409,9 +409,12 @@ public class Typechecker {
             case Print(ParserRuleContext ignored, List<Expression> ignored2) -> {
                 return VoidType.Instance;
             }
+            /*
             default -> {
-                System.out.println("GetType() Unimplemented");
+                System.out.printf("GetType() Unimplemented for Expression: %s\n", expr.getNodeDescription());
             }
+             */
+            default ->{}
         }
         return null;
     }
