@@ -409,24 +409,31 @@ public class Compiler {
                 Variable var = symbols.findVariable(variableName).get();
                 var stringType = new ClassType("String");
                 if (var.getType().equals(PrimitiveType.Double)) {
-                    if (var.isField())
+                    if (var.isField()) {
+                        out.println("aload_0");
                         out.printf("getfield %s/%s D\n", symbols.getCompilingClassName(), variableName);
+                    }
                     else
                         out.printf("dload %d\n", var.getIndex());
                 } else if (var.getType().equals(stringType)) {
-                    if (var.isField())
+                    if (var.isField()) {
+                        out.println("aload_0");
                         out.printf("getfield %s/%s Ljava/lang/String;\n", symbols.getCompilingClassName(), variableName);
+                    }
                     else
                         out.printf("aload %d\n", var.getIndex());
                 } else if (var.getType().equals(PrimitiveType.Int) || var.getType().equals(PrimitiveType.Boolean)) {
-                    if (var.isField())
+                    if (var.isField()) {
+                        out.println("aload_0");
                         out.printf("getfield %s/%s I\n", symbols.getCompilingClassName(), variableName);
+                    }
                     else
                         out.printf("iload %d\n", var.getIndex());
                 } else if (var.getType() instanceof StaticType) {
                     // do nothing
                 } else {
                     if (var.isField()) {
+                        out.println("aload_0");
                         var typeDescriptor = symbols.findJavaClass(var.getType().toString()).get().descriptorString();
                         out.printf("getfield %s/%s %s\n", symbols.getCompilingClassName(), variableName, typeDescriptor);
                     } else {
