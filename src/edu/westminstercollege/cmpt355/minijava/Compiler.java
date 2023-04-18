@@ -95,7 +95,7 @@ public class Compiler {
                     resolveSymbols(param, symbolses);
                     parameterTypes.add(param.type().type());
                 }
-                ClassType classType = new ClassType(symbolses.getCompilingClassName());
+                ClassType classType = new ClassType(symbols.getCompilingClassName());
                 if(symbols.findMethod(classType, name, parameterTypes).isPresent()){
                     throw new SyntaxException(node, String.format("Method %s already exists", name));
                 } else {
@@ -202,21 +202,20 @@ public class Compiler {
                 out.println("aload_0");
                 out.print("invokenonvirtual java/lang/Object/<init>()V\n");
                 for(var element : elements) {
-                    if (element instanceof FieldDefinition field)
+                    if (element instanceof FieldDefinition field) {
                         generateCode(out, symbols, element);
+                    }
                 }
                 out.printf("return\n");
                 out.printf(".end method\n\n");
                 for(var element : elements) {
                     if (!(element instanceof FieldDefinition field) && !(element instanceof ClassImport ci) && !(element instanceof PackageImport pi)) {
+                        System.out.println("CALLED " + element.getNodeDescription());
                         generateCode(out, symbols, element);
                         out.printf("return\n");
                         out.printf(".end method\n\n");
                     }
                 }
-            }
-            case ClassImport(ParserRuleContext ctx, List<String> importParts) -> {
-
             }
             case FieldDefinition(ParserRuleContext ignore, TypeNode type, String name, Optional<Expression> expr) -> {
                 if (expr.isPresent()) { // if there is initialization
