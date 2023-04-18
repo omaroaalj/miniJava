@@ -210,10 +210,7 @@ public class Compiler {
                 out.printf(".end method\n\n");
                 for(var element : elements) {
                     if (!(element instanceof FieldDefinition field) && !(element instanceof ClassImport ci) && !(element instanceof PackageImport pi)) {
-                        System.out.println("CALLED " + element.getNodeDescription());
                         generateCode(out, symbols, element);
-                        out.printf("return\n");
-                        out.printf(".end method\n\n");
                     }
                 }
             }
@@ -242,6 +239,7 @@ public class Compiler {
                 out.printf("new %s\ndup\n", symbols.getCompilingClassName());
                 out.printf("invokenonvirtual %s/<init>()V\n", symbols.getCompilingClassName());
                 out.printf("invokevirtual %s/main()V\n", symbols.getCompilingClassName());
+                out.printf("return\n.end method\n\n");
             }
             case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
                 out.printf(".method public %s(", name);
@@ -249,14 +247,14 @@ public class Compiler {
                     var parameterTypeDescriptor = symbolses.findJavaClass(parameter.getClass().getName()).get().descriptorString();
                     out.printf("%s;", parameterTypeDescriptor); // [???] I don't know if this works
                 }
-                var returnTypeDescriptor = symbolses.findJavaClass(returnType.getClass().getName()).get().descriptorString();
+                var returnTypeDescriptor = getAssemblyType(returnType.type());
                 out.printf(")%s\n", returnTypeDescriptor); // [???] I don't know if this works
                 out.printf(".limit stack 100\n.limit locals %d\n", symbolses.getVariableCount());
                 generateCode(out, symbolses, block);
                 if (returnType.type() instanceof VoidType) {
                     out.println("return");
                 }
-                out.println(".end method");
+                out.println(".end method\n");
             }
             case Return(ParserRuleContext ignored, Optional<Expression> value) -> {
                 if(value.isPresent()){

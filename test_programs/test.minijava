@@ -1,1 +1,2 @@
-void f(){int x = 5;}
+void f(){int x = 5; _print(x);}
+main(){}
