@@ -221,12 +221,15 @@ public class Compiler {
                 if (expr.isPresent()) { // if there is initialization
                     out.println("aload_0");
                     generateCode(out, symbols, expr.get());
+                    if(type.type().equals(PrimitiveType.Double) && tc.getType(symbols, expr.get()).equals(PrimitiveType.Int)){
+                        out.println("i2d");
+                    }
                     String typeDescriptor = getAssemblyType(type.type());
                     out.printf("putfield %s/%s %s\n", symbols.getCompilingClassName(), name, typeDescriptor); // [???] I don't know if this works
                 }
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
-                //System.out.println("This was called");
+                //System.out.println(symbolses.getVariableCount());
                 for (var statement : statements) {
                     out.printf("\n.line %d\n", statement.ctx().getStart().getLine());
                     generateCode(out, symbolses, statement);
@@ -369,38 +372,45 @@ public class Compiler {
                 Type exprType = tc.getType(symbols, name);
                 Type assigType = tc.getType(symbols, expr);
 
+                if (var.isField())
+                    out.println("aload_0");
+
                 generateCode(out, symbols, expr);
                 var stringType = new ClassType("String");
                 if (exprType.equals(PrimitiveType.Double) && assigType.equals(PrimitiveType.Int)) {
                     out.print("i2d\n");
-                    out.print("dup2\n");
                     if (var.isField()) {
-                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), name);
+                        out.println("dup2_x1");
+                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), var.getName());
                     } else {
+                        out.print("dup2\n");
                         out.printf("dstore_%d\n", var.getIndex());
                     }
                 }
                 else if (exprType.equals(PrimitiveType.Int) || exprType.equals(PrimitiveType.Boolean)){
-                    out.print("dup\n");
                     if (var.isField()) {
-                        out.printf("putfield %s/%s I\n", symbols.getCompilingClassName(), name);
+                        out.println("dup_x1");
+                        out.printf("putfield %s/%s I\n", symbols.getCompilingClassName(), var.getName());
                     } else {
+                        out.print("dup\n");
                         out.printf("istore %d\n", var.getIndex());
                     }
                 }
                 else if (exprType.equals(stringType)){
-                    out.print("dup\n");
                     if (var.isField()) {
-                        out.printf("putfield %s/%s Ljava/lang/String;\n", symbols.getCompilingClassName(), name);
+                        out.println("dup_x1");
+                        out.printf("putfield %s/%s Ljava/lang/String;\n", symbols.getCompilingClassName(), var.getName());
                     } else {
+                        out.print("dup\n");
                         out.printf("astore %d\n", var.getIndex());
                     }
                 }
                 else {
-                    out.printf("dup2\n");
                     if (var.isField()) { // maybe this is going to work?
-                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), name);
+                        out.println("dup2_x1");
+                        out.printf("putfield %s/%s D\n", symbols.getCompilingClassName(), var.getName());
                     } else {
+                        out.printf("dup2\n");
                         out.printf("dstore %d\n", var.getIndex());
                     }
                 }

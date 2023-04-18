@@ -1,4 +1,5 @@
-int x = 25;
-main() {
-    _print(x);
-}
+int x = 100;
+    main() {
+        String x = "Hello!";
+        _print(x); /* Hello! */
+    }
