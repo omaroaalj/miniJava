@@ -1,6 +1,7 @@
 int f()
     {
     int x = 5;
+    _print(x);
     return x;
     }
 main()
