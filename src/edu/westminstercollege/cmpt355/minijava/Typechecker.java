@@ -147,8 +147,10 @@ public class Typechecker {
                 if(expression.isPresent())
                     classType = (ClassType) getType(symbols, expression.get());
                 var method = symbols.findMethod(classType, methodName, argumentTypes);
-                if (method.isEmpty())
+                System.out.println(classType.className + " " + methodName + " " + argumentTypes);
+                if (method.isEmpty()) {
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
+                }
             }
             case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
                 List<Type> argumentTypes = new ArrayList<>();

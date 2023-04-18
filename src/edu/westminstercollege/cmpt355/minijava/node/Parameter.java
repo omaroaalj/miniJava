@@ -6,7 +6,7 @@ public record Parameter(ParserRuleContext ctx, TypeNode type, String name) imple
 
     @Override
     public String getNodeDescription() {
-        return name;
+        return String.format("Parameter[type: %s, name: %s]", type.type(), name);
     }
 
     @Override

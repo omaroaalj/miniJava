@@ -245,8 +245,8 @@ public class Compiler {
             case MethodDefinition(ParserRuleContext ignored, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
                 out.printf(".method public %s(", name);
                 for (var parameter : parameters) {
-                    var parameterTypeDescriptor = symbolses.findJavaClass(parameter.getClass().getName()).get().descriptorString();
-                    out.printf("%s;", parameterTypeDescriptor); // [???] I don't know if this works
+                    var parameterTypeDescriptor = getAssemblyType(parameter.type().type());
+                    out.printf("%s", parameterTypeDescriptor); // [???] I don't know if this works
                 }
                 var returnTypeDescriptor = getAssemblyType(returnType.type());
                 out.printf(")%s\n", returnTypeDescriptor); // [???] I don't know if this works

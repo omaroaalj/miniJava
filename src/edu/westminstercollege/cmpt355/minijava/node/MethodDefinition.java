@@ -7,7 +7,7 @@ import java.util.List;
 public record MethodDefinition(ParserRuleContext ctx, TypeNode returnType, String name, List<Parameter> parameters, Block block, SymbolTable symbols) implements Node {
     @Override
     public String getNodeDescription() {
-        return String.format("MethodDefinition[TypeNode %s, name %s]", returnType.type(), name);
+        return String.format("MethodDefinition[TypeNode: %s, name: %s]", returnType.type(), name);
     }
     @Override
     public List<? extends Node> children() {
