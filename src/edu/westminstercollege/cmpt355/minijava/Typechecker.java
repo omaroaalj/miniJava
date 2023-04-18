@@ -96,7 +96,10 @@ public class Typechecker {
                     }
                     // check if declaration has children, then check if declared double, can have double or int values
                     if(decItem.children().size() > 0 ) {
-                        if(type.type().equals(PrimitiveType.Double)){
+                        if(decItem.expression().get() instanceof MethodCall){
+                            //do nothing
+                        }
+                        else if (type.type().equals(PrimitiveType.Double)){
                             if(!getType(symbols, decItem.expression().get()).equals(PrimitiveType.Double)
                                     && !getType(symbols, decItem.expression().get()).equals(PrimitiveType.Int)){
                                 throw new SyntaxException(node, String.format("Initialization must match variable's declared type: variable %s does not conform to type %s", decItem.name(), getType(symbols, decItem.expression().get()).toString()));

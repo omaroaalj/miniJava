@@ -266,13 +266,15 @@ public class Compiler {
                     generateCode(out, symbols, expr);
                     if (type.equals(PrimitiveType.Double))
                         out.println("dreturn");
-                    else if (type.equals(PrimitiveType.Int))
+                    else if (type.equals(PrimitiveType.Int) || type.equals(PrimitiveType.Boolean))
                         out.println("ireturn");
                     else if (type.equals(VoidType.Instance))
                         out.println("return");
                     else
                         out.println("areturn");
                 }
+                else
+                    out.println("return");
             }
             case This(ParserRuleContext ignored) -> out.println("aload_0");
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
@@ -717,6 +719,7 @@ public class Compiler {
                         out.print(getAssemblyType(type));
                     }
                     var method = symbols.findMethod((ClassType)classType, methodName, argumentTypes);
+                    //System.out.println(classType + " " + methodName + " " + argumentTypes);
                     var returnType = method.get().returnType();
                     var returnTypeChar = getAssemblyType(returnType);
                     out.println(")" + returnTypeChar);

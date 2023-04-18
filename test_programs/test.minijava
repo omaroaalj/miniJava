@@ -1,2 +1,2 @@
-int f() { return 20; }
-main() { int i = f(); }
+void f() { return; _print("X"); }
+main() { f(); /* */}
