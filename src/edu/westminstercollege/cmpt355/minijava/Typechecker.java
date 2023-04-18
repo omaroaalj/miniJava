@@ -143,10 +143,10 @@ public class Typechecker {
                     typecheck(symbols, argument);
                     argumentTypes.add(getType(symbols, argument));
                 }
-                var classType = new ClassType("");
+                var classType = new ClassType(symbols.getCompilingClassName());
                 if(expression.isPresent())
                     classType = (ClassType) getType(symbols, expression.get());
-                var method = symbols.findMethod((ClassType) classType, methodName, argumentTypes);
+                var method = symbols.findMethod(classType, methodName, argumentTypes);
                 if (method.isEmpty())
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
             }

@@ -297,7 +297,6 @@ public class SymbolTable {
                 .filter(m -> m.name().equals(name))
                 .filter(m -> m.parameterTypes().equals(parameterTypes))
                 .findAny();
-
         return maybeMethod;
     }
 
