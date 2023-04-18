@@ -708,6 +708,7 @@ public class Compiler {
                     for (var arg : arguments) {
                         generateCode(out, symbols, arg);
                     }
+                    out.println("aload_0");
                     out.print("invokevirtual " + symbols.getCompilingClassName() + "/" + methodName + "(");
                     for (var type : argumentTypes) {
                         out.print(getAssemblyType(type));
