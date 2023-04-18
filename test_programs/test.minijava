@@ -1,2 +1,2 @@
-void f(String x){ _print(x);}
-main(){f("true");}
+int f() { return 20; }
+main() { int i = f(); }

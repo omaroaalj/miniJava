@@ -54,11 +54,11 @@ public class Typechecker {
                     var realVar = variable.get();
                     realVar.setType(type.type());
                     if(type.type().equals(PrimitiveType.Double)){
-                        realVar.setIndex(symbols.getVariableCount()+1);
+                        realVar.setIndex(symbols.getVariableCount());
                         symbols.allocateVariable(2);
                     }
                     else {
-                        realVar.setIndex(symbols.getVariableCount()+1);
+                        realVar.setIndex(symbols.getVariableCount());
                         symbols.allocateVariable(1);
                     }
                 }
@@ -86,11 +86,11 @@ public class Typechecker {
                         var realVar = variable.get();
                         realVar.setType(type.type());
                         if(type.type().equals(PrimitiveType.Double)){
-                            realVar.setIndex(symbols.getVariableCount()+1);
+                            realVar.setIndex(symbols.getVariableCount());
                             symbols.allocateVariable(2);
                         }
                         else {
-                            realVar.setIndex(symbols.getVariableCount()+1);
+                            realVar.setIndex(symbols.getVariableCount());
                             symbols.allocateVariable(1);
                         }
                     }
