@@ -1,2 +1,2 @@
-void f(int x) {}
-main() {int x = 5; f(x); }
+void f(int x) { _print(x);}
+main() { f(5); }

@@ -12,20 +12,23 @@ return
 
 .method public f(I)V
 .limit stack 100
-.limit locals 2
+.limit locals 3
+
+.line 1
+getstatic java/lang/System/out Ljava/io/PrintStream;
+iload 3
+invokevirtual java/io/PrintStream/print(I)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
 return
 .end method
 
 .method public main()V
 .limit stack 100
-.limit locals 3
+.limit locals 2
 
 .line 2
 ldc 5
-istore 2
-
-.line 2
-iload 2
 aload_0
 invokevirtual test/f(I)V
 return
@@ -33,7 +36,7 @@ return
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 3
+.limit locals 2
 new test
 dup
 invokenonvirtual test/<init>()V

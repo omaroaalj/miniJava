@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class Compiler {
@@ -99,7 +100,7 @@ public class Compiler {
                 if(symbols.findMethod(classType, name, parameterTypes).isPresent()){
                     throw new SyntaxException(node, String.format("Method %s already exists", name));
                 } else {
-                    //System.out.println(name + parameterTypes + returnType.type());
+                    //System.out.println(name + " " + parameterTypes + " " + returnType.type());
                     symbols.registerMethod(name, parameterTypes, returnType.type());
                     symbolses.setParent(symbols);
                     resolveSymbols(block1, symbolses);
@@ -115,6 +116,7 @@ public class Compiler {
                 if(symbols.findVariable(name).isPresent()){
                     throw new SyntaxException(node, String.format("Parameter %s already exists", name));
                 } else {
+                    //System.out.println(name + " " + type.type());
                     symbols.registerVariable(name, type.type());
                 }
             }

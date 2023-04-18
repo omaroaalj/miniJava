@@ -147,7 +147,7 @@ public class Typechecker {
                 if(expression.isPresent())
                     classType = (ClassType) getType(symbols, expression.get());
                 var method = symbols.findMethod(classType, methodName, argumentTypes);
-                System.out.println(classType.className + " " + methodName + " " + argumentTypes);
+                //System.out.println(classType.className + " " + methodName + " " + argumentTypes);
                 if (method.isEmpty()) {
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
                 }
@@ -258,12 +258,15 @@ public class Typechecker {
                 symbolses.allocateVariable(1); // allocate space for this
                 typecheck(symbolses, block);
             }
-            case MethodDefinition(ParserRuleContext ignored, TypeNode ignored1, String ignored2, List<Parameter> ignored3, Block block, SymbolTable symbolses) -> {
+            case MethodDefinition(ParserRuleContext ignored, TypeNode ignored1, String ignored2, List<Parameter> parameters, Block block, SymbolTable symbolses) -> {
                 symbolses.allocateVariable(1); // allocate space for this
+                for(var parameter: parameters){
+                    typecheck(symbolses, parameter);
+                }
                 typecheck(symbolses, block);
             }
             case Parameter(ParserRuleContext ignored, TypeNode type, String name) -> {
-                var parameterVar = new Variable(name);
+                Variable parameterVar = symbols.findVariable(name).get();
                 parameterVar.setType(type.type());
                 parameterVar.setIndex(symbols.getVariableCount()+1);
                 if (type.type().equals(PrimitiveType.Double)) {
