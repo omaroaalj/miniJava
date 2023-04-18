@@ -314,7 +314,7 @@ public class Typechecker {
             }
             case MethodCall(ParserRuleContext ignored, Optional<Expression> expression, String methodName, List<Expression> arguments) -> {
                 List<Type> argumentTypes = new ArrayList<>();
-                var classType = new ClassType("");
+                var classType = new ClassType(symbols.getCompilingClassName());
                 if(expression.isPresent()) {
                     classType = (ClassType) getType(symbols, expression.get());
                 }

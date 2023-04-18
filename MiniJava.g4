@@ -208,7 +208,7 @@ expression
         var methodArgs = new ArrayList<Expression>();
         for (var arg : $args)
             methodArgs.add(arg.n);
-        $n = new MethodCall($ctx, Optional.of(new This($ctx)), $NAME.text, methodArgs);
+        $n = new MethodCall($ctx, Optional.empty(), $NAME.text, methodArgs);
     }
     | '(' e=expression ')' {
         $n = $e.n;

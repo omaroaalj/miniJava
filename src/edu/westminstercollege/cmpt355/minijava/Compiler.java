@@ -641,7 +641,7 @@ public class Compiler {
             }
             case MethodCall(ParserRuleContext ignored, Optional<Expression> expr, String methodName, List<Expression> arguments) -> {
                 // find classType and classPath based of expr
-                ClassType classType = new ClassType("");
+                ClassType classType = new ClassType(symbols.getCompilingClassName());
                 if(expr.isPresent()) {
                     classType =(ClassType) tc.getType(symbols, expr.get());
                 String classPath = symbols.findJavaClass(((ClassType) classType).getClassName()).get().descriptorString();
@@ -658,18 +658,7 @@ public class Compiler {
                     var method = symbols.findMethod((ClassType)classType, methodName, argumentTypes);
                     var returnType = method.get().returnType();
                     // convert returnType to assembly equivalent
-                    var returnTypeChar = symbols.classFromType(returnType).get().toString();
-                    switch (returnTypeChar) {
-                        case "double" -> returnTypeChar = "D";
-                        case "boolean" -> returnTypeChar = "Z";
-                        case "int" -> returnTypeChar = "I";
-                        case "void" -> returnTypeChar = "V";
-                        default -> {
-                            returnTypeChar = returnTypeChar.substring(6);
-                            returnTypeChar = returnTypeChar.replace('.','/');
-                            returnTypeChar = "L" + returnTypeChar + ";";
-                        }
-                    }
+                    var returnTypeChar = getAssemblyType(returnType);
                     if(classType instanceof StaticType) {
                         for(var arg : arguments) {
                             generateCode(out, symbols, arg);
@@ -678,19 +667,7 @@ public class Compiler {
                         out.print("invokestatic " + classPath + "/" + methodName + "(");
                         // print every argumentType
                         for (var type : argumentTypes) {
-                            var type1 = symbols.classFromType(type).get().toString();
-                            switch (type1) {
-                                case "double" -> out.print("D");
-                                case "boolean" -> out.print("Z");
-                                case "int" -> out.print("I");
-                                case "void" -> out.print("V");
-                                default -> {
-                                    type1 = type1.substring(6);
-                                    type1 = type1.replace('.','/');
-                                    type1 = "L" + type1 + ";";
-                                    out.print(type1);
-                                }
-                            }
+                            out.print(getAssemblyType(type));
                         }
                     // finish invokestatic line with returnType
                     out.println(")" + returnTypeChar);
@@ -721,6 +698,24 @@ public class Compiler {
                         // finish invokevirtual line with returnType
                         out.println(")" + returnTypeChar);
                     }
+                } else {
+                    List<Type> argumentTypes = new ArrayList<>();
+                    for(var arg : arguments){
+                        //generateCode(out, symbols, arg);
+                        var argument = Reflect.typeFromClass(symbols.classFromType(tc.getType(symbols, arg)).get()).get();
+                        argumentTypes.add(argument);
+                    }
+                    for (var arg : arguments) {
+                        generateCode(out, symbols, arg);
+                    }
+                    out.print("invokevirtual " + symbols.getCompilingClassName() + "/" + methodName + "(");
+                    for (var type : argumentTypes) {
+                        out.print(getAssemblyType(type));
+                    }
+                    var method = symbols.findMethod((ClassType)classType, methodName, argumentTypes);
+                    var returnType = method.get().returnType();
+                    var returnTypeChar = getAssemblyType(returnType);
+                    out.println(")" + returnTypeChar);
                 }
             }
             case ConstructorCall(ParserRuleContext ignored, String className, List<Expression> arguments) -> {
