@@ -10,23 +10,32 @@ invokenonvirtual java/lang/Object/<init>()V
 return
 .end method
 
-.method public f()I
-.limit stack 100
-.limit locals 1
-
-.line 1
-ldc 20
-ireturn
-.end method
-
 .method public main()V
 .limit stack 100
 .limit locals 2
 
 .line 2
-aload_0
-invokevirtual test/f()I
+ldc 1
 istore 1
+
+.line 3
+loop_start:
+iconst_1
+ifeq loop_end
+
+.line 4
+getstatic java/lang/System/out Ljava/io/PrintStream;
+iload 1
+invokevirtual java/io/PrintStream/print(I)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
+
+.line 5
+iinc 1 1
+iload 1
+pop
+goto loop_start
+loop_end:
 return
 .end method
 

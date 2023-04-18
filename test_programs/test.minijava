@@ -1,2 +1,7 @@
-int f() { return 20; }
-main() { int i = f(); }
+main() {
+    int i = 1;
+    while (true) {
+        _print(i);
+        ++i;
+    }
+}

@@ -134,7 +134,9 @@ statement
     | 'return' ';' {
         $n = new Return($ctx, Optional.empty());
     }
-    | 'while' '(' cond=expression ')' body=statement
+    | 'while' '(' cond=expression ')' body=statement {
+        $n = new While($ctx, $cond.n, $body.n);
+    }
     // what goes between the ( )?
     // - expression -
     // - conditions like "i < 5"
