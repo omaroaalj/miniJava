@@ -275,6 +275,14 @@ public class Typechecker {
                     symbols.allocateVariable(1);
                 }
             }
+            case While(ParserRuleContext ignore, Expression condition, Statement body) -> {
+                typecheck(symbols, condition);
+                typecheck(symbols, body);
+                var conditionType = getType(symbols, condition);
+                if (!conditionType.equals(PrimitiveType.Boolean)) {
+                    throw new SyntaxException(node, "While condition is must be a boolean type, not " + conditionType);
+                }
+            }
             /*
             default -> {
                 throw new SyntaxException(node, String.format("Typecheck case unimplemented for node %s", node.getNodeDescription()));

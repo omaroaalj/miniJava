@@ -750,6 +750,9 @@ public class Compiler {
                 }
                 out.println(")V");
             }
+            case While(ParserRuleContext ctx, Expression condition, Statement body) -> {
+                
+            }
             default -> {
                 throw new SyntaxException(String.format("GenerateCode() unimplemented for node %s", node.getNodeDescription()));
             }
