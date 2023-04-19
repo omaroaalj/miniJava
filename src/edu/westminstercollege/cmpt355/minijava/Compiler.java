@@ -139,19 +139,24 @@ public class Compiler {
     }
     private String getAssemblyType(Type type){
         var stringType = new ClassType("String");
-        if(type.equals(PrimitiveType.Int))
+        if(type.equals(PrimitiveType.Int)) {
             return "I";
-        else if(type.equals(PrimitiveType.Double))
+        }
+        else if(type.equals(PrimitiveType.Double)) {
             return "D";
-        else if(type.equals(PrimitiveType.Boolean))
+        }
+        else if(type.equals(PrimitiveType.Boolean)) {
             return "Z";
-        else if(type.equals(VoidType.Instance))
+        }
+        else if(type.equals(VoidType.Instance)) {
             return "V";
-        else if(type.equals(stringType))
+        }
+        else if(type.equals(stringType)) {
             return "Ljava/lang/String;";
+        }
         else {
             String s = type.toString();
-            String s1 = " L" + s.substring(10, s.length()-1) + ";";
+            String s1 = "L" + s.substring(10, s.length()-1) + ";";
             s1 = s1.replace('.','/');
             return s1;
         }

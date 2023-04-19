@@ -23,7 +23,7 @@ astore 1
 
 .line 4
 aload 1
-invokevirtual java/util/Scanner/nextLine() Ljava/lang/String;
+invokevirtual java/util/Scanner/nextLine()Ljava/lang/String;
 astore 2
 
 .line 5

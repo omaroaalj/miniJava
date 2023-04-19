@@ -17,7 +17,6 @@ public class Typechecker {
                 }
             }
             case ClassImport(ParserRuleContext ignored, List<String> importParts) -> {
-                System.out.println("CALLED");
                 String path = "";
                 for (int i = 0; i < importParts.size(); i++) {
                     path = path.concat(importParts.get(i));
