@@ -310,6 +310,7 @@ public class Typechecker {
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
+                //System.out.println(variable.get().getType());
                 if(variable.isPresent()){
                     return variable.get().getType();
                 }
@@ -345,6 +346,7 @@ public class Typechecker {
                     argumentTypes.add(getType(symbols, arg));
                 }
                 var clazz = symbols.findJavaClass(className);
+                System.out.println(className);
                 var constructor = symbols.findConstructor((ClassType) Reflect.typeFromClass(clazz.get()).get(), argumentTypes);
                 return constructor.get().containingType();
             }
@@ -352,7 +354,7 @@ public class Typechecker {
                 return getType(symbols, exprName);
             }
             case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
-                System.out.println(left + "\n" + right);
+                //System.out.println(left + "\n" + right);
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
                 // cases if operator is +

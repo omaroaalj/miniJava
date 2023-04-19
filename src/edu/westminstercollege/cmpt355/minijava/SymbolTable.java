@@ -92,6 +92,7 @@ public class SymbolTable {
         if (v == null) {
             v = new Variable(name);
             variables.put(name, v);
+            v.setType(type);
         }
 
         return v;
@@ -109,6 +110,7 @@ public class SymbolTable {
             variables.put(name, v);
         }
         v.setField(true);
+        v.setType(type);
 
         return v;
     }
@@ -179,7 +181,6 @@ public class SymbolTable {
      * is automatically imported.)
      */
     public Optional<Class<?>> findJavaClass(String className) {
-
         if (importedClasses.containsKey(className))
             return Optional.of(importedClasses.get(className));
 
