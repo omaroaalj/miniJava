@@ -1,7 +1,7 @@
 .class public test
 .super java/lang/Object
 
-.field public in LScanner;
+.field public in Ljava/util/Scanner;
 
 .method public <init>()V
 .limit stack 10
@@ -14,7 +14,7 @@ new java/util/Scanner
 dup
 getstatic java/lang/System.in Ljava/io/InputStream;
 invokenonvirtual java/util/Scanner.<init>(Ljava/io/InputStream;)V
-putfield test/in LScanner;
+putfield test/in Ljava/util/Scanner;
 return
 .end method
 

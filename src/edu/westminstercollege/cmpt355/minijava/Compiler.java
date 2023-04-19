@@ -155,10 +155,9 @@ public class Compiler {
             return "Ljava/lang/String;";
         }
         else {
-            String s = type.toString();
-            String s1 = "L" + s.substring(10, s.length()-1) + ";";
-            s1 = s1.replace('.','/');
-            return s1;
+            String s = ((ClassType) type).getClassName();
+            s = symbols.findJavaClass(s).get().descriptorString();
+            return s;
         }
     }
     private void generateCode(PrintWriter out, SymbolTable symbols, Node node) throws SyntaxException {
