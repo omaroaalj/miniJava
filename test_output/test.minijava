@@ -1,0 +1,28 @@
+.class public test
+.super java/lang/Object
+
+.method public <init>()V
+.limit stack 10
+.limit locals 1
+
+aload_0
+invokenonvirtual java/lang/Object/<init>()V
+return
+.end method
+
+.method public main()V
+.limit stack 100
+.limit locals 1
+return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 100
+.limit locals 1
+new test
+dup
+invokenonvirtual test/<init>()V
+invokevirtual test/main()V
+return
+.end method
+

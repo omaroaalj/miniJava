@@ -17,6 +17,7 @@ public class Typechecker {
                 }
             }
             case ClassImport(ParserRuleContext ignored, List<String> importParts) -> {
+                System.out.println("CALLED");
                 String path = "";
                 for (int i = 0; i < importParts.size(); i++) {
                     path = path.concat(importParts.get(i));
@@ -39,7 +40,6 @@ public class Typechecker {
                         path = path.concat(".");
                     }
                 }
-                //path = path.concat("*");
                 // make sure it is a valid package?
                 symbols.importPackage(path);
             }
@@ -346,8 +346,8 @@ public class Typechecker {
                     argumentTypes.add(getType(symbols, arg));
                 }
                 var clazz = symbols.findJavaClass(className);
-                System.out.println(className);
-                var constructor = symbols.findConstructor((ClassType) Reflect.typeFromClass(clazz.get()).get(), argumentTypes);
+                //System.out.println(clazz);
+                var constructor = symbols.findConstructor(new ClassType(className), argumentTypes);
                 return constructor.get().containingType();
             }
             case Assignment(ParserRuleContext ignored, Expression exprName, Expression ignored2) -> {

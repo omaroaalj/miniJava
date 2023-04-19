@@ -1,25 +1,4 @@
 import java.util.Scanner;
-import java.lang.reflect.*;
-
-double FACTOR = 5.0 / 9;
-double OFFSET = 32;
-
-double FtoC(double F) {
-    double C = this.FACTOR * (F - OFFSET);
-    return C;
-}
-
-String toString() {
-    return "This is a Temp object!";
-}
-
-main() {
+main(){
     Scanner in = new Scanner(System.in);
-    System.out.print("Enter a temperature in Fahrenheit (°F): ");
-    double fahr = in.nextDouble();
-
-    Temp temp = this;
-    double cels = temp.FtoC(fahr);
-
-    System.out.println(fahr + "°F is " + cels + "°C");
 }
