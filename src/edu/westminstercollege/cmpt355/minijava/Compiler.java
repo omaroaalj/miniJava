@@ -90,27 +90,22 @@ public class Compiler {
                     resolveSymbols(stmt, symbolses);
                 }
             }
-            case Declaration(ParserRuleContext ignored, String name, Optional<Expression> expr) -> {
-                if(symbols.findVariable(name).isPresent()){
-                    if(!symbols.findVariable(name).get().isField()){
-                        throw new SyntaxException(node, String.format("Variable '%s' already declared", name));
-                    }
-                    else {
-                        if(expr.isPresent()){
-                            var type = tc.getType(symbols, expr.get());
-                            symbols.registerVariable(name, type);
-                        } else {
-                            symbols.registerVariable(name, VoidType.Instance);
+            case Declarations(ParserRuleContext ignore, TypeNode type, List<Declaration> decItems) -> {
+                for(var decItem : decItems){
+                    if(symbols.findVariable(decItem.name()).isPresent()){
+                        if(!symbols.findVariable(decItem.name()).get().isField()) {
+                            throw new SyntaxException(node, String.format("Variable '%s' already declared", decItem.name()));
+                        }
+                        else {
+                            symbols.registerVariable(decItem.name(), type.type());
                         }
                     }
-                }
-                else {
-                    if(expr.isPresent()){
-                        //System.out.println(expr.get());
-                        var type = tc.getType(symbols, expr.get());
-                        symbols.registerVariable(name, type);
-                    } else {
-                        symbols.registerVariable(name, VoidType.Instance);
+                    else {
+                        if(decItem.expression().isPresent()){
+                            symbols.registerVariable(decItem.name(), type.type());
+                        } else {
+                            symbols.registerVariable(decItem.name(), VoidType.Instance);
+                        }
                     }
                 }
             }

@@ -1,4 +1,6 @@
 import java.util.Scanner;
-main(){
-    Scanner in = new Scanner(System.in);
-}
+    main() {
+        Scanner in = new Scanner(System.in);
+        String x = in.nextLine();
+        _print(x); /* Hello! */
+    }
