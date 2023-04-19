@@ -53,14 +53,7 @@ public class Typechecker {
                 if(variable.isPresent()){
                     var realVar = variable.get();
                     realVar.setType(type.type());
-                    /*
-                    if(type.type().equals(PrimitiveType.Double)){
-                        realVar.setIndex(symbols.allocateVariable(2));
-                    }
-                    else {
-                        realVar.setIndex(symbols.allocateVariable(1));
-                    }
-                     */
+
                 }
                 if(expr.isPresent()){
                     if(type.type().equals(PrimitiveType.Double)){
@@ -125,8 +118,6 @@ public class Typechecker {
             }
             case ExpressionStatement(ParserRuleContext ignored, Expression expr) -> {
                 typecheck(symbols, expr);
-                //Type exprType = getType(symbols, expr);
-                //System.out.println("exprType of " + expr + ": " + exprType.toString());
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
@@ -157,7 +148,6 @@ public class Typechecker {
                 if(expression.isPresent())
                     classType = (ClassType) getType(symbols, expression.get());
                 var method = symbols.findMethod(classType, methodName, argumentTypes);
-                //System.out.println(classType.className + " " + methodName + " " + argumentTypes);
                 if (method.isEmpty()) {
                     throw new SyntaxException(node, String.format("Method %s does not exist", methodName));
                 }
@@ -198,7 +188,6 @@ public class Typechecker {
                 boolean voidIsPresent = leftType.equals(VoidType.Instance) || rightType.equals(VoidType.Instance);
                 var stringType = new ClassType("String");
                 boolean noStringsPresent = !(leftType.equals(stringType)) && !(rightType.equals(stringType));
-                //System.out.println(!(leftType.equals(stringType)));
                 boolean nonNumericPresent =
                         (!leftType.equals(PrimitiveType.Int) && !leftType.equals(PrimitiveType.Double))
                                 || (!rightType.equals(PrimitiveType.Int) && !rightType.equals(PrimitiveType.Double));
@@ -309,7 +298,6 @@ public class Typechecker {
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 var variable = symbols.findVariable(variableName);
-                //System.out.println(variable.get().getType());
                 if(variable.isPresent()){
                     return variable.get().getType();
                 }
@@ -345,7 +333,6 @@ public class Typechecker {
                     argumentTypes.add(getType(symbols, arg));
                 }
                 var clazz = symbols.findJavaClass(className);
-                //System.out.println(clazz);
                 var constructor = symbols.findConstructor(new ClassType(className), argumentTypes);
                 return constructor.get().containingType();
             }
@@ -353,7 +340,6 @@ public class Typechecker {
                 return getType(symbols, exprName);
             }
             case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
-                //System.out.println(left + "\n" + right);
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
                 // cases if operator is +

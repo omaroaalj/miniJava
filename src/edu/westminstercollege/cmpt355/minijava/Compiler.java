@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 public class Compiler {
 
     // Commented out until we have our AST nodes defined...
@@ -51,7 +52,6 @@ public class Compiler {
                         throw new SyntaxException(node, String.format("Field with name: %s already exists.", name));
                     }
                 } else {
-                    //System.out.println(name + " " + type.type());
                     symbols.registerField(name, type.type());
                 }
             }
@@ -80,7 +80,6 @@ public class Compiler {
                 if(symbols.findVariable(name).isPresent()){
                     throw new SyntaxException(node, String.format("Parameter %s already exists", name));
                 } else {
-                    //System.out.println(name + " " + type.type());
                     symbols.registerVariable(name, type.type());
                 }
             }
@@ -201,7 +200,6 @@ public class Compiler {
                 }
             }
             case Block(ParserRuleContext ignored, List<Statement> statements, SymbolTable symbolses) -> {
-                //System.out.println(symbols.findVariable("x").get().getName());
                 for (var statement : statements) {
                     out.printf("\n.line %d\n", statement.ctx().getStart().getLine());
                     generateCode(out, symbolses, statement);
@@ -320,7 +318,6 @@ public class Compiler {
                     out.print("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
                     generateCode(out, symbols, expr);
                     exprType = tc.getType(symbols, expr);
-                    //System.out.println(exprType);
                     if (exprType.equals(PrimitiveType.Int))
                         printlnArg = "I";
                     else if (exprType.equals(PrimitiveType.Double))
@@ -390,7 +387,6 @@ public class Compiler {
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 Variable var = symbols.findVariable(variableName).get();
-                //System.out.println(var);
                 var stringType = new ClassType("String");
                 if (var.getType().equals(PrimitiveType.Double)) {
                     if (var.isField()) {
@@ -418,13 +414,11 @@ public class Compiler {
                 } else {
                     if (var.isField()) {
                         out.println("aload_0");
-                        //System.out.println(((ClassType) var.getType()).getClassName());
                         var typeDescriptor = symbols.findJavaClass(((ClassType) var.getType()).getClassName()).get().descriptorString();
                         out.printf("getfield %s/%s %s\n", symbols.getCompilingClassName(), variableName, typeDescriptor);
                     } else {
                         out.printf("aload %d\n", var.getIndex());
                     }
-                    //out.println("invokevirtual java/lang/Object.toString()Ljava/lang/String;");
                 }
             }
             case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
@@ -711,7 +705,6 @@ public class Compiler {
                         out.print(getAssemblyType(type));
                     }
                     var method = symbols.findMethod((ClassType)classType, methodName, argumentTypes);
-                    //System.out.println(classType + " " + methodName + " " + argumentTypes);
                     var returnType = method.get().returnType();
                     var returnTypeChar = getAssemblyType(returnType);
                     out.println(")" + returnTypeChar);
