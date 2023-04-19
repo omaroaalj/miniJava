@@ -1,43 +1,161 @@
 .class public test
 .super java/lang/Object
 
+.field public in LScanner;
+
 .method public <init>()V
 .limit stack 10
 .limit locals 1
 
 aload_0
 invokenonvirtual java/lang/Object/<init>()V
-return
-.end method
-
-.method public main()V
-.limit stack 100
-.limit locals 3
-
-.line 3
+aload_0
 new java/util/Scanner
 dup
 getstatic java/lang/System.in Ljava/io/InputStream;
 invokenonvirtual java/util/Scanner.<init>(Ljava/io/InputStream;)V
-astore 1
+putfield test/in LScanner;
+return
+.end method
 
-.line 4
+.method public discriminant(DDD)D
+.limit stack 100
+.limit locals 7
+
+.line 6
+dload 3
+ldc2_w 2.000000
+invokestatic java/lang/Math/pow(DD)D
+ldc 4
+i2d
+dload 1
+dmul
+dload 5
+dmul
+dsub
+dreturn
+.end method
+
+.method public firstRoot(DDDD)D
+.limit stack 100
+.limit locals 9
+
+.line 10
+dload 3
+dneg
+dload 7
+invokestatic java/lang/Math/sqrt(D)D
+dsub
+ldc 2
+i2d
+dload 1
+dmul
+ddiv
+dreturn
+.end method
+
+.method public secondRoot(DDDD)D
+.limit stack 100
+.limit locals 9
+
+.line 14
+dload 3
+dneg
+dload 7
+invokestatic java/lang/Math/sqrt(D)D
+dadd
+ldc 2
+i2d
+dload 1
+dmul
+ddiv
+dreturn
+.end method
+
+.method public input(Ljava/lang/String;)D
+.limit stack 100
+.limit locals 2
+
+.line 18
+getstatic java/lang/System.out Ljava/io/PrintStream;
 aload 1
-invokevirtual java/util/Scanner/nextLine()Ljava/lang/String;
-astore 2
-
-.line 5
-getstatic java/lang/System/out Ljava/io/PrintStream;
-aload 2
 invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V
-getstatic java/lang/System/out Ljava/io/PrintStream;
-invokevirtual java/io/PrintStream/println()V
+
+.line 19
+aload_0
+getfield test/in Ljava/util/Scanner;
+invokevirtual java/util/Scanner/nextDouble()D
+dreturn
+.end method
+
+.method public main()V
+.limit stack 100
+.limit locals 13
+
+.line 23
+aload_0
+ldc "Enter a: "
+invokevirtual test/input(Ljava/lang/String;)D
+dstore 1
+
+.line 24
+aload_0
+ldc "Enter b: "
+invokevirtual test/input(Ljava/lang/String;)D
+dstore 3
+
+.line 25
+aload_0
+ldc "Enter c: "
+invokevirtual test/input(Ljava/lang/String;)D
+dstore 5
+
+.line 27
+aload_0
+dload 1
+dload 3
+dload 5
+invokevirtual test/discriminant(DDD)D
+dstore 7
+
+.line 28
+aload_0
+dload 1
+dload 3
+dload 5
+dload 7
+invokevirtual test/firstRoot(DDDD)D
+dstore 9
+
+.line 29
+aload_0
+dload 1
+dload 3
+dload 5
+dload 7
+invokevirtual test/secondRoot(DDDD)D
+dstore 11
+
+.line 31
+getstatic java/lang/System.out Ljava/io/PrintStream;
+ldc "The real roots are "
+dload 9
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+ldc " and "
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+dload 11
+invokestatic java/lang/Double.toString(D)Ljava/lang/String;
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+ldc "."
+invokevirtual java/lang/String.concat(Ljava/lang/String;)Ljava/lang/String;
+invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 return
 .end method
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 100
-.limit locals 3
+.limit locals 13
 new test
 dup
 invokenonvirtual test/<init>()V

@@ -419,7 +419,8 @@ public class Compiler {
                 } else {
                     if (var.isField()) {
                         out.println("aload_0");
-                        var typeDescriptor = symbols.findJavaClass(var.getType().toString()).get().descriptorString();
+                        //System.out.println(((ClassType) var.getType()).getClassName());
+                        var typeDescriptor = symbols.findJavaClass(((ClassType) var.getType()).getClassName()).get().descriptorString();
                         out.printf("getfield %s/%s %s\n", symbols.getCompilingClassName(), variableName, typeDescriptor);
                     } else {
                         out.printf("aload %d\n", var.getIndex());
