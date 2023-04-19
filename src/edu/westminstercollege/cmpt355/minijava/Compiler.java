@@ -106,6 +106,7 @@ public class Compiler {
                 }
                 else {
                     if(expr.isPresent()){
+                        //System.out.println(expr.get());
                         var type = tc.getType(symbols, expr.get());
                         symbols.registerVariable(name, type);
                     } else {
@@ -390,7 +391,7 @@ public class Compiler {
             }
             case VariableAccess(ParserRuleContext ignored, String variableName) -> {
                 Variable var = symbols.findVariable(variableName).get();
-                //System.out.println(var.isField());
+                //System.out.println(var);
                 var stringType = new ClassType("String");
                 if (var.getType().equals(PrimitiveType.Double)) {
                     if (var.isField()) {

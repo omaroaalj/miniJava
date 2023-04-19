@@ -1,6 +1,14 @@
-int x;
-    main() {
-        x = 100;
-        _print(x);
-        { String x = "Hello!"; _print(x); /* Hello! */ }
-    }
+import java.util.Scanner;
+import java.lang.reflect.*;
+
+double FACTOR = 5.0 / 9;
+double OFFSET = 32;
+
+double FtoC(double F) {
+    double C = FACTOR - 1; //this.FACTOR * (F - OFFSET);
+    return C;
+}
+
+main() {
+    FtoC(5.0);
+}

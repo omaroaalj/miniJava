@@ -352,6 +352,7 @@ public class Typechecker {
                 return getType(symbols, exprName);
             }
             case BinaryOp(ParserRuleContext ignored, String operator, Expression left, Expression right) -> {
+                System.out.println(left + "\n" + right);
                 Type leftType = getType(symbols, left),
                         rightType = getType(symbols, right);
                 // cases if operator is +
@@ -430,6 +431,9 @@ public class Typechecker {
             }
             case Print(ParserRuleContext ignored, List<Expression> ignored2) -> {
                 return VoidType.Instance;
+            }
+            case This(ParserRuleContext ctx) -> {
+                return new ClassType(symbols.getCompilingClassName());
             }
             default -> System.out.printf("GetType() Unimplemented for Expression: %s\n", expr.getNodeDescription());
         }
