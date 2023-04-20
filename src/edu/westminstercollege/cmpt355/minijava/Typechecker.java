@@ -9,6 +9,9 @@ import java.util.Optional;
 
 public class Typechecker {
 
+    private boolean isNumeric(Type type) {
+        return type == PrimitiveType.Int || type == PrimitiveType.Double;
+    }
     public void typecheck(SymbolTable symbols, Node node) throws SyntaxException {
         switch(node) {
             case ClassNode(ParserRuleContext ignored, List<Node> elements) -> {
@@ -283,6 +286,26 @@ public class Typechecker {
                     throw new SyntaxException(node, "While condition is must be a boolean type, not " + conditionType);
                 }
             }
+            case RelationalOp(ParserRuleContext ctx, Expression left, Expression right, String op) -> {
+                // <, <=, >, >= : numeric only, mixed types (int/double) allowed
+                //      maybe later: allow with Strings
+                // ==, != : any (non-void) type, but both must be in same "category" (numeric, boolean, or object)
+                typecheck(symbols, left);
+                typecheck(symbols, right);
+
+                var leftType = getType(symbols, left);
+                var rightType = getType(symbols, right);
+                boolean bothNumeric = isNumeric(leftType) && isNumeric(rightType);
+                boolean bothBoolean = leftType == PrimitiveType.Boolean && rightType == PrimitiveType.Boolean;
+                boolean bothObjects = leftType instanceof ClassType && rightType instanceof ClassType;
+                SyntaxException ex = new SyntaxException(node, String.format("Incompatible types: %s %s %s", leftType, op, rightType));
+                if (List.of("<", "<=", ">", ">=").contains(op)) {
+                    if (!bothNumeric)
+                        throw ex;
+                } else if (!(bothNumeric || bothBoolean || bothObjects)) // == or !=
+                    throw ex;
+
+            }
             /*
             default -> {
                 throw new SyntaxException(node, String.format("Typecheck case unimplemented for node %s", node.getNodeDescription()));
@@ -428,6 +451,9 @@ public class Typechecker {
             }
             case Print(ParserRuleContext ignored, List<Expression> ignored2) -> {
                 return VoidType.Instance;
+            }
+            case RelationalOp(ParserRuleContext ctx, Expression left, Expression right, String op) -> {
+                return PrimitiveType.Boolean;
             }
             default -> System.out.printf("GetType() Unimplemented for Expression: %s\n", expr.getNodeDescription());
         }

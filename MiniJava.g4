@@ -170,6 +170,13 @@ decItem
     }
     ;
 
+// Other Boolean expressions:
+// <, >, <=, >=, ==, != - relational operators (number -> boolean)
+//      == and != can be used with nonnumeric values
+//      == on objects is same is .equals(), != is !.equals()
+// - !, &&, ||, - logic operators (boolean -> boolean)
+// For objects, == means "are they the same object?"
+
 expression
     returns[Expression n]
     : '_print' '(' (args+=expression (',' args+=expression)*)? ')' {
@@ -244,6 +251,9 @@ expression
     }
     | l=expression op=('+' | '-') r=expression {
         $n = new BinaryOp($ctx, $op.text, $l.n, $r.n);
+    }
+    | l=expression op=('<' | '<=' | '>' | '>=') r=expression {
+
     }
     | <assoc=right> l=expression '=' r=expression {
         $n = new Assignment($ctx, $l.n, $r.n);
