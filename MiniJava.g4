@@ -253,7 +253,10 @@ expression
         $n = new BinaryOp($ctx, $op.text, $l.n, $r.n);
     }
     | l=expression op=('<' | '<=' | '>' | '>=') r=expression {
-
+        $n = new RelationalOp($ctx, $l.n, $r.n, $op.text);
+    }
+    | l=expression op=('==' | '!=') r=expression {
+        $n = new RelationalOp($ctx, $l.n, $r.n, $op.text);
     }
     | <assoc=right> l=expression '=' r=expression {
         $n = new Assignment($ctx, $l.n, $r.n);

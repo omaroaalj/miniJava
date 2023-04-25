@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class Typechecker {
 
-    private boolean isNumeric(Type type) {
+    public boolean isNumeric(Type type) {
         return type == PrimitiveType.Int || type == PrimitiveType.Double;
     }
     public void typecheck(SymbolTable symbols, Node node) throws SyntaxException {

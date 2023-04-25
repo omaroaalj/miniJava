@@ -751,18 +751,72 @@ public class Compiler {
                 out.println(")V");
             }
             case While(ParserRuleContext ctx, Expression condition, Statement body) -> {
-                out.println("loop_start:");
+                String loopStartLabel = symbols.newLabel("loop_start");
+                String loopEndLabel = symbols.newLabel("loop_end");
+                out.printf("%s:\n", loopStartLabel);
                 generateCode(out, symbols, condition);
                 // My condition is boolean, so the top of the stack is either true (1) or false (0)
                 // If it's true (1), I should continue executing the body; [no branch]
                 // if it's false (0), I should jump to the end of the loop. [branch]
-                out.println("ifeq loop_end");
+                out.printf("ifeq %s\n", loopEndLabel);
 
                 generateCode(out, symbols, body);
 
                 // Return to the top of the loop to check the condition again
-                out.println("goto loop_start");
-                out.println("loop_end:"); // Point to jump to when the condition fails
+                out.printf("goto %s\n", loopStartLabel);
+                out.printf("%s:\n", loopEndLabel); // Point to jump to when the condition fails
+            }
+            case RelationalOp(ParserRuleContext ctx, Expression left, Expression right, String op) -> {
+                var leftType = tc.getType(symbols, left);
+                var rightType = tc.getType(symbols, right);
+
+                boolean bothNumeric = tc.isNumeric(leftType) && tc.isNumeric(rightType);
+                boolean bothBoolean = leftType == PrimitiveType.Boolean && rightType == PrimitiveType.Boolean;
+                boolean bothObjects = leftType instanceof ClassType && rightType instanceof ClassType;
+
+                // Possibilities
+                // < / > / <= / >= / == / != (ints)     if_cmp<op>
+                // < / > / <= / >= / == / != (doubles)  dcmpg
+                // == / != (booleans)                   if_icmp<op>
+                // == / != (objects)                    if_acmp<op>
+                // Goal: end up with 0 (false) or 1 (true) on the stack
+
+                String instrOp = switch (op) {
+                    case "==" -> "eq";
+                    case "!=" -> "ne";
+                    case "<" -> "lt";
+                    case ">" -> "gt";
+                    case "<=" -> "le";
+                    case ">=" -> "ge";
+                    default -> throw new RuntimeException("Internal compiler error: no applicable operator");
+                };
+
+                String trueLabel = symbols.newLabel("trueCase");
+                String endLabel = symbols.newLabel("end");
+
+                if (leftType == PrimitiveType.Int && rightType == PrimitiveType.Int) {
+                    // if (!(left op right))
+                    //      iconst_0 // push false
+                    //      goto end
+                    // else
+                    // trueCase:
+                    //      iconst_1 // push true
+                    // end:
+                    generateCode(out, symbols, left);
+                    generateCode(out, symbols, right);
+                    out.printf("if_icmp%s %s\n", instrOp, trueLabel);
+
+                    // false case
+                    out.println("iconst_0");
+                    out.printf("goto %s\n", endLabel);
+
+                    // true case
+                    out.printf("%s:\n", trueLabel);
+                    out.println("iconst_1");
+
+                    out.printf("%s:\n", endLabel);
+                } else
+                    throw new RuntimeException("Unimplemented comparison case");
             }
             default -> {
                 throw new SyntaxException(String.format("GenerateCode() unimplemented for node %s", node.getNodeDescription()));

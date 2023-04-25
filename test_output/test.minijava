@@ -19,9 +19,16 @@ ldc 1
 istore 1
 
 .line 3
-loop_start:
+loop_start_0:
+iload 1
+ldc 10
+if_icmplt trueCase_2
+iconst_0
+goto end_3
+trueCase_2:
 iconst_1
-ifeq loop_end
+end_3:
+ifeq loop_end_1
 
 .line 4
 getstatic java/lang/System/out Ljava/io/PrintStream;
@@ -34,8 +41,34 @@ invokevirtual java/io/PrintStream/println()V
 iinc 1 1
 iload 1
 pop
-goto loop_start
-loop_end:
+goto loop_start_0
+loop_end_1:
+
+.line 8
+loop_start_4:
+iload 1
+ldc 0
+if_icmpgt trueCase_6
+iconst_0
+goto end_7
+trueCase_6:
+iconst_1
+end_7:
+ifeq loop_end_5
+
+.line 9
+getstatic java/lang/System/out Ljava/io/PrintStream;
+iload 1
+invokevirtual java/io/PrintStream/print(I)V
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println()V
+
+.line 10
+iinc 1 -1
+iload 1
+pop
+goto loop_start_4
+loop_end_5:
 return
 .end method
 
