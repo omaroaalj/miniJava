@@ -33,6 +33,8 @@ public class SymbolTable {
     private Map<String, Class<?>> importedClasses = new HashMap<>();
     private List<String> importedPackages = new ArrayList<>();
 
+    private static int labelCount = 0; // for uniqueness in labels
+
     /**
      * Creates a new symbol table with the given level (class, method, or block).
      */
@@ -309,5 +311,9 @@ public class SymbolTable {
         if (maybeVar.isPresent() && maybeVar.get().isField())
             return Optional.of(new Field(new ClassType(getCompilingClassName()), name, maybeVar.get().getType()));
         return Optional.empty();
+    }
+
+    public String newLabel(String prefix) {
+        return String.format("%s_%d", prefix, labelCount++);
     }
 }

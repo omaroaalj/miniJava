@@ -134,6 +134,21 @@ statement
     | 'return' ';' {
         $n = new Return($ctx, Optional.empty());
     }
+    | 'while' '(' cond=expression ')' body=statement {
+        $n = new While($ctx, $cond.n, $body.n);
+    }
+    | 'if' '(' cond=expression ')' body=statement {
+        $n = new If($ctx, $cond.n, $body.n);
+    }
+    | 'if' '(' cond=expression ')' body=statement 'else' elseBody=statement {
+        $n = new IfElse($ctx, $cond.n, $body.n, $elseBody.n);
+    }
+    // what goes between the ( )?
+    // - expression -
+    // - conditions like "i < 5"
+    // - variable call
+    // - method call
+    // as long as expression is boolean
     ;
 
 // type followed by a comma-separated list of "items", each being just a name or a name = value.
@@ -160,6 +175,13 @@ decItem
         $n = new Declaration($ctx, $NAME.text, Optional.of($e.n));
     }
     ;
+
+// Other Boolean expressions:
+// <, >, <=, >=, ==, != - relational operators (number -> boolean)
+//      == and != can be used with nonnumeric values
+//      == on objects is same is .equals(), != is !.equals()
+// - !, &&, ||, - logic operators (boolean -> boolean)
+// For objects, == means "are they the same object?"
 
 expression
     returns[Expression n]
@@ -235,6 +257,12 @@ expression
     }
     | l=expression op=('+' | '-') r=expression {
         $n = new BinaryOp($ctx, $op.text, $l.n, $r.n);
+    }
+    | l=expression op=('<' | '<=' | '>' | '>=') r=expression {
+        $n = new RelationalOp($ctx, $l.n, $r.n, $op.text);
+    }
+    | l=expression op=('==' | '!=') r=expression {
+        $n = new RelationalOp($ctx, $l.n, $r.n, $op.text);
     }
     | <assoc=right> l=expression '=' r=expression {
         $n = new Assignment($ctx, $l.n, $r.n);

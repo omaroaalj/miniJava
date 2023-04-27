@@ -738,6 +738,139 @@ public class Compiler {
                 }
                 out.println(")V");
             }
+            case While(ParserRuleContext ignore, Expression condition, Statement body) -> {
+                String loopStartLabel = symbols.newLabel("loop_start");
+                String loopEndLabel = symbols.newLabel("loop_end");
+                out.printf("%s:\n", loopStartLabel);
+                generateCode(out, symbols, condition);
+                // My condition is boolean, so the top of the stack is either true (1) or false (0)
+                // If it's true (1), I should continue executing the body; [no branch]
+                // if it's false (0), I should jump to the end of the loop. [branch]
+                out.printf("ifeq %s\n", loopEndLabel);
+
+                generateCode(out, symbols, body);
+
+                // Return to the top of the loop to check the condition again
+                out.printf("goto %s\n", loopStartLabel);
+                out.printf("%s:\n", loopEndLabel); // Point to jump to when the condition fails
+            }
+            case If(ParserRuleContext ignore, Expression condition, Statement body) -> {
+                String ifEndLabel = symbols.newLabel("if_end");
+                generateCode(out, symbols, condition);
+                // My condition is boolean, so the top of the stack is either true (1) or false (0)
+                // If it's true (1), I should execute the body; [no branch]
+                // if it's false (0), I should jump to the end of the if. [branch]
+                out.printf("ifeq %s\n", ifEndLabel);
+
+                generateCode(out, symbols, body);
+
+                out.printf("%s:\n", ifEndLabel); // Point to jump to when the condition fails
+            }
+            case IfElse(ParserRuleContext ignore, Expression condition, Statement body, Statement elseBody) -> {
+                // Conditional branch at top: if condition is false, jump to else
+                // Unconditional branch at the end of the body: jump past the else
+                String elseLabel = symbols.newLabel("else");
+                String ifEndLabel = symbols.newLabel("if_end");
+                generateCode(out, symbols, condition);
+                // My condition is boolean, so the top of the stack is either true (1) or false (0)
+                // If it's true (1), I should execute the body; [no branch]
+                // if it's false (0), I should jump to the end of the if. [branch]
+                out.printf("ifeq %s\n", elseLabel);
+                generateCode(out, symbols, body);
+                out.printf("goto %s\n", ifEndLabel);
+
+                out.printf("%s:\n", elseLabel);
+                generateCode(out, symbols, elseBody);
+
+                out.printf("%s:\n", ifEndLabel); // Point to jump to when the condition fails
+            }
+            case RelationalOp(ParserRuleContext ignore, Expression left, Expression right, String op) -> {
+                var leftType = tc.getType(symbols, left);
+                var rightType = tc.getType(symbols, right);
+
+                boolean bothNumeric = tc.isNumeric(leftType) && tc.isNumeric(rightType);
+                boolean bothBoolean = leftType == PrimitiveType.Boolean && rightType == PrimitiveType.Boolean;
+                boolean bothObjects = leftType instanceof ClassType && rightType instanceof ClassType;
+
+                // Possibilities
+                // < / > / <= / >= / == / != (ints)     if_cmp<op>
+                // < / > / <= / >= / == / != (doubles)  dcmpg
+                // == / != (booleans)                   if_icmp<op>
+                // == / != (objects)                    if_acmp<op>
+                // Goal: end up with 0 (false) or 1 (true) on the stack
+
+                String instrOp = switch (op) {
+                    case "==" -> "eq";
+                    case "!=" -> "ne";
+                    case "<" -> "lt";
+                    case ">" -> "gt";
+                    case "<=" -> "le";
+                    case ">=" -> "ge";
+                    default -> throw new RuntimeException("Internal compiler error: no applicable operator");
+                };
+
+                String trueLabel = symbols.newLabel("trueCase");
+                String endLabel = symbols.newLabel("end");
+
+                if (leftType == PrimitiveType.Double || rightType == PrimitiveType.Double) {
+                    generateCode(out, symbols, left);
+                    if(leftType == PrimitiveType.Int)
+                        out.println("i2d");
+
+                    generateCode(out, symbols, right);
+                    if(rightType == PrimitiveType.Int)
+                        out.println("i2d");
+
+                    out.printf("dcmpg\n");  // this compares the two doubles on the stack
+                    // now the top of the stack is either
+                    //  - -1 if left < right
+                    //  - 0 if left == right
+                    //  - +1 if left > right
+
+                    // Say we're evaluating a condition like x < y
+                    // We now have -1, 0, or 1 on the stack; we should branch to the true case if it's -1
+                    out.printf("if%s %s\n", instrOp, trueLabel);
+
+                    // false case
+                    out.println("iconst_0");
+                    out.printf("goto %s\n", endLabel);
+
+                    // true case
+                    out.printf("%s:\n", trueLabel);
+                    out.println("iconst_1");
+
+                    out.printf("%s:\n", endLabel);
+                } else if (leftType == PrimitiveType.Int && rightType == PrimitiveType.Int
+                    || leftType == PrimitiveType.Boolean
+                    || leftType instanceof ClassType) {
+                    // if (!(left op right))
+                    //      iconst_0 // push false
+                    //      goto end
+                    // else
+                    // trueCase:
+                    //      iconst_1 // push true
+                    // end:
+                    generateCode(out, symbols, left);
+                    generateCode(out, symbols, right);
+
+                    if(leftType instanceof ClassType){
+                        out.printf("if_acmp%s %s\n", instrOp, trueLabel);
+                    } else {
+                        out.printf("if_icmp%s %s\n", instrOp, trueLabel);
+                    }
+
+                    // false case
+                    out.println("iconst_0");
+                    out.printf("goto %s\n", endLabel);
+
+                    // true case
+                    out.printf("%s:\n", trueLabel);
+                    out.println("iconst_1");
+
+                    out.printf("%s:\n", endLabel);
+                } else
+                    throw new RuntimeException("Unimplemented comparison case");
+            }
             default -> {
                 throw new SyntaxException(String.format("GenerateCode() unimplemented for node %s", node.getNodeDescription()));
             }

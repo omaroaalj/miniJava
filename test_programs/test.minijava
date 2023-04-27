@@ -1,2 +1,1 @@
-int f() { return 3;}
-main() {  int i = this.f();}
+
