@@ -137,6 +137,12 @@ statement
     | 'while' '(' cond=expression ')' body=statement {
         $n = new While($ctx, $cond.n, $body.n);
     }
+    | 'if' '(' cond=expression ')' body=statement {
+        $n = new If($ctx, $cond.n, $body.n);
+    }
+    | 'if' '(' cond=expression ')' body=statement 'else' elseBody=statement {
+        $n = new IfElse($ctx, $cond.n, $body.n, $elseBody.n);
+    }
     // what goes between the ( )?
     // - expression -
     // - conditions like "i < 5"

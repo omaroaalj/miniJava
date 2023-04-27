@@ -306,6 +306,23 @@ public class Typechecker {
                     throw ex;
 
             }
+            case If(ParserRuleContext ignore, Expression condition, Statement body) -> {
+                typecheck(symbols, condition);
+                typecheck(symbols, body);
+
+                var conditionType = getType(symbols, condition);
+                if(conditionType != PrimitiveType.Boolean)
+                    throw new SyntaxException(node, "The condition of an if must be boolean, not " + conditionType);
+            }
+            case IfElse(ParserRuleContext ignore, Expression condition, Statement body, Statement elseBody) -> {
+                typecheck(symbols, condition);
+                typecheck(symbols, body);
+                typecheck(symbols, elseBody);
+
+                var conditionType = getType(symbols, condition);
+                if(conditionType != PrimitiveType.Boolean)
+                    throw new SyntaxException(node, "The condition of an if must be boolean, not " + conditionType);
+            }
             /*
             default -> {
                 throw new SyntaxException(node, String.format("Typecheck case unimplemented for node %s", node.getNodeDescription()));
